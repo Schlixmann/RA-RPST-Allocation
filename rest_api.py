@@ -22,7 +22,7 @@ _names = set()
 
 app = application = bottle.default_app()
 
-@get("/info")
+@get("/")
 def get_info():
     '''Returns some info on project'''
     info_text = "This is the test page for the resource manipulation API"

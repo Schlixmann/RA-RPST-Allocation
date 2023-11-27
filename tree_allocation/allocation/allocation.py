@@ -13,6 +13,34 @@ logger = logging.getLogger(__name__)
 ns = {"cpee2": "http://cpee.org/ns/properties/2.0", 
         "cpee1":"http://cpee.org/ns/description/1.0"}
 
+class TaskAllocation():
+
+    def __init__(self, task, xml_str, state=None, ) -> None:
+        allowed_states = {'ready', 'running', 'stopped', 'finished', 'initialized'}
+
+        self.id = str(uuid.uuid1())
+        self.task = task
+        self.state = state
+        self.allo_tree = None
+        self.xml_str = xml_str
+
+    def allocate_task(self):
+        """
+        Build the allocation tree for self.task. 
+        -> set self.state = running
+        -> Resources = Request from Resource Repository
+        -> Build allo_tree(task, resources)
+        -> if hitting delete or only invalid branches: 
+            -> set self.allo_tree = allo_tree
+            -> set self.state = stopped
+        -> if valid branch: 
+            -> set self.state = finished
+        -> Choose best branch (Local best allocation)
+
+        -> If Global best allocation becomes interesting: provide ordered list
+        """
+
+
 
 def parse_tasks(xml_string:str):
     ns = {"cpee2": "http://cpee.org/ns/properties/2.0", 

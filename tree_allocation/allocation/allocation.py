@@ -23,8 +23,10 @@ class TaskAllocation():
         self.state = state
         self.allo_tree = None
         self.xml_str = xml_str
+        self.ns = {"cpee2": "http://cpee.org/ns/properties/2.0", 
+            "cpee1":"http://cpee.org/ns/description/1.0"}
 
-    def allocate_task(self):
+    def allocate_task(self, root=self.task, resource_url, file_path:str):
         """
         Build the allocation tree for self.task. 
         -> set self.state = running
@@ -39,8 +41,18 @@ class TaskAllocation():
 
         -> If Global best allocation becomes interesting: provide ordered list
         """
-    
-    
+        payload = {"resource_file":file_path}
+        r = requests.get(url=resource_url, params=payload)
+        res_xml = etree.fromstring(r.content)
+        
+        av_resources = res_xml.xpath("resource") # available resources
+        for resource in av_resources:
+            res_profiles = resource.xpath("resprofile") # resource profiles of resource
+            for profile in res_profiles:
+                if root.label.lower() == profile.xpath("@role")[0].lower and (profile.xpath("@role")[0] in root.allowed_roles if len(root.allowed_roles) > 0 else True):
+                    root.add_child ... 
+                #ToDo --> Fix Task representation should task be python or xml object??
+        
 
 
 

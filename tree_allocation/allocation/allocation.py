@@ -15,7 +15,7 @@ ns = {"cpee2": "http://cpee.org/ns/properties/2.0",
 
 class TaskAllocation():
 
-    def __init__(self, task, xml_str, state=None, ) -> None:
+    def __init__(self, task:tn.TaskNode, xml_str, state=None, ) -> None:
         allowed_states = {'ready', 'running', 'stopped', 'finished', 'initialized'}
 
         self.id = str(uuid.uuid1())
@@ -51,7 +51,8 @@ class TaskAllocation():
             for profile in res_profiles:
                 if root.label.lower() == profile.xpath("@role")[0].lower and (profile.xpath("@role")[0] in root.allowed_roles if len(root.allowed_roles) > 0 else True):
                     root.add_child ... 
-                #ToDo --> Fix Task representation should task be python or xml object??
+                #TODO --> Fix Task representation should task be python or xml object??
+                # Use newly defined Tasknodes to find fitting tasks. 
         
 
 

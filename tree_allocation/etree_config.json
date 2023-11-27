@@ -1,0 +1,8 @@
+{
+    "namespaces": {
+        "cpee": {
+            "cpee1": "http://cpee.org/ns/description/1.0",
+            "cpee2": "http://cpee.org/ns/properties/2.0"
+        }
+    }
+}

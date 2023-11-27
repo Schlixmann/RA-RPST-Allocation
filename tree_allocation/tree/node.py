@@ -1,13 +1,28 @@
 import uuid
+import json
 import warnings
 import logging
+import os
 logger = logging.getLogger(__name__)
 
 class Node:
-    def __init__(self):
+    # Class Variables:
+    ns = {}
+
+    def __init__(self, config_file="etree_config.json"):
         self.__id = str(uuid.uuid1())
         self.children = []
         self.expected_time = 0
+        self.config_file = config_file
+        self.load_config()
+    
+    def load_config(self):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        parent_dir = os.path.dirname(current_dir)
+        config_abs = os.path.join(parent_dir, self.config_file)
+        with open(config_abs, 'r') as f:
+            config = json.load(f)
+            Node.ns = config["namespaces"]["cpee"]
 
     def add_child(self, obj):
         self.children.append(obj)

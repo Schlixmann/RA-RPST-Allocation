@@ -7,14 +7,22 @@ logger = logging.getLogger(__name__)
 
 class Node:
     # Class Variables:
-    ns = {}
 
-    def __init__(self, config_file="etree_config.json"):
+    def __init__(self, ns=None, config_file="etree_config.json"):
         self.__id = str(uuid.uuid1())
         self.children = []
         self.expected_time = 0
         self.config_file = config_file
-        self.load_config()
+        self.ns = ns
+    
+    @classmethod
+    def parse_config(cls, config_file="etree_config.json"):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        parent_dir = os.path.dirname(current_dir)
+        config_abs = os.path.join(parent_dir, config_file)
+        with open(config_abs, 'r') as f:
+            config = json.load(f)
+        return config["namespaces"]["cpee"]
     
     def load_config(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))

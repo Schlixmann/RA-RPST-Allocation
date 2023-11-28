@@ -26,7 +26,7 @@ class TaskAllocation():
         self.ns = {"cpee2": "http://cpee.org/ns/properties/2.0", 
             "cpee1":"http://cpee.org/ns/description/1.0"}
 
-    def allocate_task(self, root=self.task, resource_url, file_path:str):
+    def allocate_task(self, root= self.task, resource_url, file_path:str):
         """
         Build the allocation tree for self.task. 
         -> set self.state = running
@@ -47,10 +47,11 @@ class TaskAllocation():
         
         av_resources = res_xml.xpath("resource") # available resources
         for resource in av_resources:
+            resource_node = rn.ResourceNode.fromrawxml(resource)
             res_profiles = resource.xpath("resprofile") # resource profiles of resource
             for profile in res_profiles:
                 if root.label.lower() == profile.xpath("@role")[0].lower and (profile.xpath("@role")[0] in root.allowed_roles if len(root.allowed_roles) > 0 else True):
-                    root.add_child ... 
+                    root.add_child()
                 #TODO --> Fix Task representation should task be python or xml object??
                 # Use newly defined Tasknodes to find fitting tasks. 
         

@@ -5,14 +5,13 @@ from lxml import etree
 
 class TaskNode(Node):
 
-    def __init__(self, task_id:str=None, label:str=None, allowed_roles=[], task_tree:etree.Element=None, ns=None):
+    def __init__(self, task_id:str=None, label:str=None, allowed_roles=[],task_type=None, task_tree:etree.Element=None, ns=None):
         super().__init__()
         self.task_id = task_id
         self.label = label
-        self.allowed_roles = allowed_roles  
+        self.allowed_roles = allowed_roles
         self.node_type = "task"
         self.task_tree = task_tree
-        self.ns = ns
 
     @classmethod
     def fromrawxml(cls, xml_str:str):

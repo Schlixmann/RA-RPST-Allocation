@@ -15,18 +15,18 @@ ns = {"cpee2": "http://cpee.org/ns/properties/2.0",
 
 class TaskAllocation():
 
-    def __init__(self, task:tn.TaskNode, xml_str, state=None, ) -> None:
+    def __init__(self, task:tn.TaskNode, xml_str=None, state='initialized', ) -> None:
         allowed_states = {'ready', 'running', 'stopped', 'finished', 'initialized'}
 
         self.id = str(uuid.uuid1())
         self.task = task
         self.state = state
-        self.allo_tree = None
+        self.final_tree = None
+        self.intermediate_trees = []
         self.xml_str = xml_str
-        self.ns = {"cpee2": "http://cpee.org/ns/properties/2.0", 
-            "cpee1":"http://cpee.org/ns/description/1.0"}
+        self.lock:bool = False
 
-    def allocate_task(self, root= self.task, resource_url, file_path:str):
+    def allocate_task(self, root=None, resource_url=None, file_path:str=None, excluded=[], task_parent=None, res_parent=None):
         """
         Build the allocation tree for self.task. 
         -> set self.state = running
@@ -41,17 +41,88 @@ class TaskAllocation():
 
         -> If Global best allocation becomes interesting: provide ordered list
         """
-        payload = {"resource_file":file_path}
-        r = requests.get(url=resource_url, params=payload)
-        res_xml = etree.fromstring(r.content)
+        if root is None: 
+            self.state = 'running'
+            root = self.task
+            intermediate_tree = self.allocate_task(root, resource_url = resource_url)
+            # Process can not finish unless lock is solved
+            if self.lock:
+                print("wait")
+                self.intermediate_trees.append(intermediate_tree) 
+            else:
+                self.final_tree = intermediate_tree
+            return 
+        # only for dev purposes: res from static file: 
+        # payload = {"resource_file":file_path}
+        # r = requests.get(url=resource_url, params=payload)
+        # res_xml = etree.fromstring(r.content)
         
+        res_xml = resource_url
         av_resources = res_xml.xpath("resource") # available resources
+        pt = PrettyPrintTree(lambda x: x.children, lambda x: "task:" + str(x.label) if type(x) == tn.TaskNode else "RP:" + str(x.name))
+        pt(root)
         for resource in av_resources:
-            resource_node = rn.ResourceNode.fromrawxml(resource)
+            resource_node = rn.ResourceNode.frometree(resource)
             res_profiles = resource.xpath("resprofile") # resource profiles of resource
-            for profile in res_profiles:
-                if root.label.lower() == profile.xpath("@role")[0].lower and (profile.xpath("@role")[0] in root.allowed_roles if len(root.allowed_roles) > 0 else True):
-                    root.add_child()
+            for profile in resource_node.resource_profiles:
+                print(root.label.lower() == profile.task.lower() and (profile.role in root.allowed_roles if len(root.allowed_roles) > 0 else True))
+                print(root.label.lower(),  profile.task.lower(),  profile.role, root.allowed_roles, len(root.allowed_roles))
+                if root.label.lower() == profile.task.lower() and (profile.role in root.allowed_roles if len(root.allowed_roles) > 0 else True):
+                    root.add_child(profile)
+                    #if resource_node not in root.children:
+                    #    root.add_child(profile)
+                        #resource_node.add_child(profile)
+                    #else:
+                    #    root.children[root.children.index(resource_node)].add_child(profile)
+                #pt = PrettyPrintTree(lambda x: x.children, lambda x: "task:" + str(x.label) if type(x) == tn.TaskNode else "RP:" + str(x.name))
+                #pt(root)
+
+        
+        if len(root.children) == 0:
+            if not task_parent: 
+                warnings.warn("No resource for a core task")
+                raise(ResourceError(root))
+            
+            print([value for sublist in task_parent.children for value in sublist.children])
+            task_parent.children = [task for task in task_parent.children if task.name != res_parent.name]
+
+            if len(task_parent.children) == 0:
+                warnings.warn("The task can not be allocated due to missing resource availability", ResourceWarning)
+                raise(ResourceError(task_parent))
+
+            return root
+        print(root.children)
+        for profile in root.children:
+            ex_branch = excluded
+            if len(profile.change_patterns) > 0: 
+                for change_pattern in profile.change_patterns:
+                    
+                    cp_tasks = change_pattern.xpath(".//cpee1:call | .//cpee1:manipulate", namespaces=ns)
+                    cp_task_labels = [task.attrib["label"] for task in change_pattern.xpath(".//cpee1:call | .//cpee1:manipulate", namespaces=ns)]
+                    if any(x['label'].lower() in map(lambda d: d["label"].lower(), cp_task_labels) for x in ex_branch): 
+                        print(f"Break reached, task {cp_task_labels} in excluded")
+                        root.children.remove(profile)
+                        break
+
+                    for task in cp_tasks:
+                        #ex_branch = ex_branch + [task]
+                        print(change_pattern.xpath("@type")[0].lower())
+                        if change_pattern.xpath("@type")[0].lower() in ["insert", "replace"]:
+                            task = tn.TaskNode.frometree(task)
+                            profile.add_child(self.allocate_task(task, resource_url, excluded=ex_branch, task_parent=root, res_parent=profile))
+
+                        elif change_pattern.xpath("@type")[0].lower() == "delete":
+                            task = tn.TaskNode.frometree(task)
+                            task.node_type = "delete"
+                            self.lock = True
+                            profile.add_child(task)
+                            #profile.add_child(self.allocate_task(task, resource_url, excluded=ex_branch, task_parent=root, res_parent=profile))
+
+                        else:
+                            raise("Changepattern type not in ['insert', 'replace', 'delete']")
+
+        return root
+                
                 #TODO --> Fix Task representation should task be python or xml object??
                 # Use newly defined Tasknodes to find fitting tasks. 
         
@@ -189,9 +260,9 @@ def allocate_process(cpee_url, resource_url="http://127.0.0.1:8000/resources", m
 class ResourceError(Exception):
     # Exception is raised if no sufficiant allocation for a task can be found for available resources
     
-    def __init__(self, task, message=f"No valid resource allocation can be found for the given set of available resources"):
+    def __init__(self, task, message="{} No valid resource allocation can be found for the given set of available resources"):
         self.task = task
-        self.message = message
+        self.message = message.format(self.task.label)
         super().__init__(self.message)
 
 class ResourceWarning(UserWarning):

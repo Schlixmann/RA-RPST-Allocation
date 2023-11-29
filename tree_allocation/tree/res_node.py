@@ -5,7 +5,7 @@ from lxml import etree
 
 
 class ResourceNode(Node):
-    def __init__(self, resource_obj=None, name=None, resource_profile=None, task=None, measure={}, xml_str=None):
+    def __init__(self,  name=None,resource_obj=None, resource_profile=None, task=None, measure={}, xml_str=None):
         super().__init__()
         self.resource_obj = resource_obj
         self.name = name
@@ -27,7 +27,7 @@ class ResourceNode(Node):
     def frometree(cls, xml_str:etree.Element):
         "Initialize TaskNode from raw xml_str which describes one task"
         res_xml = xml_str
-        name = res_xml.xpath("resource")[0].attrib["name"]
+        name = res_xml.attrib["name"]
         xml_str = xml_str
         instance = cls(name, xml_str=etree.tostring(xml_str))
         instance.create_profiles_from_xml()
@@ -48,21 +48,21 @@ class ResourceNode(Node):
             self.active_profile = self.resource_profiles[0]
 
     def create_profiles_from_xml(self):
-        resource_str = etree.fromstring(self.xml_str)
-        for resource in resource_str.xpath("resource"):
-            for resprofile in resource.xpath("resprofile"):
-                attribs = resprofile.attrib
-                change_patterns = resprofile.xpath("changepattern")
-                measures = {str(measure.tag) : float(measure.text) for measure in resprofile.xpath("measures/*")}
-                rp = ResourceProfile(attribs["id"], attribs["name"], attribs["role"], 
-                                     self, change_patterns=change_patterns, task=attribs["task"], measure=measures)
-                self.resource_profiles.append(rp)
+        resource = etree.fromstring(self.xml_str)
+        for resprofile in resource.xpath("resprofile"):
+            attribs = resprofile.attrib
+            change_patterns = resprofile.xpath("changepattern")
+            measures = {str(measure.tag) : float(measure.text) for measure in resprofile.xpath("measures/*")}
+            rp = ResourceProfile(attribs["id"], attribs["name"], attribs["role"], 
+                                    self, change_patterns=change_patterns, task=attribs["task"], measure=measures)
+            self.resource_profiles.append(rp)
 
 
 
-class ResourceProfile():
-    def __init__(self, id, name,  role, resource, change_patterns=[], task=str(), measure={}):
-        self.id:str = id
+class ResourceProfile(Node):
+    def __init__(self, profile_id, name,  role, resource, change_patterns=[], task=str(), measure={}):
+        super().__init__()
+        self.profile_id:str = profile_id
         self.name:str = name
         self.role:str = role
         self.change_patterns:list = change_patterns

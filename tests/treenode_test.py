@@ -55,7 +55,7 @@ class TestTreeNode(unittest.TestCase):
 
     def test_res_node(self):
         xml_str = """
-        <resources >
+
             <resource id="1" name="Good Drill" activeRole="">
                 <resprofile id="11" name="autodrill" role ="Drill" task="Drill Hole into product"> <!--{{{-->
                     <measures>
@@ -82,7 +82,7 @@ class TestTreeNode(unittest.TestCase):
                     </measures>
                 </resprofile>
             </resource>
-        </resources>
+
         """
         #resnode = rn.ResourceNode()
         new_res = rn.ResourceNode.fromrawxml(xml_str=xml_str)

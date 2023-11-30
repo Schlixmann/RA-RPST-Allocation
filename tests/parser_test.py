@@ -16,3 +16,12 @@ class TestEvent(unittest.TestCase):
         print(tree)
         pt = PrettyPrintTree(lambda x: x.children, lambda x: "task:" + str(x.label) if type(x) == tn.TaskNode or type(x) == gtw.GtwNode else "GTW:" + str(x))
         pt(tree)
+
+    def test_int_proc(self):
+        with open("main_process.xml") as f:
+            process = f.read()
+        
+        tree = parser.internal_process_parser(process)
+        print(tree)
+        print("children: ", tree.xpath("//*"))
+            

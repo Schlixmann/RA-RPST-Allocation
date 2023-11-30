@@ -43,6 +43,63 @@ def parse_xml(process_xml, root=None):
         #print([child.tag for child in root.children])
     return root
 
+class CpeeParser():
+    """ 
+    Takes a Cpee Element and Parses it into RDPM Element 
+    """
+
+    def parse_loop(loop_xml:etree.Element, ns):
+        out_xml = [loop_xml.remove(x) for x in loop_xml.xpath("*", namespaces=ns)]
+
+        return loop_xml
+    
+    def parse_manipulate(man_xml:etree.Element, ns):
+        for elem in man_xml.xpath("cpee1:resources/cpee1:resource", namespaces=ns):
+            elem.tag = "allowed_role"
+        return man_xml
+
+    def parse_call(xml:etree.Element, ns):
+        xml.attrib["label"] = xml.xpath("cpee1:parameters/cpee1:label", namespaces=ns)[0].text
+        resources = xml.xpath("cpee1:resources", namespaces=ns)
+
+        xml = [xml.remove(x) for x in xml.xpath("*", namespaces=ns)]
+        xml.append(resources)
+        for elem in xml.xpath("cpee1:resources/cpee1:resource", namespaces=ns):
+            elem.tag = "allowed_role"
+
+        return xml
+
+
+def parse_factory(element_type = None, xml=None, ns=None):
+    elem_factory= {
+        f"{{{ns['cpee1']}}}loop" : CpeeParser.parse_loop,
+        f"{{{ns['cpee1']}}}manipulate" : CpeeParser.parse_manipulate, 
+        f"{{{ns['cpee1']}}}call" : CpeeParser.parse_call
+    }
+    print(elem_factory)
+    return elem_factory[element_type](xml, ns)
+
+def internal_process_parser(process_xml):
+    root = etree.fromstring(process_xml)
+    if len(root.xpath("*")) == 0:
+        return root
+    namespace = list(root.nsmap.values())[0]
+    ns = {"cpee1": namespace}
+    new_root = etree.Element(f"{{{ns['cpee1']}}}description")
+    #input_process.xpath("//cpee1:description", namespaces = ns)[0]
+    for elem in root.xpath("*"):
+        try:
+            new_root.append(parse_factory(str(elem.tag), elem, ns=ns))
+
+        except:
+            pass
+    return new_root
+
+
+
+
+
+
 if __name__ == "__main__":
     with open("main_process.xml") as f:
         process = etree.parse(f)

@@ -1,0 +1,59 @@
+digraph CallTree {
+	"3d5b466a-906d-11ee-87db-04cf4b795879" [label = "a6: Drill Hole into product 
+ Type: Core 
+ Direction: Core"]	; 
+	"3d5b531c-906d-11ee-87db-04cf4b795879" [label = "1: Good Drill"]	; 
+	"3d5b466a-906d-11ee-87db-04cf4b795879" -> "3d5b531c-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b547a-906d-11ee-87db-04cf4b795879" [label = "11: autodrill"]	; 
+	"3d5b531c-906d-11ee-87db-04cf4b795879" -> "3d5b547a-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b5538-906d-11ee-87db-04cf4b795879" [label = "r1: Setup Drill 
+ Type: insert 
+ Direction: before"]	; 
+	"3d5b547a-906d-11ee-87db-04cf4b795879" -> "3d5b5538-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b5790-906d-11ee-87db-04cf4b795879" [label = "2: Technician"]	; 
+	"3d5b5538-906d-11ee-87db-04cf4b795879" -> "3d5b5790-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b5876-906d-11ee-87db-04cf4b795879" [label = "r1: Check quality of product 
+ Type: delete 
+ Direction: before"]	; 
+	"3d5b547a-906d-11ee-87db-04cf4b795879" -> "3d5b5876-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b5d58-906d-11ee-87db-04cf4b795879" [label = "2: Technician"]	; 
+	"3d5b5876-906d-11ee-87db-04cf4b795879" -> "3d5b5d58-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b5e2a-906d-11ee-87db-04cf4b795879" [label = "4: Student Technician"]	; 
+	"3d5b5876-906d-11ee-87db-04cf4b795879" -> "3d5b5e2a-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b5f24-906d-11ee-87db-04cf4b795879" [label = "23: Check manual"]	; 
+	"3d5b5e2a-906d-11ee-87db-04cf4b795879" -> "3d5b5f24-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b5fd8-906d-11ee-87db-04cf4b795879" [label = "r5: Supervise quality Check 
+ Type: insert 
+ Direction: parallel"]	; 
+	"3d5b5f24-906d-11ee-87db-04cf4b795879" -> "3d5b5fd8-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b61d6-906d-11ee-87db-04cf4b795879" [label = "2: Technician"]	; 
+	"3d5b5fd8-906d-11ee-87db-04cf4b795879" -> "3d5b61d6-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b62d0-906d-11ee-87db-04cf4b795879" [label = "5: 3D Measure Machine"]	; 
+	"3d5b5876-906d-11ee-87db-04cf4b795879" -> "3d5b62d0-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b63c0-906d-11ee-87db-04cf4b795879" [label = "51: 3D Measurement for check"]	; 
+	"3d5b62d0-906d-11ee-87db-04cf4b795879" -> "3d5b63c0-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b646a-906d-11ee-87db-04cf4b795879" [label = "r5: Level 3D measure machine 
+ Type: insert 
+ Direction: before"]	; 
+	"3d5b63c0-906d-11ee-87db-04cf4b795879" -> "3d5b646a-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b664a-906d-11ee-87db-04cf4b795879" [label = "2: Technician"]	; 
+	"3d5b646a-906d-11ee-87db-04cf4b795879" -> "3d5b664a-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b66f4-906d-11ee-87db-04cf4b795879" [label = "r5: Full 3D check 
+ Type: replace 
+ Direction: Core"]	; 
+	"3d5b63c0-906d-11ee-87db-04cf4b795879" -> "3d5b66f4-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b68c0-906d-11ee-87db-04cf4b795879" [label = "5: 3D Measure Machine"]	; 
+	"3d5b66f4-906d-11ee-87db-04cf4b795879" -> "3d5b68c0-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b69a6-906d-11ee-87db-04cf4b795879" [label = "22: manual drill"]	; 
+	"3d5b531c-906d-11ee-87db-04cf4b795879" -> "3d5b69a6-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b6a8c-906d-11ee-87db-04cf4b795879" [label = "2: Slow Drill"]	; 
+	"3d5b466a-906d-11ee-87db-04cf4b795879" -> "3d5b6a8c-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b6b72-906d-11ee-87db-04cf4b795879" [label = "11: autodrill"]	; 
+	"3d5b6a8c-906d-11ee-87db-04cf4b795879" -> "3d5b6b72-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b6c1c-906d-11ee-87db-04cf4b795879" [label = "r1: Setup Drill 
+ Type: insert 
+ Direction: before"]	; 
+	"3d5b6b72-906d-11ee-87db-04cf4b795879" -> "3d5b6c1c-906d-11ee-87db-04cf4b795879"	 ;
+	"3d5b6de8-906d-11ee-87db-04cf4b795879" [label = "2: Technician"]	; 
+	"3d5b6c1c-906d-11ee-87db-04cf4b795879" -> "3d5b6de8-906d-11ee-87db-04cf4b795879"	 ;
+}

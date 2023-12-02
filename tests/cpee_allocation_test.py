@@ -5,6 +5,7 @@ from tree_allocation.tree import parser, task_node as tn, gtw_node as gtw
 from tree_allocation.allocation import cpee_allocation
 from pptree import *
 from PrettyPrint import PrettyPrintTree
+from tree_allocation.tree import graphix
 
 
 class TestCpeeAllocation(unittest.TestCase):
@@ -64,6 +65,8 @@ class TestCpeeAllocation(unittest.TestCase):
             print(tree)
             with open("xml_out.xml", "wb") as f:
                  f.write(etree.tostring(tree))
+
+            graphix.TreeGraph().show(etree.tostring(tree))
             
 
                 

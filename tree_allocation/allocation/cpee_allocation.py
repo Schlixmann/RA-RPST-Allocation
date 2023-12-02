@@ -27,7 +27,7 @@ class TaskAllocation():
         self.lock:bool = False
         self.ns = None
 
-    def allocate_task(self, root=None, resource_url = None, excluded=None):
+    def allocate_task(self, root=None, resource_url = None, excluded=[]):
         """
         Build the allocation tree for self.task. 
         -> set self.state = running
@@ -59,25 +59,18 @@ class TaskAllocation():
         x = res_xml.xpath("*")
         # Create Resource Children
         for resource in av_resources:
-            #root.xpath("cpee1:children", namespaces=self.ns)[0].append(resource)
-            print("current childs: ", root.xpath("cpee1:children/*", namespaces=self.ns))
             
             #Delete non fitting profiles
             for profile in resource.xpath("resprofile"):
                 profile.append(etree.Element("children"))
-                #print(profile.xpath("*"))
                 print("Profile description: ", profile.xpath("changepattern/cpee1:description/*", namespaces=self.ns))
                 label = R_RPST.get_label(etree.tostring(root)).lower()
                 roles = R_RPST.get_allowed_roles(etree.tostring(root))
-                #print(R_RPST.get_label(etree.tostring(root).lower()) == profile.attrib["task"].lower() and (profile.attrib["role"] in R_RPST.get_allowed_roles(etree.tostring(root)) if len(R_RPST.get_allowed_roles(etree.tostring(root))) > 0 else True))
                 
                 if not (R_RPST.get_label(etree.tostring(root).lower()) == profile.attrib["task"].lower() and (profile.attrib["role"] in R_RPST.get_allowed_roles(etree.tostring(root)) if len(R_RPST.get_allowed_roles(etree.tostring(root))) > 0 else True)):
                     resource.remove(profile)
             
-            # Delete Resources without any fitting profile
-            #if len(resource.xpath("resprofile")) == 0:
-            #    print("Deleted: ", root.xpath("cpee1:children", namespaces=self.ns)[0])
-            #    root.xpath("cpee1:children", namespaces=self.ns)[0].remove(resource)
+            # Add Resource if it has fitting profiles
             if len(resource.xpath("*")) > 0:
                 root.xpath("cpee1:children", namespaces=self.ns)[0].append(resource)
 
@@ -110,11 +103,12 @@ class TaskAllocation():
                     #print(testy[3], task_elements[0])
                     cp_tasks = [element for element in change_pattern.xpath(".//*") if element.tag in task_elements]
                     cp_task_labels = [R_RPST.get_label(etree.tostring(task)) for task in cp_tasks]
-                    #TODO
-                    #if any(x['label'].lower() in map(lambda d: d["label"].lower(), cp_task_labels) for x in ex_branch): 
-                    #    print(f"Break reached, task {cp_task_labels} in excluded")
-                    #    root.children.remove(profile)
-                    #    break
+                    
+                    #TODO excluded tasks
+                    if any(x['label'].lower() in map(lambda d: d["label"].lower(), cp_task_labels) for x in ex_branch): 
+                        print(f"Break reached, task {cp_task_labels} in excluded")
+                        root.xpath("cpee1:children/resource/resprofile").remove(profile)
+                        break
 
                     for task in cp_tasks:
                         if len(change_pattern.xpath("@type")[0].lower()) > 0:

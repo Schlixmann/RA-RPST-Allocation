@@ -21,7 +21,11 @@ class TreeGraph():
     def add_visualization_res(self, element):
         
         self.dot_content += f'\t"{element.attrib["unid"]}" [label = "{element.attrib["id"]}: {element.attrib["name"]}"]\t; \n'
+
+    def add_visualization_resprofile(self, element):
         
+        self.dot_content += f'\t"{element.attrib["unid"]}" [label = "{element.attrib["id"]}: {element.attrib["role"]}" shape=polygon sides=6]\t; \n'
+            
     def add_visualization_task(self, element):
         name = get_label(etree.tostring(element))
         try:
@@ -33,7 +37,7 @@ class TreeGraph():
         except:
             direction = "Core"
 
-        self.dot_content += f'\t"{element.attrib["unid"]}" [label = "{element.attrib["id"]}: {name} \n Type: {task_type} \n Direction: {direction}"]\t; \n'
+        self.dot_content += f'\t"{element.attrib["unid"]}" [label = "{element.attrib["id"]}: {name} \n Type: {task_type} \n Direction: {direction}" shape=rectangle]\t; \n'
 
 
 
@@ -52,7 +56,7 @@ class TreeGraph():
             
             for profile in node.xpath("cpee1:resprofile", namespaces=self.ns):
                 profile.attrib["unid"] = str(uuid.uuid1())
-                self.add_visualization_res(profile)
+                self.add_visualization_resprofile(profile)
                 self.dot_content += self.add_node_to_dot(node, profile)
                 for child in profile.xpath("cpee1:children/*", namespaces=self.ns):
                     child.attrib["unid"] = str(uuid.uuid1())

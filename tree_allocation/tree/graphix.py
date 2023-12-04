@@ -88,6 +88,54 @@ class TreeGraph():
         source = Source(self.dot_content, filename='new_call_tree.dot', format='png')
         source.render(filename='new_call_tree', directory='.', cleanup=True, view=True)
 
+
+class ProcessTreeGraph():
+    """
+    Prints full ProcessTreegraph 
+    -> Can I print the process Horizontal and the Allocations Vertical?
+    -> Try!
+    vgl:
+    digraph G {
+    rankdir=HR; // Sets the direction from top to bottom
+    pad=0.5; // Adds space around the graph
+    // Horizontal process nodes
+    
+    // Cluster for the "Process" subgraph with a box around it
+
+    
+    // Vertical tree for node a
+    subgraph cluster_a {
+        label="a";
+        node [shape=circle, width=0.5, height=0.5,  color=lightgreen];
+        a -> 1;
+        a -> 2;
+    }
+    
+    // Vertical tree for node b
+    subgraph cluster_b {
+        label="b";
+        node [shape=circle, width=0.5, height=0.5, color=lightgreen];
+        b -> 3 ->4;
+        3 -> 5;
+        b -> 6;
+    }
+    
+    // Vertical tree for node c
+    subgraph cluster_c {
+        label="c";
+        node [shape=circle, width=0.5, height=0.5,  color=lightgreen];
+        c -> 7;
+        c -> 8;
+    }
+    // Invisible edges to create separation between process and trees
+    {rank= same; a; b; c; d;}
+    a -> b -> c ;
+    a -> d -> c ;
+    
+
+}
+
+    """
 # Write DOT content to a file (replace 'call_tree.dot' with your desired filename)
 #with open('call_tree.dot', 'w') as dot_file:
 #    dot_file.write(dot_content)

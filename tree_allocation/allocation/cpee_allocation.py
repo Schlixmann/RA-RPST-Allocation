@@ -131,6 +131,14 @@ class TaskAllocation():
         return root
 
 
+class ProcessAllocation(): 
+    """
+    Call TaskAllocation() for every task in the process (extra: --> Define area which should be allocated)
+    The call must be done in a threaded and Async fashion, thus: 
+    - Every Task allocation must run as a thread which has a state out of the task allocation steps. 
+    - eventually when all allocations have either reached "stopped" or "finished" all issues of stopped branches must be resolved. 
+    - the costs of the changes must be calculated and used in the allocation decision.
+    """
 
 
         

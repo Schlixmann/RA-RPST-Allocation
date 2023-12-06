@@ -1,59 +1,35 @@
 digraph CallTree {
-	"21d8d3b4-9101-11ee-9dc2-04cf4b795879" [label = "a6: Drill Hole into product 
+	"cbcba95a-947b-11ee-b6cd-04cf4b795879" [label = "a6: Check quality of product 
  Type: Core 
  Direction: Core" shape=rectangle]	; 
-	"21d8f4a2-9101-11ee-9dc2-04cf4b795879" [label = "1: Good Drill"]	; 
-	"21d8d3b4-9101-11ee-9dc2-04cf4b795879" -> "21d8f4a2-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d8faf6-9101-11ee-9dc2-04cf4b795879" [label = "11: Drill" shape=polygon sides=6]	; 
-	"21d8f4a2-9101-11ee-9dc2-04cf4b795879" -> "21d8faf6-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d8ff1a-9101-11ee-9dc2-04cf4b795879" [label = "r1: Setup Drill 
- Type: insert 
- Direction: before" shape=rectangle]	; 
-	"21d8faf6-9101-11ee-9dc2-04cf4b795879" -> "21d8ff1a-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d90910-9101-11ee-9dc2-04cf4b795879" [label = "2: Technician"]	; 
-	"21d8ff1a-9101-11ee-9dc2-04cf4b795879" -> "21d90910-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d90dd4-9101-11ee-9dc2-04cf4b795879" [label = "r1: Check quality of product 
- Type: delete 
- Direction: before" shape=rectangle]	; 
-	"21d8faf6-9101-11ee-9dc2-04cf4b795879" -> "21d90dd4-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d91bee-9101-11ee-9dc2-04cf4b795879" [label = "2: Technician"]	; 
-	"21d90dd4-9101-11ee-9dc2-04cf4b795879" -> "21d91bee-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d92148-9101-11ee-9dc2-04cf4b795879" [label = "4: Student Technician"]	; 
-	"21d90dd4-9101-11ee-9dc2-04cf4b795879" -> "21d92148-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d926b6-9101-11ee-9dc2-04cf4b795879" [label = "23: Technician" shape=polygon sides=6]	; 
-	"21d92148-9101-11ee-9dc2-04cf4b795879" -> "21d926b6-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d92a6c-9101-11ee-9dc2-04cf4b795879" [label = "r5: Supervise quality Check 
+	"cbcbbd8c-947b-11ee-b6cd-04cf4b795879" [label = "2: Technician"]	; 
+	"cbcba95a-947b-11ee-b6cd-04cf4b795879" -> "cbcbbd8c-947b-11ee-b6cd-04cf4b795879"	 ;
+	"cbcbc070-947b-11ee-b6cd-04cf4b795879" [label = "4: Student Technician"]	; 
+	"cbcba95a-947b-11ee-b6cd-04cf4b795879" -> "cbcbc070-947b-11ee-b6cd-04cf4b795879"	 ;
+	"cbcbc49e-947b-11ee-b6cd-04cf4b795879" [label = "23: Technician 
+ Check manual" shape=polygon sides=6]	; 
+	"cbcbc070-947b-11ee-b6cd-04cf4b795879" -> "cbcbc49e-947b-11ee-b6cd-04cf4b795879"	 ;
+	"cbcbc7aa-947b-11ee-b6cd-04cf4b795879" [label = "r5: Supervise quality Check 
  Type: insert 
  Direction: parallel" shape=rectangle]	; 
-	"21d926b6-9101-11ee-9dc2-04cf4b795879" -> "21d92a6c-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d9344e-9101-11ee-9dc2-04cf4b795879" [label = "2: Technician"]	; 
-	"21d92a6c-9101-11ee-9dc2-04cf4b795879" -> "21d9344e-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d93926-9101-11ee-9dc2-04cf4b795879" [label = "5: 3D Measure Machine"]	; 
-	"21d90dd4-9101-11ee-9dc2-04cf4b795879" -> "21d93926-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d93d7c-9101-11ee-9dc2-04cf4b795879" [label = "51: Technician" shape=polygon sides=6]	; 
-	"21d93926-9101-11ee-9dc2-04cf4b795879" -> "21d93d7c-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d94060-9101-11ee-9dc2-04cf4b795879" [label = "r5: Level 3D measure machine 
+	"cbcbc49e-947b-11ee-b6cd-04cf4b795879" -> "cbcbc7aa-947b-11ee-b6cd-04cf4b795879"	 ;
+	"cbcbcee4-947b-11ee-b6cd-04cf4b795879" [label = "2: Technician"]	; 
+	"cbcbc7aa-947b-11ee-b6cd-04cf4b795879" -> "cbcbcee4-947b-11ee-b6cd-04cf4b795879"	 ;
+	"cbcbd2ea-947b-11ee-b6cd-04cf4b795879" [label = "5: 3D Measure Machine"]	; 
+	"cbcba95a-947b-11ee-b6cd-04cf4b795879" -> "cbcbd2ea-947b-11ee-b6cd-04cf4b795879"	 ;
+	"cbcbd6b4-947b-11ee-b6cd-04cf4b795879" [label = "51: Technician 
+ 3D Measurement for check" shape=polygon sides=6]	; 
+	"cbcbd2ea-947b-11ee-b6cd-04cf4b795879" -> "cbcbd6b4-947b-11ee-b6cd-04cf4b795879"	 ;
+	"cbcbd97a-947b-11ee-b6cd-04cf4b795879" [label = "r5: Level 3D measure machine 
  Type: insert 
  Direction: before" shape=rectangle]	; 
-	"21d93d7c-9101-11ee-9dc2-04cf4b795879" -> "21d94060-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d949a2-9101-11ee-9dc2-04cf4b795879" [label = "2: Technician"]	; 
-	"21d94060-9101-11ee-9dc2-04cf4b795879" -> "21d949a2-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d94d9e-9101-11ee-9dc2-04cf4b795879" [label = "r5: Full 3D check 
+	"cbcbd6b4-947b-11ee-b6cd-04cf4b795879" -> "cbcbd97a-947b-11ee-b6cd-04cf4b795879"	 ;
+	"cbcbe08c-947b-11ee-b6cd-04cf4b795879" [label = "2: Technician"]	; 
+	"cbcbd97a-947b-11ee-b6cd-04cf4b795879" -> "cbcbe08c-947b-11ee-b6cd-04cf4b795879"	 ;
+	"cbcbe3ac-947b-11ee-b6cd-04cf4b795879" [label = "r5: Full 3D check 
  Type: replace 
  Direction: Core" shape=rectangle]	; 
-	"21d93d7c-9101-11ee-9dc2-04cf4b795879" -> "21d94d9e-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d956c2-9101-11ee-9dc2-04cf4b795879" [label = "5: 3D Measure Machine"]	; 
-	"21d94d9e-9101-11ee-9dc2-04cf4b795879" -> "21d956c2-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d95b54-9101-11ee-9dc2-04cf4b795879" [label = "22: Drill" shape=polygon sides=6]	; 
-	"21d8f4a2-9101-11ee-9dc2-04cf4b795879" -> "21d95b54-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d95f00-9101-11ee-9dc2-04cf4b795879" [label = "2: Slow Drill"]	; 
-	"21d8d3b4-9101-11ee-9dc2-04cf4b795879" -> "21d95f00-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d962a2-9101-11ee-9dc2-04cf4b795879" [label = "11: Drill" shape=polygon sides=6]	; 
-	"21d95f00-9101-11ee-9dc2-04cf4b795879" -> "21d962a2-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d9652c-9101-11ee-9dc2-04cf4b795879" [label = "r1: Setup Drill 
- Type: insert 
- Direction: before" shape=rectangle]	; 
-	"21d962a2-9101-11ee-9dc2-04cf4b795879" -> "21d9652c-9101-11ee-9dc2-04cf4b795879"	 ;
-	"21d96d9c-9101-11ee-9dc2-04cf4b795879" [label = "2: Technician"]	; 
-	"21d9652c-9101-11ee-9dc2-04cf4b795879" -> "21d96d9c-9101-11ee-9dc2-04cf4b795879"	 ;
+	"cbcbd6b4-947b-11ee-b6cd-04cf4b795879" -> "cbcbe3ac-947b-11ee-b6cd-04cf4b795879"	 ;
+	"cbcbeb40-947b-11ee-b6cd-04cf4b795879" [label = "5: 3D Measure Machine"]	; 
+	"cbcbe3ac-947b-11ee-b6cd-04cf4b795879" -> "cbcbeb40-947b-11ee-b6cd-04cf4b795879"	 ;
 }

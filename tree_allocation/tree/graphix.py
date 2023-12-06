@@ -24,7 +24,7 @@ class TreeGraph():
 
     def add_visualization_resprofile(self, element):
         
-        self.dot_content += f'\t"{element.attrib["unid"]}" [label = "{element.attrib["id"]}: {element.attrib["role"]}" shape=polygon sides=6]\t; \n'
+        self.dot_content += f'\t"{element.attrib["unid"]}" [label = "{element.attrib["id"]}: {element.attrib["role"]} \n {element.attrib["name"]}" shape=polygon sides=6]\t; \n'
             
     def add_visualization_task(self, element):
         name = get_label(etree.tostring(element))

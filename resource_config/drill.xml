@@ -27,6 +27,10 @@
                         <resources allocated_to="not_allocated">
                         </resources>
                     </manipulate>
+                        <manipulate id="r1" label="Check anything">
+                        <resources allocated_to="not_allocated">
+                        </resources>
+                    </manipulate>
                 </description>
             </changepattern>
         </resprofile>

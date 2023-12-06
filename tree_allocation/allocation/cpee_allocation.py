@@ -1,33 +1,94 @@
+# Import modules
 from tree_allocation.tree import task_node as tn
 from tree_allocation.tree import res_node as rn, R_RPST
 from tree_allocation.helpers import get_all_resources, get_all_tasks, get_process_model
 from tree_allocation.allocation.change_operations import *
-
-from PrettyPrint import PrettyPrintTree
 from tree_allocation.proc_resource import *
+
+# Import external packages
+from PrettyPrint import PrettyPrintTree
 from lxml import etree
 import warnings
 import logging
 import copy
+import threading
 logger = logging.getLogger(__name__)
 
+class ProcessAllocation(): 
+    """
+    Call TaskAllocation() for every task in the process (extra: --> Define area which should be allocated)
+    - should be super of TaskAllocation
+    The call must be done in a threaded and Async fashion, thus: 
+    - Every Task allocation must run as a thread which has a state out of the task allocation steps. 
+    - eventually when all allocations have either reached "stopped" or "finished" all issues of stopped branches must be resolved. 
+    - the costs of the changes must be calculated and used in the allocation decision.
+    """
+
+    def __init__(self, process:str, resource_url) -> None:
+        self.id = str(uuid.uuid1())
+        self.process = etree.fromstring(process)
+        self.resource_url = resource_url
+        self.ns = None
+     
+    def allocate_process(self):
+        """ 
+        This method triggers the threaded allocation of each task in the process
+        - if in parallel or XOR maybe add a flag?!
+        """
+        # TODO Tasks must still be adapted, only for testing purposes now
+        self.ns = {"cpee1" : list(self.process.nsmap.values())[0]}
+        tasks = self.process.xpath("cpee1:call", namespaces=self.ns)
+        allocations = []
+        threads = []
+        print(self.resource_url)
+        print(tasks)
+
+        event = threading.Event() # Event set to true, if all deletes have been cleared
+        for task in tasks: 
+            print("The task is: ", task)
+            allocation = TaskAllocation(self, etree.tostring(task))
+            x = threading.Thread(target=allocation.allocate_task, args=(None, self.resource_url))
+            allocations.append(allocation)
+            threads.append(x)
+            x.start()
+        
+        for thread in threads:
+            thread.join()
 
 
-class TaskAllocation():
+        # delete in own tree:
+        for allocation in allocations:
+            if allocation.open_delete:
+                delete_tasks = allocation.intermediate_trees[-1].xpath("//cpee1:manipulate[@type='delete']|//cpee1:call[@type='delete']", namespaces=self.ns)
+                
+                for delete_task in delete_tasks:
+                    label = R_RPST.get_label(etree.tostring(delete_task))
+                    hits = allocation.intermediate_trees[0].xpath(f"//cpee1:*[@label='{label}']|//cpee1:parameters[cpee1:label='{label}']", namespaces=self.ns)
+                    [hit for hit in hits if not hit.xpath("@type='delete")]
+                    #TODO -> should only be allowed to delete in branches which are not the delete branch is part of
+                    # Implement
 
-    def __init__(self, process, task, state='initialized', ) -> None:
+        return allocations
+        
+
+class TaskAllocation(ProcessAllocation):
+
+    def __init__(self, parent:ProcessAllocation, task:str, state='initialized' ) -> None:
         allowed_states = {'ready', 'running', 'stopped', 'finished', 'initialized'}
 
-        self.id = str(uuid.uuid1())
+
+        self.parent = parent
+        self.process = self.parent.process
         self.task = task
         self.state = state
         self.final_tree = None
         self.intermediate_trees = []
-        self.process = process
+        
         self.lock:bool = False
+        self.open_delete = False
         self.ns = None
 
-    def allocate_task(self, root=None, resource_url = None, excluded=[]):
+    def allocate_task(self, root=None, resource_url=None, excluded=[]):
         """
         Build the allocation tree for self.task. 
         -> set self.state = running
@@ -47,6 +108,7 @@ class TaskAllocation():
         if root is None:
             self.state='running'
             root = etree.fromstring(self.task)
+            print("New created root: ", root)
             self.ns = {"cpee1" : list(root.nsmap.values())[0]}
             root.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
             return self.intermediate_trees.append(self.allocate_task(root, resource_url=resource_url))
@@ -63,7 +125,7 @@ class TaskAllocation():
             #Delete non fitting profiles
             for profile in resource.xpath("resprofile"):
                 profile.append(etree.Element("children"))
-                print("Profile description: ", profile.xpath("changepattern/cpee1:description/*", namespaces=self.ns))
+                #print("Profile description: ", profile.xpath("changepattern/cpee1:description/*", namespaces=self.ns))
                 label = R_RPST.get_label(etree.tostring(root)).lower()
                 roles = R_RPST.get_allowed_roles(etree.tostring(root))
                 
@@ -97,7 +159,7 @@ class TaskAllocation():
             ex_branch = excluded
             if len(profile.xpath("changepattern")) > 0:
                 for change_pattern in profile.xpath("changepattern"):
-                    print("CP_kids: ", change_pattern.xpath(".//*", namespaces=self.ns))
+                    #print("CP_kids: ", change_pattern.xpath(".//*", namespaces=self.ns))
                     testy = change_pattern.xpath(".//*")
                     #print(testy[3] in task_elements)
                     #print(testy[3], task_elements[0])
@@ -117,30 +179,28 @@ class TaskAllocation():
                             task.attrib["direction"] = change_pattern.xpath("parameters/direction")[0].text.lower()
 
                         if change_pattern.xpath("@type")[0].lower() in ["insert", "replace"]:
-                            print("CP_kids: ", change_pattern.xpath(".//*", namespaces=self.ns))
+                            #print("CP_kids: ", change_pattern.xpath(".//*", namespaces=self.ns))
                             profile.xpath("children")[0].append(self.allocate_task(task, resource_url, excluded=ex_branch))
 
                         elif change_pattern.xpath("@type")[0].lower() == "delete":
                             self.lock = True
-                            profile.xpath("children")[0].append(self.allocate_task(task, resource_url, excluded=ex_branch))
+                            """
+                            TODO Handle Delete: 
+                            - end branch here
+                            - check if to delete is available in this branch
+                            --> run method delete_task in parent class
+                            - check if its available to delete in process
+                            - if no delete availble: delete Resource profile and maybe resource!
+                            """
+
+                            profile.xpath("children")[0].append(task)
+                            self.open_delete = True
                             #profile.add_child(self.allocate_task(task, resource_url, excluded=ex_branch, task_parent=root, res_parent=profile))
 
                         else:
                             raise("Changepattern type not in ['insert', 'replace', 'delete']")
         
         return root
-
-
-class ProcessAllocation(): 
-    """
-    Call TaskAllocation() for every task in the process (extra: --> Define area which should be allocated)
-    The call must be done in a threaded and Async fashion, thus: 
-    - Every Task allocation must run as a thread which has a state out of the task allocation steps. 
-    - eventually when all allocations have either reached "stopped" or "finished" all issues of stopped branches must be resolved. 
-    - the costs of the changes must be calculated and used in the allocation decision.
-    """
-
-
         
 
 class ResourceError(Exception):

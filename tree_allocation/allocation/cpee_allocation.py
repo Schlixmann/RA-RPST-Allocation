@@ -22,6 +22,8 @@ class ProcessAllocation():
     - Every Task allocation must run as a thread which has a state out of the task allocation steps. 
     - eventually when all allocations have either reached "stopped" or "finished" all issues of stopped branches must be resolved. 
     - the costs of the changes must be calculated and used in the allocation decision.
+
+    - Allocation idea: Build all possible valid processes and search for best one
     """
 
     def __init__(self, process:str, resource_url) -> None:

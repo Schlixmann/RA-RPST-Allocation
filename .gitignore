@@ -14,14 +14,13 @@ ssh_config
 # Untracked File Types
 *.xml
 
-
 # Keep config tracked
 !config/*
 !resource_config/*
 !use_cases/*
 !main_process.xml
 !tree_allocation/*
-
+!cpee_elements.xml
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -66,7 +66,7 @@ class ProcessAllocation():
                 for delete_task in delete_tasks:
                     label = R_RPST.get_label(etree.tostring(delete_task))
                     hits = allocation.intermediate_trees[0].xpath(f"//cpee1:*[@label='{label}']|//cpee1:parameters[cpee1:label='{label}']", namespaces=self.ns)
-                    [hit for hit in hits if not hit.xpath("@type='delete")]
+                    [hit for hit in hits if not hit.xpath("@type='delete'")]
                     #TODO -> should only be allowed to delete in branches which are not the delete branch is part of
                     # Implement
 

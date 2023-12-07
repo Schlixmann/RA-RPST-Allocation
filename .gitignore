@@ -20,6 +20,7 @@ ssh_config
 !resource_config/*
 !use_cases/*
 !main_process.xml
+!tree_allocation/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

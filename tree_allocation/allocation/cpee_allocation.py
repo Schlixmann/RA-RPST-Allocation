@@ -128,6 +128,13 @@ class TaskAllocation(ProcessAllocation):
         """ 
         Delete Everything from a deepcopied node, which is not part of the new branch
         append branch to branches
+
+        To do removal: 
+        build deep_copy to keep original node!
+        go through all Resprofiles
+        create new branch for each resprofile( -> from root)
+        Delete all other resprofiles except current one. Element.remove! 
+        deepcopy = self.task (otherwise tasknode is changed!)
         """
         if tree == None:
             tree = self.intermediate_trees[0]

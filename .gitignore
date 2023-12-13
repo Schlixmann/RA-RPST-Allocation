@@ -21,6 +21,7 @@ ssh_config
 !main_process.xml
 !tree_allocation/*
 !cpee_elements.xml
+!example.xml
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

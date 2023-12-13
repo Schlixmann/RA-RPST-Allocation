@@ -170,7 +170,7 @@ class TestCpeeAllocation(unittest.TestCase):
                     
                     with open("xml_out2.xml", "wb") as f:
                             f.write(etree.tostring(tree.intermediate_trees[0]))
-                    print("tree branches:", tree.branches())
+                    #print("tree branches:", tree.branches())
 
 
                     for branch in tree.branches():

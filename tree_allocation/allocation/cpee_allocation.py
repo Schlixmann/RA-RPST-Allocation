@@ -107,8 +107,35 @@ class TaskAllocation(ProcessAllocation):
             tree = self.intermediate_trees[0]
         print(tree.xpath("//cpee1:children/resource/resprofile/ancestor::cpee1:call", namespaces=self.ns))
         branches=tree.xpath("//cpee1:children/resource/resprofile", namespaces = self.ns)
+        final_branches = []
 
-        return branches
+        for branch in branches: 
+            ancestors = branch.xpath("ancestor-or-self::*", namespaces=self.ns)
+
+            new_root = etree.Element(tree.tag, nsmap=tree.nsmap)
+            current_parent=new_root
+            for element in ancestors:
+                new_element= element
+                current_parent.append(new_element)
+                current_parent = new_element
+            
+            final_branches.append(new_root)
+        
+        return final_branches
+    
+    def set_branches(self, root=None):
+        #TODO
+        """ 
+        Delete Everything from a deepcopied node, which is not part of the new branch
+        append branch to branches
+        """
+        if tree == None:
+            tree = self.intermediate_trees[0]
+        branches=tree.xpath("//cpee1:children/resource/resprofile", namespaces = self.ns)
+
+        for branch in branches: 
+            new_branch = copy.deepcopy(branch)
+
 
     def allocate_task(self, root=None, resource_url=None, excluded=[]):
         """

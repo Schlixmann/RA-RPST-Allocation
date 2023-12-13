@@ -43,28 +43,63 @@ class TreeGraph():
 
     def tree_iter(self, node, branch=None): 
 
-        if not branch:
-            node.attrib["unid"] = str(uuid.uuid1())
-            self.add_visualization_task(node)
+        if node.tag == f"{{{self.ns['cpee1']}}}call" or node.tag == f"{{{self.ns['cpee1']}}}manipulate":
+            if not branch:
+                node.attrib["unid"] = str(uuid.uuid1())
+                self.add_visualization_task(node)
+                for child in node.xpath("cpee1:children/*", namespaces=self.ns):
+                    child.attrib["unid"] = str(uuid.uuid1())
+            
+            if len(node.xpath("cpee1:children/*", namespaces=self.ns)) == 0:
+                return node
+            
+            print("Resource Children: \n",  node.xpath("cpee1:children/*", namespaces=self.ns))
             for child in node.xpath("cpee1:children/*", namespaces=self.ns):
                 child.attrib["unid"] = str(uuid.uuid1())
-
-
-        if node.tag == f"{{{self.ns['cpee1']}}}resource":
-            if len(node.xpath("cpee1:resprofile/cpee1:children/*", namespaces=self.ns)) == 0:
-                return
-            
-            for profile in node.xpath("cpee1:resprofile", namespaces=self.ns):
-                profile.attrib["unid"] = str(uuid.uuid1())
-                self.add_visualization_resprofile(profile)
-                self.dot_content += self.add_node_to_dot(node, profile)
-                for child in profile.xpath("cpee1:children/*", namespaces=self.ns):
+                self.add_visualization_res(child)
+                self.dot_content += self.add_node_to_dot(node, child)
+                self.tree_iter(child, True)
+        
+        elif node.tag == f"{{{self.ns['cpee1']}}}resprofile":
+            if not branch:
+                node.attrib["unid"] = str(uuid.uuid1())
+                self.add_visualization_resprofile(node)
+                for child in node.xpath("cpee1:children/*", namespaces=self.ns):
                     child.attrib["unid"] = str(uuid.uuid1())
-                    self.add_visualization_task(child)
-                    self.dot_content += self.add_node_to_dot(profile, child)
-                    self.tree_iter(child, True)
 
+            if len(node.xpath("cpee1:children/*", namespaces=self.ns)) == 0:
+                return node
+            
+            print("Task Children: \n",  node.xpath("cpee1:children/*", namespaces=self.ns))
+            for child in node.xpath("cpee1:children/*", namespaces=self.ns):
+                child.attrib["unid"] = str(uuid.uuid1())
+                self.add_visualization_task(child)
+                self.dot_content += self.add_node_to_dot(node, child)
+                self.tree_iter(child, True)
+            
+        elif node.tag == f"{{{self.ns['cpee1']}}}resource":
+            if not branch:
+                node.attrib["unid"] = str(uuid.uuid1())
+                self.add_visualization_res(node)
+                for child in node.xpath("cpee1:resprofile", namespaces=self.ns):
+                    child.attrib["unid"] = str(uuid.uuid1())
 
+            if len(node.xpath("cpee1:resprofile", namespaces=self.ns)) == 0:
+                return node
+            
+            print("Profile Children: \n",  node.xpath("cpee1:children/*", namespaces=self.ns))
+            for child in node.xpath("cpee1:resprofile", namespaces=self.ns):
+                child.attrib["unid"] = str(uuid.uuid1())
+                self.add_visualization_resprofile(child)
+                self.dot_content += self.add_node_to_dot(node, child)
+                self.tree_iter(child, True)
+
+        else:
+            raise("Unknown nodetype")
+        
+        return node
+
+        """
         if len(node.xpath("cpee1:children/*", namespaces=self.ns)) == 0:
             return
         if len(node.xpath("cpee1:children/*", namespaces=self.ns)) == 0 & (node.tag == f"{{{self.ns['cpee1']}}}resprofile"):
@@ -77,6 +112,7 @@ class TreeGraph():
                 self.add_visualization_res(child)
                 self.dot_content += self.add_node_to_dot(node, child)
                 self.tree_iter(child, True)
+        """
 
     def show(self, xml_str, format= 'png', filename='output_graph'):
         root = etree.fromstring(xml_str)

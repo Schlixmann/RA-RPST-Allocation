@@ -1,5 +1,24 @@
 digraph CallTree {
-	"8e708d70-99c4-11ee-9fb4-04cf4b795879" [label = "22: None 
+	"0a358dce-99fd-11ee-98aa-04cf4b795879" [label = "a6: Drill Hole into product 
  Type: Core 
  Direction: Core" shape=rectangle]	; 
+	"0a359eea-99fd-11ee-98aa-04cf4b795879" [label = "1: Good Drill"]	; 
+	"0a358dce-99fd-11ee-98aa-04cf4b795879" -> "0a359eea-99fd-11ee-98aa-04cf4b795879"	 ;
+	"0a35a35e-99fd-11ee-98aa-04cf4b795879" [label = "22: Drill 
+ manual drill" shape=polygon sides=6]	; 
+	"0a359eea-99fd-11ee-98aa-04cf4b795879" -> "0a35a35e-99fd-11ee-98aa-04cf4b795879"	 ;
+	"0a35a584-99fd-11ee-98aa-04cf4b795879" [label = "2: Slow Drill"]	; 
+	"0a358dce-99fd-11ee-98aa-04cf4b795879" -> "0a35a584-99fd-11ee-98aa-04cf4b795879"	 ;
+	"0a35a94e-99fd-11ee-98aa-04cf4b795879" [label = "11: Drill 
+ autodrill" shape=polygon sides=6]	; 
+	"0a35a584-99fd-11ee-98aa-04cf4b795879" -> "0a35a94e-99fd-11ee-98aa-04cf4b795879"	 ;
+	"0a35ad40-99fd-11ee-98aa-04cf4b795879" [label = "r1: Setup Drill 
+ Type: insert 
+ Direction: before" shape=rectangle]	; 
+	"0a35a94e-99fd-11ee-98aa-04cf4b795879" -> "0a35ad40-99fd-11ee-98aa-04cf4b795879"	 ;
+	"0a35b3d0-99fd-11ee-98aa-04cf4b795879" [label = "2: Technician"]	; 
+	"0a35ad40-99fd-11ee-98aa-04cf4b795879" -> "0a35b3d0-99fd-11ee-98aa-04cf4b795879"	 ;
+	"0a35b808-99fd-11ee-98aa-04cf4b795879" [label = "21: Technician 
+ Setup Drill" shape=polygon sides=6]	; 
+	"0a35b3d0-99fd-11ee-98aa-04cf4b795879" -> "0a35b808-99fd-11ee-98aa-04cf4b795879"	 ;
 }

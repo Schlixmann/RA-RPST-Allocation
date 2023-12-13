@@ -1,35 +1,5 @@
 digraph CallTree {
-	"c257bb66-9520-11ee-9b9f-ac1a3ddd05c7" [label = "a6: Check quality of product 
+	"8e708d70-99c4-11ee-9fb4-04cf4b795879" [label = "22: None 
  Type: Core 
  Direction: Core" shape=rectangle]	; 
-	"c257c3cc-9520-11ee-9b9f-ac1a3ddd05c7" [label = "2: Technician"]	; 
-	"c257bb66-9520-11ee-9b9f-ac1a3ddd05c7" -> "c257c3cc-9520-11ee-9b9f-ac1a3ddd05c7"	 ;
-	"c257c494-9520-11ee-9b9f-ac1a3ddd05c7" [label = "4: Student Technician"]	; 
-	"c257bb66-9520-11ee-9b9f-ac1a3ddd05c7" -> "c257c494-9520-11ee-9b9f-ac1a3ddd05c7"	 ;
-	"c257c57a-9520-11ee-9b9f-ac1a3ddd05c7" [label = "23: Technician 
- Check manual" shape=polygon sides=6]	; 
-	"c257c494-9520-11ee-9b9f-ac1a3ddd05c7" -> "c257c57a-9520-11ee-9b9f-ac1a3ddd05c7"	 ;
-	"c257c61a-9520-11ee-9b9f-ac1a3ddd05c7" [label = "r5: Supervise quality Check 
- Type: insert 
- Direction: parallel" shape=rectangle]	; 
-	"c257c57a-9520-11ee-9b9f-ac1a3ddd05c7" -> "c257c61a-9520-11ee-9b9f-ac1a3ddd05c7"	 ;
-	"c257c822-9520-11ee-9b9f-ac1a3ddd05c7" [label = "2: Technician"]	; 
-	"c257c61a-9520-11ee-9b9f-ac1a3ddd05c7" -> "c257c822-9520-11ee-9b9f-ac1a3ddd05c7"	 ;
-	"c257c958-9520-11ee-9b9f-ac1a3ddd05c7" [label = "5: 3D Measure Machine"]	; 
-	"c257bb66-9520-11ee-9b9f-ac1a3ddd05c7" -> "c257c958-9520-11ee-9b9f-ac1a3ddd05c7"	 ;
-	"c257ca48-9520-11ee-9b9f-ac1a3ddd05c7" [label = "51: Technician 
- 3D Measurement for check" shape=polygon sides=6]	; 
-	"c257c958-9520-11ee-9b9f-ac1a3ddd05c7" -> "c257ca48-9520-11ee-9b9f-ac1a3ddd05c7"	 ;
-	"c257cade-9520-11ee-9b9f-ac1a3ddd05c7" [label = "r5: Level 3D measure machine 
- Type: insert 
- Direction: before" shape=rectangle]	; 
-	"c257ca48-9520-11ee-9b9f-ac1a3ddd05c7" -> "c257cade-9520-11ee-9b9f-ac1a3ddd05c7"	 ;
-	"c257ccaa-9520-11ee-9b9f-ac1a3ddd05c7" [label = "2: Technician"]	; 
-	"c257cade-9520-11ee-9b9f-ac1a3ddd05c7" -> "c257ccaa-9520-11ee-9b9f-ac1a3ddd05c7"	 ;
-	"c257cd54-9520-11ee-9b9f-ac1a3ddd05c7" [label = "r5: Full 3D check 
- Type: replace 
- Direction: Core" shape=rectangle]	; 
-	"c257ca48-9520-11ee-9b9f-ac1a3ddd05c7" -> "c257cd54-9520-11ee-9b9f-ac1a3ddd05c7"	 ;
-	"c257cef8-9520-11ee-9b9f-ac1a3ddd05c7" [label = "5: 3D Measure Machine"]	; 
-	"c257cd54-9520-11ee-9b9f-ac1a3ddd05c7" -> "c257cef8-9520-11ee-9b9f-ac1a3ddd05c7"	 ;
 }

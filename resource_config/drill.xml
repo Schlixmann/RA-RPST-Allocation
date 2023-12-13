@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <resources >
     <resource id="1" name="Good Drill" activeRole="">
-        <resprofile id="11" name="autodrill" role ="Drill" task="Drill Hole into product"> <!--{{{-->
+        <resprofile id="11" name="autodrill" role ="Drill" task="Drill Hole"> <!--{{{-->
              <measures>
                 <cost>50</cost>
                 <time>10</time>

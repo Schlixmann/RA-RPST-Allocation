@@ -166,13 +166,39 @@ class TestCpeeAllocation(unittest.TestCase):
                 trees = test_allo.allocate_process()
                 
                 for tree in trees:
+                    graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0])) 
+                    
+                    with open("xml_out2.xml", "wb") as f:
+                            f.write(etree.tostring(tree.intermediate_trees[0]))
+                    print("tree branches:", tree.branches())
+
+
+                    for branch in tree.branches():
+                        with open("xml_out2.xml", "wb") as f:
+                            f.write(etree.tostring(branch))
+                        print(branch.xpath("./*", namespaces=tree.ns))
+                        graphix.TreeGraph().show(etree.tostring(branch))     
+
+    def test_full_process_allo(self):
+                with open("main_process.xml") as f:
+                      task_xml = f.read()
+
+                task_node = task_xml
+                
+
+                with open("/home/felixs/Programming_Projects/RDPM_private/resource_config/drill.xml") as f: 
+                    resource_et = etree.fromstring(f.read())
+                
+                test_allo = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
+                trees = test_allo.allocate_process()
+                
+                for tree in trees:
                     tree = tree.intermediate_trees[0]
                     print(tree)
                     with open("xml_out.xml", "wb") as f:
                         f.write(etree.tostring(tree))
 
                     graphix.TreeGraph().show(etree.tostring(tree))
-
 
                     
                 

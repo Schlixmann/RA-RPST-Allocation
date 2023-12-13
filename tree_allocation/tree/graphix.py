@@ -67,12 +67,16 @@ class TreeGraph():
 
         if len(node.xpath("cpee1:children/*", namespaces=self.ns)) == 0:
             return
+        if len(node.xpath("cpee1:children/*", namespaces=self.ns)) == 0 & (node.tag == f"{{{self.ns['cpee1']}}}resprofile"):
+            self.add_visualization_resprofile(node)
+            return
 
-        for child in node.xpath("cpee1:children/*", namespaces=self.ns):
-            child.attrib["unid"] = str(uuid.uuid1())
-            self.add_visualization_res(child)
-            self.dot_content += self.add_node_to_dot(node, child)
-            self.tree_iter(child, True)
+        if node.tag == f"{{{self.ns['cpee1']}}}call" or node.tag == f"{{{self.ns['cpee1']}}}call":
+            for child in node.xpath("cpee1:children/*", namespaces=self.ns):
+                child.attrib["unid"] = str(uuid.uuid1())
+                self.add_visualization_res(child)
+                self.dot_content += self.add_node_to_dot(node, child)
+                self.tree_iter(child, True)
 
     def show(self, xml_str, format= 'png', filename='output_graph'):
         root = etree.fromstring(xml_str)

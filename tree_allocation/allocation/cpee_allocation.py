@@ -30,6 +30,8 @@ class ProcessAllocation():
         self.id = str(uuid.uuid1())
         self.process = etree.fromstring(process)
         self.resource_url = resource_url
+        self.valid_allocations = []
+        self.allocations = []
         self.ns = None
      
     def allocate_process(self):
@@ -39,7 +41,7 @@ class ProcessAllocation():
         """
         # TODO Tasks must still be adapted, only for testing purposes now
         self.ns = {"cpee1" : list(self.process.nsmap.values())[0]}
-        tasks = self.process.xpath("cpee1:call", namespaces=self.ns)
+        tasks = self.process.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)
         allocations = []
         threads = []
         print(self.resource_url)
@@ -50,7 +52,7 @@ class ProcessAllocation():
             print("The task is: ", task)
             allocation = TaskAllocation(self, etree.tostring(task))
             x = threading.Thread(target=allocation.allocate_task, args=(None, self.resource_url))
-            allocations.append(allocation)
+            self.allocations.append(allocation)
             threads.append(x)
             x.start()
         
@@ -70,8 +72,17 @@ class ProcessAllocation():
                     #TODO -> should only be allowed to delete in branches which are not the delete branch is part of
                     # Implement
 
-        return allocations
-        
+        return self.allocations
+
+    def find_valid_allocations(self, root = None):
+        # TODO iterate through full process also considering Gateways
+        tasks = self.process.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)
+        if tasks == None:
+            return root
+        for task in tasks: 
+            pass
+
+
 
 class TaskAllocation(ProcessAllocation):
 
@@ -84,11 +95,20 @@ class TaskAllocation(ProcessAllocation):
         self.task = task
         self.state = state
         self.final_tree = None
-        self.intermediate_trees = []
+        self.intermediate_trees = [] # etree
+        self.valid_branches = []
         
         self.lock:bool = False
         self.open_delete = False
         self.ns = None
+    
+    def branches(self,tree=None):
+        if tree == None:
+            tree = self.intermediate_trees[0]
+        print(tree.xpath("//cpee1:children/resource/resprofile/ancestor::cpee1:call", namespaces=self.ns))
+        branches=tree.xpath("//cpee1:children/resource/resprofile", namespaces = self.ns)
+
+        return branches
 
     def allocate_task(self, root=None, resource_url=None, excluded=[]):
         """

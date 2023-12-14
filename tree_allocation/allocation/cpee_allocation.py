@@ -97,33 +97,15 @@ class TaskAllocation(ProcessAllocation):
         self.final_tree = None
         self.intermediate_trees = [] # etree
         self.valid_branches = []
+        self.branches = []
         
         self.lock:bool = False
         self.open_delete = False
         self.ns = None
     
-    def branches(self,tree=None):
-        if tree == None:
-            tree = self.intermediate_trees[0]
-        print(tree.xpath("//cpee1:children/resource/resprofile/ancestor::cpee1:call", namespaces=self.ns))
-        branches=tree.xpath("//cpee1:children/resource/resprofile", namespaces = self.ns)
-        final_branches = []
-
-        for branch in branches: 
-            ancestors = branch.xpath("ancestor-or-self::*", namespaces=self.ns)
-
-            new_root = etree.Element(tree.tag, nsmap=tree.nsmap)
-            current_parent=new_root
-            for element in ancestors:
-                new_element= element
-                current_parent.append(new_element)
-                current_parent = new_element
-            
-            final_branches.append(new_root)
-        
-        return final_branches
     
-    def set_branches(self, root=None):
+    
+    def set_branches(self, node=None):
         #TODO
         """ 
         Delete Everything from a deepcopied node, which is not part of the new branch
@@ -134,14 +116,48 @@ class TaskAllocation(ProcessAllocation):
         go through all Resprofiles
         create new branch for each resprofile( -> from root)
         Delete all other resprofiles except current one. Element.remove! 
-        deepcopy = self.task (otherwise tasknode is changed!)
+        deepcopy = self.task (otherwise tasknode is changed!)  
         """
-        if tree == None:
-            tree = self.intermediate_trees[0]
-        branches=tree.xpath("//cpee1:children/resource/resprofile", namespaces = self.ns)
+        if node == None:
+            node = self.intermediate_trees[0]
+            childs = node.xpath("cpee1:children/*", namespaces=self.ns)
+            for node3 in childs:
+                print("bastardTest: ", node3.getparent())
+                
+            for node2 in node.xpath("cpee1:children/*", namespaces=self.ns):
+                self.branches.append(node2)
+                print("parent: ", node2.getparent())
+                self.set_branches(node2)
 
-        for branch in branches: 
-            new_branch = copy.deepcopy(branch)
+        if node.tag == f"{{{self.ns['cpee1']}}}resprofile":  
+                
+            i = 0
+            for child in node.xpath("cpee1:children", namespaces=self.ns):
+                self.set_branches(child)
+        
+        elif node.tag == f"{{{self.ns['cpee1']}}}resource" or (node.tag == f"resource"):
+            parent = node.xpath("parent::node()", namespaces=self.ns)[0]
+            if len(parent.xpath("child::*", namespaces=self.ns)) > 1:
+                to_remove = [elem for elem in parent.xpath("child::*", namespaces=self.ns) if elem != node] 
+                for elem in to_remove:
+                    parent.remove(elem)
+                
+            for child in node.xpath("cpee1:resprofile", namespaces=self.ns):
+                self.set_branches(child)
+        
+        elif node.tag == f"{{{self.ns['cpee1']}}}call" or node.tag == f"{{{self.ns['cpee1']}}}manipulate":
+            i=0
+            for child in node.xpath("cpee1:children", namespaces=self.ns):
+                if i > 0:
+                    new_branch = copy.deepcopy(child.xpath("/*")[0])
+                    childpath = etree.ElementTree(child.xpath("/*")[0]).getpath(child)
+                    self.branches.append(new_branch)
+                    child = new_branch.xpath(childpath, namespaces=self.ns)
+
+                i += 1
+                self.set_branches(child)
+        else:
+            raise("cpee_allocation_set_branches: Wrong node Type")
 
 
     def allocate_task(self, root=None, resource_url=None, excluded=[]):

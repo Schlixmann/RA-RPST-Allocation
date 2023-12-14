@@ -71,90 +71,8 @@ class TestCpeeAllocation(unittest.TestCase):
             graphix.TreeGraph().show(etree.tostring(tree))
             
     def test_1t_process_allo(self):
-                task_xml = """
-                <description xmlns="http://cpee.org/ns/description/1.0">
-                <call id="a6" endpoint="" >
-                    <parameters>
-                        <label>Drill Hole into product</label>
-                        <method>:post</method>
-                        <arguments/>
-                    </parameters>
-                    <annotations>
-                        <_timing>
-                        <_timing_weight/>
-                        <_timing_avg/>
-                        <explanations/>
-                        </_timing>
-                        <_shifting>
-                        <_shifting_type>Duration</_shifting_type>
-                        </_shifting>
-                        <_context_data_analysis>
-                        <probes/>
-                        <ips/>
-                        </_context_data_analysis>
-                        <report>
-                        <url/>
-                        </report>
-                        <_notes>
-                        <_notes_general/>
-                        </_notes>
-                    </annotations>
-                    <documentation>
-                        <input/>
-                        <output/>
-                        <implementation>
-                        <description/>
-                        </implementation>
-                    </documentation>
-                    <resources allocated_to="not_allocated">
-                        <resource>Drill</resource>
-                    </resources>
-                    <allocation>
-                    </allocation>
-                    </call>
-
-                    <call id="a6" endpoint="" >
-                    <parameters>
-                        <label>Check quality of product</label>
-                        <method>:post</method>
-                        <arguments/>
-                    </parameters>
-                    <annotations>
-                        <_timing>
-                        <_timing_weight/>
-                        <_timing_avg/>
-                        <explanations/>
-                        </_timing>
-                        <_shifting>
-                        <_shifting_type>Duration</_shifting_type>
-                        </_shifting>
-                        <_context_data_analysis>
-                        <probes/>
-                        <ips/>
-                        </_context_data_analysis>
-                        <report>
-                        <url/>
-                        </report>
-                        <_notes>
-                        <_notes_general/>
-                        </_notes>
-                    </annotations>
-                    <documentation>
-                        <input/>
-                        <output/>
-                        <implementation>
-                        <description/>
-                        </implementation>
-                    </documentation>
-                    <resources allocated_to="not_allocated">
-                        <resource>Technician</resource>
-                    </resources>
-                    <allocation>
-                    </allocation>
-                    </call>
-                    
-                </description>
-                """
+                with open("tests/test_xml.xml") as f:
+                    task_xml = f.read()
 
                 task_node = task_xml
                 
@@ -173,11 +91,10 @@ class TestCpeeAllocation(unittest.TestCase):
                     #print("tree branches:", tree.branches())
 
 
-                    for branch in tree.branches():
-                        with open("xml_out2.xml", "wb") as f:
-                            f.write(etree.tostring(branch))
-                        print(branch.xpath("./*", namespaces=tree.ns))
-                        graphix.TreeGraph().show(etree.tostring(branch))     
+                    tree.set_branches()
+                    print("tree.branches: ", tree.branches)
+                    for branch in tree.branches:
+                          graphix.TreeGraph().show(etree.tostring(branch))  
 
     def test_full_process_allo(self):
                 with open("main_process.xml") as f:

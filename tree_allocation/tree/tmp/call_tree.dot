@@ -1,0 +1,28 @@
+digraph CallTree {
+	"aca0ed4a-9b7b-11ee-9ced-04cf4b795879" [label = "a6: Check quality of product 
+ Type: Core 
+ Direction: Core" shape=rectangle]	; 
+	"aca0f718-9b7b-11ee-9ced-04cf4b795879" [label = "5: 3D Measure Machine"]	; 
+	"aca0ed4a-9b7b-11ee-9ced-04cf4b795879" -> "aca0f718-9b7b-11ee-9ced-04cf4b795879"	 ;
+	"aca0fa7e-9b7b-11ee-9ced-04cf4b795879" [label = "51: Technician 
+ 3D Measurement for check" shape=polygon sides=6]	; 
+	"aca0f718-9b7b-11ee-9ced-04cf4b795879" -> "aca0fa7e-9b7b-11ee-9ced-04cf4b795879"	 ;
+	"aca0fc86-9b7b-11ee-9ced-04cf4b795879" [label = "r5: Level 3D measure machine 
+ Type: insert 
+ Direction: before" shape=rectangle]	; 
+	"aca0fa7e-9b7b-11ee-9ced-04cf4b795879" -> "aca0fc86-9b7b-11ee-9ced-04cf4b795879"	 ;
+	"aca1008c-9b7b-11ee-9ced-04cf4b795879" [label = "2: Technician"]	; 
+	"aca0fc86-9b7b-11ee-9ced-04cf4b795879" -> "aca1008c-9b7b-11ee-9ced-04cf4b795879"	 ;
+	"aca103b6-9b7b-11ee-9ced-04cf4b795879" [label = "24: Technician 
+ Leveling" shape=polygon sides=6]	; 
+	"aca1008c-9b7b-11ee-9ced-04cf4b795879" -> "aca103b6-9b7b-11ee-9ced-04cf4b795879"	 ;
+	"aca10582-9b7b-11ee-9ced-04cf4b795879" [label = "r5: Full 3D check 
+ Type: replace 
+ Direction: Core" shape=rectangle]	; 
+	"aca0fa7e-9b7b-11ee-9ced-04cf4b795879" -> "aca10582-9b7b-11ee-9ced-04cf4b795879"	 ;
+	"aca109e2-9b7b-11ee-9ced-04cf4b795879" [label = "5: 3D Measure Machine"]	; 
+	"aca10582-9b7b-11ee-9ced-04cf4b795879" -> "aca109e2-9b7b-11ee-9ced-04cf4b795879"	 ;
+	"aca10d34-9b7b-11ee-9ced-04cf4b795879" [label = "53: 3D Measure machine 
+ 3D Measuring" shape=polygon sides=6]	; 
+	"aca109e2-9b7b-11ee-9ced-04cf4b795879" -> "aca10d34-9b7b-11ee-9ced-04cf4b795879"	 ;
+}

@@ -120,46 +120,64 @@ class TaskAllocation(ProcessAllocation):
         """
         if node == None:
             node = self.intermediate_trees[0]
-            childs = node.xpath("cpee1:children/*", namespaces=self.ns)
-            for node3 in childs:
-                print("bastardTest: ", node3.getparent())
-                
-            for node2 in node.xpath("cpee1:children/*", namespaces=self.ns):
-                self.branches.append(node2)
-                print("parent: ", node2.getparent())
-                self.set_branches(node2)
+            self.branches.append(node)
 
-        if node.tag == f"{{{self.ns['cpee1']}}}resprofile":  
-                
-            i = 0
-            for child in node.xpath("cpee1:children", namespaces=self.ns):
-                self.set_branches(child)
+        if node.tag == f"{{{self.ns['cpee1']}}}resprofile":
+            # Delete other resource profiles from branch
+            parent = node.xpath("parent::node()", namespaces=self.ns)[0]
+            if len(parent.xpath("*", namespaces=self.ns)) > 1:
+                to_remove = [elem for elem in parent.xpath("child::*", namespaces=self.ns) if elem != node] 
+                set(map(parent.remove, to_remove))  
+            
+            # Iter through children
+            children = node.xpath("cpee1:children/*", namespaces=self.ns)
+            set(map(self.set_branches, children))
         
         elif node.tag == f"{{{self.ns['cpee1']}}}resource" or (node.tag == f"resource"):
+            # Delete other Resources from branch
             parent = node.xpath("parent::node()", namespaces=self.ns)[0]
-            if len(parent.xpath("child::*", namespaces=self.ns)) > 1:
+            if len(parent.xpath("*", namespaces=self.ns)) > 1:
                 to_remove = [elem for elem in parent.xpath("child::*", namespaces=self.ns) if elem != node] 
-                for elem in to_remove:
-                    parent.remove(elem)
-                
-            for child in node.xpath("cpee1:resprofile", namespaces=self.ns):
-                self.set_branches(child)
+                set(map(parent.remove, to_remove))
+            
+            # Create a new branch for reach resource profile
+            children = node.xpath("cpee1:resprofile", namespaces=self.ns)
+            branches = []
+            for child in children:
+                if i > 0:
+                    path = child.getroottree().getpath(child)
+                    new_branch = copy.deepcopy(child.xpath("/*", namespaces=self.ns)[0])
+                    self.branches.append(new_branch)
+                    branches.append(new_branch.xpath(path)[0])
+                else:
+                    branches.append(child)
+                i += 1
+            set(map(self.set_branches, branches))
         
         elif node.tag == f"{{{self.ns['cpee1']}}}call" or node.tag == f"{{{self.ns['cpee1']}}}manipulate":
+            # Create new branch for each resource
             i=0
-            for child in node.xpath("cpee1:children", namespaces=self.ns):
+            children = node.xpath("cpee1:children/*", namespaces=self.ns)
+            branches = []
+            for child in children:
                 if i > 0:
-                    new_branch = copy.deepcopy(child.xpath("/*")[0])
-                    childpath = etree.ElementTree(child.xpath("/*")[0]).getpath(child)
+                    path = child.getroottree().getpath(child)
+                    new_branch = copy.deepcopy(child.xpath("/*", namespaces=self.ns)[0])
                     self.branches.append(new_branch)
-                    child = new_branch.xpath(childpath, namespaces=self.ns)
-
+                    branches.append(new_branch.xpath(path)[0])
+                else:
+                    branches.append(child)
                 i += 1
-                self.set_branches(child)
+            set(map(self.set_branches, branches))
+        
         else:
             raise("cpee_allocation_set_branches: Wrong node Type")
 
-
+    def print_node_structure(self, node, level=0):
+        print('  ' * level + node.tag)
+        for child in node.xpath("*"):
+            self.print_node_structure(child, level + 1)
+            
     def allocate_task(self, root=None, resource_url=None, excluded=[]):
         """
         Build the allocation tree for self.task. 
@@ -196,7 +214,7 @@ class TaskAllocation(ProcessAllocation):
             
             #Delete non fitting profiles
             for profile in resource.xpath("resprofile"):
-                profile.append(etree.Element("children"))
+                profile.append(etree.Element("children", nsmap={"ns": self.ns["cpee1"]}))
                 #print("Profile description: ", profile.xpath("changepattern/cpee1:description/*", namespaces=self.ns))
                 label = R_RPST.get_label(etree.tostring(root)).lower()
                 roles = R_RPST.get_allowed_roles(etree.tostring(root))

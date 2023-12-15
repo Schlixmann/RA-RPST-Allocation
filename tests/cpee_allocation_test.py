@@ -93,8 +93,10 @@ class TestCpeeAllocation(unittest.TestCase):
 
                     tree.set_branches()
                     print("tree.branches: ", tree.branches)
+                    i = 0
                     for branch in tree.branches:
-                          graphix.TreeGraph().show(etree.tostring(branch))  
+                          i += 1
+                          graphix.TreeGraph().show(etree.tostring(branch), filename="branch{}".format(i), view=False)  
 
     def test_full_process_allo(self):
                 with open("main_process.xml") as f:
@@ -116,7 +118,3 @@ class TestCpeeAllocation(unittest.TestCase):
                         f.write(etree.tostring(tree))
 
                     graphix.TreeGraph().show(etree.tostring(tree))
-
-                    
-                
-

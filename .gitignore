@@ -13,7 +13,7 @@ ssh_config
 
 # Untracked File Types
 *.xml
-
+*.png
 # Keep config tracked
 !config/*
 !resource_config/*
@@ -22,6 +22,7 @@ ssh_config
 !tree_allocation/*
 !cpee_elements.xml
 !example.xml
+!test.xml
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

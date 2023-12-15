@@ -2,13 +2,6 @@ from lxml import etree
 import uuid
 from graphviz import Source
 from tree_allocation.tree.R_RPST import *
-# Sample XML data (replace this with your XML data)
-#xml_data = open("xml_out.xml").read()
-
-# Parse XML data
-#root = etree.fromstring(xml_data)
-
-# Initialize DOT content
 
 class TreeGraph():
     def __init__(self):
@@ -19,11 +12,9 @@ class TreeGraph():
         return f'\t"{parent_id.attrib["unid"]}" -> "{element.attrib["unid"]}"\t ;\n'
 
     def add_visualization_res(self, element):
-        
         self.dot_content += f'\t"{element.attrib["unid"]}" [label = "{element.attrib["id"]}: {element.attrib["name"]}"]\t; \n'
 
     def add_visualization_resprofile(self, element):
-        
         self.dot_content += f'\t"{element.attrib["unid"]}" [label = "{element.attrib["id"]}: {element.attrib["role"]} \n {element.attrib["name"]}" shape=polygon sides=6]\t; \n'
             
     def add_visualization_task(self, element):
@@ -42,7 +33,7 @@ class TreeGraph():
 
 
     def tree_iter(self, node, branch=None): 
-
+        children = node.xpath("cpee1:children/*", namespaces=self.ns)
         if node.tag == f"{{{self.ns['cpee1']}}}call" or node.tag == f"{{{self.ns['cpee1']}}}manipulate":
             if not branch:
                 node.attrib["unid"] = str(uuid.uuid1())
@@ -50,11 +41,10 @@ class TreeGraph():
                 for child in node.xpath("cpee1:children/*", namespaces=self.ns):
                     child.attrib["unid"] = str(uuid.uuid1())
             
-            if len(node.xpath("cpee1:children/*", namespaces=self.ns)) == 0:
+            if len(children) == 0:
                 return node
             
-            print("Resource Children: \n",  node.xpath("cpee1:children/*", namespaces=self.ns))
-            for child in node.xpath("cpee1:children/*", namespaces=self.ns):
+            for child in children:
                 child.attrib["unid"] = str(uuid.uuid1())
                 self.add_visualization_res(child)
                 self.dot_content += self.add_node_to_dot(node, child)
@@ -67,11 +57,10 @@ class TreeGraph():
                 for child in node.xpath("cpee1:children/*", namespaces=self.ns):
                     child.attrib["unid"] = str(uuid.uuid1())
 
-            if len(node.xpath("cpee1:children/*", namespaces=self.ns)) == 0:
+            if len(children) == 0:
                 return node
             
-            print("Task Children: \n",  node.xpath("cpee1:children/*", namespaces=self.ns))
-            for child in node.xpath("cpee1:children/*", namespaces=self.ns):
+            for child in children:
                 child.attrib["unid"] = str(uuid.uuid1())
                 self.add_visualization_task(child)
                 self.dot_content += self.add_node_to_dot(node, child)
@@ -87,7 +76,6 @@ class TreeGraph():
             if len(node.xpath("cpee1:resprofile", namespaces=self.ns)) == 0:
                 return node
             
-            print("Profile Children: \n",  node.xpath("cpee1:children/*", namespaces=self.ns))
             for child in node.xpath("cpee1:resprofile", namespaces=self.ns):
                 child.attrib["unid"] = str(uuid.uuid1())
                 self.add_visualization_resprofile(child)
@@ -99,34 +87,19 @@ class TreeGraph():
         
         return node
 
-        """
-        if len(node.xpath("cpee1:children/*", namespaces=self.ns)) == 0:
-            return
-        if len(node.xpath("cpee1:children/*", namespaces=self.ns)) == 0 & (node.tag == f"{{{self.ns['cpee1']}}}resprofile"):
-            self.add_visualization_resprofile(node)
-            return
-
-        if node.tag == f"{{{self.ns['cpee1']}}}call" or node.tag == f"{{{self.ns['cpee1']}}}call":
-            for child in node.xpath("cpee1:children/*", namespaces=self.ns):
-                child.attrib["unid"] = str(uuid.uuid1())
-                self.add_visualization_res(child)
-                self.dot_content += self.add_node_to_dot(node, child)
-                self.tree_iter(child, True)
-        """
-
-    def show(self, xml_str, format= 'png', filename='output_graph'):
+    def show(self, xml_str, format= 'png', filename='output_graph', directory='tree_allocation/tree/graphs', view=True):
         root = etree.fromstring(xml_str)
         self.tree_iter(root)
         self.dot_content += '}\n'
-        print("Fin Dot:" , self.dot_content)
+        
         # Write DOT content to a file (replace 'call_tree.dot' with your desired filename)
-        with open('call_tree.dot', 'w') as dot_file:
+        with open('tree_allocation/tree/tmp/call_tree.dot', 'w') as dot_file:
             dot_file.write(self.dot_content)
         
         output_file = f"{filename}.{format}"
         
-        source = Source(self.dot_content, filename='new_call_tree.dot', format='png')
-        source.render(filename='new_call_tree', directory='.', cleanup=True, view=True)
+        source = Source(self.dot_content, filename=f'{filename}.dot', format='png')
+        source.render(filename=f'{filename}', directory=directory, cleanup=True, view=view)
 
 
 class ProcessTreeGraph():

@@ -15,8 +15,8 @@ from bottle import post, get, put, delete, route
 from tree_allocation.helpers import *
 from tree_allocation.allocation.allocation import *
 import json
-import requests
 import time
+import requests
 
 _names = set()
 

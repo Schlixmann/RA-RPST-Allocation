@@ -1,28 +1,27 @@
 digraph CallTree {
-	"4e3851ce-9dad-11ee-9d38-04cf4b795879" [label = "a7: Check quality of product 
+	"3a5d9a14-9dc7-11ee-9423-04cf4b795879" [label = "a6: Drill Hole into product 
  Type: Core 
  Direction: Core" shape=rectangle]	; 
-	"4e385b1a-9dad-11ee-9d38-04cf4b795879" [label = "5: 3D Measure Machine"]	; 
-	"4e3851ce-9dad-11ee-9d38-04cf4b795879" -> "4e385b1a-9dad-11ee-9d38-04cf4b795879"	 ;
-	"4e385dcc-9dad-11ee-9d38-04cf4b795879" [label = "51: Technician 
- 3D Measurement for check" shape=polygon sides=6]	; 
-	"4e385b1a-9dad-11ee-9d38-04cf4b795879" -> "4e385dcc-9dad-11ee-9d38-04cf4b795879"	 ;
-	"4e385f70-9dad-11ee-9d38-04cf4b795879" [label = "r5: Level 3D measure machine 
+	"3a5da464-9dc7-11ee-9423-04cf4b795879" [label = "1: Good Drill"]	; 
+	"3a5d9a14-9dc7-11ee-9423-04cf4b795879" -> "3a5da464-9dc7-11ee-9423-04cf4b795879"	 ;
+	"3a5da6f8-9dc7-11ee-9423-04cf4b795879" [label = "11: Drill 
+ autodrill" shape=polygon sides=6]	; 
+	"3a5da464-9dc7-11ee-9423-04cf4b795879" -> "3a5da6f8-9dc7-11ee-9423-04cf4b795879"	 ;
+	"3a5da89c-9dc7-11ee-9423-04cf4b795879" [label = "r1: Setup Drill 
  Type: insert 
  Direction: before" shape=rectangle]	; 
-	"4e385dcc-9dad-11ee-9d38-04cf4b795879" -> "4e385f70-9dad-11ee-9d38-04cf4b795879"	 ;
-	"4e38620e-9dad-11ee-9d38-04cf4b795879" [label = "2: Technician"]	; 
-	"4e385f70-9dad-11ee-9d38-04cf4b795879" -> "4e38620e-9dad-11ee-9d38-04cf4b795879"	 ;
-	"4e38642a-9dad-11ee-9d38-04cf4b795879" [label = "24: Technician 
- Leveling" shape=polygon sides=6]	; 
-	"4e38620e-9dad-11ee-9d38-04cf4b795879" -> "4e38642a-9dad-11ee-9d38-04cf4b795879"	 ;
-	"4e386588-9dad-11ee-9d38-04cf4b795879" [label = "r5: Full 3D check 
- Type: replace 
- Direction: Core" shape=rectangle]	; 
-	"4e385dcc-9dad-11ee-9d38-04cf4b795879" -> "4e386588-9dad-11ee-9d38-04cf4b795879"	 ;
-	"4e3867e0-9dad-11ee-9d38-04cf4b795879" [label = "5: 3D Measure Machine"]	; 
-	"4e386588-9dad-11ee-9d38-04cf4b795879" -> "4e3867e0-9dad-11ee-9d38-04cf4b795879"	 ;
-	"4e3869ca-9dad-11ee-9d38-04cf4b795879" [label = "53: 3D Measure machine 
- 3D Measuring" shape=polygon sides=6]	; 
-	"4e3867e0-9dad-11ee-9d38-04cf4b795879" -> "4e3869ca-9dad-11ee-9d38-04cf4b795879"	 ;
+	"3a5da6f8-9dc7-11ee-9423-04cf4b795879" -> "3a5da89c-9dc7-11ee-9423-04cf4b795879"	 ;
+	"3a5dac48-9dc7-11ee-9423-04cf4b795879" [label = "2: Technician"]	; 
+	"3a5da89c-9dc7-11ee-9423-04cf4b795879" -> "3a5dac48-9dc7-11ee-9423-04cf4b795879"	 ;
+	"3a5daeb4-9dc7-11ee-9423-04cf4b795879" [label = "21: Technician 
+ Setup Drill" shape=polygon sides=6]	; 
+	"3a5dac48-9dc7-11ee-9423-04cf4b795879" -> "3a5daeb4-9dc7-11ee-9423-04cf4b795879"	 ;
+	"3a5db03a-9dc7-11ee-9423-04cf4b795879" [label = "r1: Check quality of product 
+ Type: delete 
+ Direction: before" shape=rectangle]	; 
+	"3a5da6f8-9dc7-11ee-9423-04cf4b795879" -> "3a5db03a-9dc7-11ee-9423-04cf4b795879"	 ;
+	"3a5db2ba-9dc7-11ee-9423-04cf4b795879" [label = "r1: Check anything 
+ Type: delete 
+ Direction: before" shape=rectangle]	; 
+	"3a5da6f8-9dc7-11ee-9423-04cf4b795879" -> "3a5db2ba-9dc7-11ee-9423-04cf4b795879"	 ;
 }

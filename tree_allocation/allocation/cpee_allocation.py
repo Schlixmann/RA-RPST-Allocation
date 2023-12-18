@@ -142,11 +142,14 @@ class TaskAllocation(ProcessAllocation):
         Delete all other resprofiles except current one. Element.remove! 
         deepcopy = self.task (otherwise tasknode is changed!)  
         """
-        if node == None:
-            node = self.intermediate_trees[0]
-            self.branches.append(node)
 
-        if node.tag == f"{{{self.ns['cpee1']}}}resprofile":
+        if node == None:
+            node = Branch(self.intermediate_trees[0])
+            self.branches.append(node)
+            node = node.node
+        
+
+        if node.tag == f"{{{self.ns['cpee1']}}}resprofile"or (node.tag == f"resprofile"):
             # Delete other resource profiles from branch
             parent = node.xpath("parent::node()", namespaces=self.ns)[0]
             if len(parent.xpath("*", namespaces=self.ns)) > 1:
@@ -165,13 +168,15 @@ class TaskAllocation(ProcessAllocation):
                 set(map(parent.remove, to_remove))
             
             # Create a new branch for reach resource profile
-            children = node.xpath("cpee1:resprofile", namespaces=self.ns)
+            children = node.xpath("resprofile", namespaces=self.ns)
             branches = []
+            i = 0
             for child in children:
                 if i > 0:
                     path = child.getroottree().getpath(child)
-                    new_branch = copy.deepcopy(child.xpath("/*", namespaces=self.ns)[0])
+                    new_branch = Branch(copy.deepcopy(child.xpath("/*", namespaces=self.ns)[0]))
                     self.branches.append(new_branch)
+                    new_branch = new_branch.node
                     branches.append(new_branch.xpath(path)[0])
                 else:
                     branches.append(child)
@@ -180,13 +185,20 @@ class TaskAllocation(ProcessAllocation):
         
         elif node.tag == f"{{{self.ns['cpee1']}}}call" or node.tag == f"{{{self.ns['cpee1']}}}manipulate":
             # Create new branch for each resource
-            i=0
+            
+            #TODO 
+            i = 0
+            if node.xpath("@type"):
+                if node.xpath("@type")[0] == "delete":
+                    self.branches[-1].open_delete = True
+
             children = node.xpath("cpee1:children/*", namespaces=self.ns)
             branches = []
+
             for child in children:
                 if i > 0:
                     path = child.getroottree().getpath(child)
-                    new_branch = copy.deepcopy(child.xpath("/*", namespaces=self.ns)[0])
+                    new_branch = Branch(copy.deepcopy(child.xpath("/*", namespaces=self.ns)[0]))
                     self.branches.append(new_branch)
                     new_branch = new_branch.node
                     branches.append(new_branch.xpath(path)[0])
@@ -236,7 +248,7 @@ class TaskAllocation(ProcessAllocation):
 
             #Delete non fitting profiles
             for profile in resource.xpath("resprofile"):
-                profile.append(etree.Element("children", nsmap={"ns": self.ns["cpee1"]}))
+                profile.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
                 
                 if not (R_RPST.get_label(etree.tostring(root).lower()) == profile.attrib["task"].lower() and (profile.attrib["role"] in R_RPST.get_allowed_roles(etree.tostring(root)) if len(R_RPST.get_allowed_roles(etree.tostring(root))) > 0 else True)):
                     resource.remove(profile)
@@ -288,7 +300,7 @@ class TaskAllocation(ProcessAllocation):
                     if change_pattern.xpath("@type")[0].lower() in ["insert", "replace"]:                           
                         path = etree.ElementTree(task.xpath("/*")[0]).getpath(task) # generate path to current task
                         task = copy.deepcopy(task.xpath("/*")[0]).xpath(path)[0]    # Deepcopy whole tree and re-locate current task
-                        profile.xpath("children")[0].append(self.allocate_task(task, resource_url, excluded=ex_branch))
+                        profile.xpath("cpee1:children", namespaces=self.ns)[0].append(self.allocate_task(task, resource_url, excluded=ex_branch))
                         
                     elif change_pattern.xpath("@type")[0].lower() == "delete":
                         self.lock = True
@@ -300,7 +312,7 @@ class TaskAllocation(ProcessAllocation):
                         - check if its available to delete in process
                         - if no delete availble: delete Resource profile and maybe resource!
                         """
-                        profile.xpath("children")[0].append(task)
+                        profile.xpath("cpee1:children", namespaces=self.ns)[0].append(task)
                         self.open_delete = True
                         
 
@@ -322,6 +334,9 @@ def print_node_structure(node, level=0):
 class Branch():
     def __init__(self, node):
         self.node = node
+        self.valid = True
+        self.open_delete = False
+        self.current_path = ''
 
 class ResourceError(Exception):
     # Exception is raised if no sufficiant allocation for a task can be found for available resources

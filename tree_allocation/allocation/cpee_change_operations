@@ -1,0 +1,24 @@
+from lxml import etree
+
+class ChangeOperations():
+
+    def __init__(self, task:etree.Element):
+        self.ns ={"cpee1" : list(task.nsmap.values())[0]}
+        if len(task.xpath("cpee1:children/resource", namespaces=self.ns) != 1):
+            raise("Task not correctly allocated")
+        self.resource = task.xpath("cpee1:children/resource", namespaces=self.ns)[0]
+        if len(self.resource.xpath("resprofile", namespaces=self.ns) != 1):
+            raise("To many resprofiles, Task not correctly allocated")
+        self.resprofile = self.resource.xpath("resprofile", namespaces=self.ns)[0]
+        self.changepattern_types = self.resprofile.xpath("changepattern/@type") 
+
+
+    def apply_insert(process:etree.Element, task:etree.Element):
+        pass
+        
+
+
+    def apply_replace():
+        pass
+    def apply_delete(): 
+        pass

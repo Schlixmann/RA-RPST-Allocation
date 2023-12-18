@@ -31,7 +31,7 @@ class ProcessAllocation():
         self.process = etree.fromstring(process)
         self.resource_url = resource_url
         self.valid_allocations = []
-        self.allocations = []
+        self.allocations = {}
         self.ns = None
      
     def allocate_process(self):
@@ -50,7 +50,7 @@ class ProcessAllocation():
             print("The task is: ", task)
             allocation = TaskAllocation(self, etree.tostring(task))
             x = threading.Thread(target=allocation.allocate_task, args=(None, self.resource_url))
-            self.allocations.append(allocation)
+            self.allocations[task.xpath("@id")[0]] = (allocation)
             threads.append(x)
             x.start()
         
@@ -72,13 +72,33 @@ class ProcessAllocation():
 
         return self.allocations
 
-    def find_valid_allocations(self, root = None):
+    def build_solution_space(self, root = None):
         # TODO iterate through full process also considering Gateways
         tasks = self.process.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)
         if tasks == None:
-            return root
-        for task in tasks: 
-            pass
+            raise("No valid process")
+        else:
+            set(map(self.new_solution, ))
+
+    def new_solution(self, solution=None, step=None):
+        """
+        -> Add all Branches as new solutions
+        -> for each branch, call, "new_solution(process, self, step+=1)"
+        -> if i > 1: copy current solution and add new solution
+        End: no further step
+        """
+        if not solution: 
+            first_task=self.process.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)[0]
+            first_allocation = self.allocations[first_task]
+            set(map(self.new_solution, first_allocation.branches))
+        
+
+
+        
+
+
+        
+            
     
     def apply_allocation_to_process(self, branch):
         """
@@ -100,7 +120,7 @@ class TaskAllocation(ProcessAllocation):
         self.state = state
         self.final_tree = None
         self.intermediate_trees = [] # etree
-        self.valid_branches = []
+        self.invalid_branches = bool
         self.branches = []
         
         self.lock:bool = False
@@ -168,6 +188,7 @@ class TaskAllocation(ProcessAllocation):
                     path = child.getroottree().getpath(child)
                     new_branch = copy.deepcopy(child.xpath("/*", namespaces=self.ns)[0])
                     self.branches.append(new_branch)
+                    new_branch = new_branch.node
                     branches.append(new_branch.xpath(path)[0])
                 else:
                     branches.append(child)
@@ -297,6 +318,10 @@ def print_node_structure(node, level=0):
     print('  ' * level + node.tag + ' ' + str(node.attrib))
     for child in node.xpath("*"):
         print_node_structure(child, level + 1)
+
+class Branch():
+    def __init__(self, node):
+        self.node = node
 
 class ResourceError(Exception):
     # Exception is raised if no sufficiant allocation for a task can be found for available resources

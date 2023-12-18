@@ -84,7 +84,7 @@ class TestCpeeAllocation(unittest.TestCase):
         test_allo = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
         trees = test_allo.allocate_process()
         
-        for tree in trees:
+        for tree in list(trees.values()):
             graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0])) 
             
             with open("xml_out2.xml", "wb") as f:

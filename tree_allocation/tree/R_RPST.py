@@ -20,10 +20,10 @@ class CpeeElements():
         return self.xpath("cpee1:choose", namespaces=self.ns)
 
     def call(self):
-        return self.xpath("cpee1:choose", namespaces=self.ns)
+        return self.xpath("cpee1:call", namespaces=self.ns)
     
     def manipulate(self):
-        return self.xpath("cpee1:choose", namespaces=self.ns)
+        return self.xpath("cpee1:manipulate", namespaces=self.ns)
     
 def get_label(element):
     elem_et = etree.fromstring(element)

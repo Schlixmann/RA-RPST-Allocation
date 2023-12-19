@@ -1,27 +1,47 @@
 digraph CallTree {
-	"3a5d9a14-9dc7-11ee-9423-04cf4b795879" [label = "a6: Drill Hole into product 
+	"cadd46b0-9e86-11ee-b5f6-04cf4b795879" [label = "a7: Check quality of product 
  Type: Core 
  Direction: Core" shape=rectangle]	; 
-	"3a5da464-9dc7-11ee-9423-04cf4b795879" [label = "1: Good Drill"]	; 
-	"3a5d9a14-9dc7-11ee-9423-04cf4b795879" -> "3a5da464-9dc7-11ee-9423-04cf4b795879"	 ;
-	"3a5da6f8-9dc7-11ee-9423-04cf4b795879" [label = "11: Drill 
- autodrill" shape=polygon sides=6]	; 
-	"3a5da464-9dc7-11ee-9423-04cf4b795879" -> "3a5da6f8-9dc7-11ee-9423-04cf4b795879"	 ;
-	"3a5da89c-9dc7-11ee-9423-04cf4b795879" [label = "r1: Setup Drill 
+	"cadd55ba-9e86-11ee-b5f6-04cf4b795879" [label = "2: Technician"]	; 
+	"cadd46b0-9e86-11ee-b5f6-04cf4b795879" -> "cadd55ba-9e86-11ee-b5f6-04cf4b795879"	 ;
+	"cadd5ab0-9e86-11ee-b5f6-04cf4b795879" [label = "23: Technician 
+ Check manual" shape=polygon sides=6]	; 
+	"cadd55ba-9e86-11ee-b5f6-04cf4b795879" -> "cadd5ab0-9e86-11ee-b5f6-04cf4b795879"	 ;
+	"cadd5cea-9e86-11ee-b5f6-04cf4b795879" [label = "4: Student Technician"]	; 
+	"cadd46b0-9e86-11ee-b5f6-04cf4b795879" -> "cadd5cea-9e86-11ee-b5f6-04cf4b795879"	 ;
+	"cadd6078-9e86-11ee-b5f6-04cf4b795879" [label = "23: Technician 
+ Check manual" shape=polygon sides=6]	; 
+	"cadd5cea-9e86-11ee-b5f6-04cf4b795879" -> "cadd6078-9e86-11ee-b5f6-04cf4b795879"	 ;
+	"cadd6294-9e86-11ee-b5f6-04cf4b795879" [label = "r5: Supervise quality Check 
+ Type: insert 
+ Direction: parallel" shape=rectangle]	; 
+	"cadd6078-9e86-11ee-b5f6-04cf4b795879" -> "cadd6294-9e86-11ee-b5f6-04cf4b795879"	 ;
+	"cadd66fe-9e86-11ee-b5f6-04cf4b795879" [label = "2: Technician"]	; 
+	"cadd6294-9e86-11ee-b5f6-04cf4b795879" -> "cadd66fe-9e86-11ee-b5f6-04cf4b795879"	 ;
+	"cadd6a78-9e86-11ee-b5f6-04cf4b795879" [label = "23: Technician 
+ Supervise quality check" shape=polygon sides=6]	; 
+	"cadd66fe-9e86-11ee-b5f6-04cf4b795879" -> "cadd6a78-9e86-11ee-b5f6-04cf4b795879"	 ;
+	"cadd6c80-9e86-11ee-b5f6-04cf4b795879" [label = "5: 3D Measure Machine"]	; 
+	"cadd46b0-9e86-11ee-b5f6-04cf4b795879" -> "cadd6c80-9e86-11ee-b5f6-04cf4b795879"	 ;
+	"cadd6fd2-9e86-11ee-b5f6-04cf4b795879" [label = "51: Technician 
+ 3D Measurement for check" shape=polygon sides=6]	; 
+	"cadd6c80-9e86-11ee-b5f6-04cf4b795879" -> "cadd6fd2-9e86-11ee-b5f6-04cf4b795879"	 ;
+	"cadd71c6-9e86-11ee-b5f6-04cf4b795879" [label = "r5: Level 3D measure machine 
  Type: insert 
  Direction: before" shape=rectangle]	; 
-	"3a5da6f8-9dc7-11ee-9423-04cf4b795879" -> "3a5da89c-9dc7-11ee-9423-04cf4b795879"	 ;
-	"3a5dac48-9dc7-11ee-9423-04cf4b795879" [label = "2: Technician"]	; 
-	"3a5da89c-9dc7-11ee-9423-04cf4b795879" -> "3a5dac48-9dc7-11ee-9423-04cf4b795879"	 ;
-	"3a5daeb4-9dc7-11ee-9423-04cf4b795879" [label = "21: Technician 
- Setup Drill" shape=polygon sides=6]	; 
-	"3a5dac48-9dc7-11ee-9423-04cf4b795879" -> "3a5daeb4-9dc7-11ee-9423-04cf4b795879"	 ;
-	"3a5db03a-9dc7-11ee-9423-04cf4b795879" [label = "r1: Check quality of product 
- Type: delete 
- Direction: before" shape=rectangle]	; 
-	"3a5da6f8-9dc7-11ee-9423-04cf4b795879" -> "3a5db03a-9dc7-11ee-9423-04cf4b795879"	 ;
-	"3a5db2ba-9dc7-11ee-9423-04cf4b795879" [label = "r1: Check anything 
- Type: delete 
- Direction: before" shape=rectangle]	; 
-	"3a5da6f8-9dc7-11ee-9423-04cf4b795879" -> "3a5db2ba-9dc7-11ee-9423-04cf4b795879"	 ;
+	"cadd6fd2-9e86-11ee-b5f6-04cf4b795879" -> "cadd71c6-9e86-11ee-b5f6-04cf4b795879"	 ;
+	"cadd75b8-9e86-11ee-b5f6-04cf4b795879" [label = "2: Technician"]	; 
+	"cadd71c6-9e86-11ee-b5f6-04cf4b795879" -> "cadd75b8-9e86-11ee-b5f6-04cf4b795879"	 ;
+	"cadd7928-9e86-11ee-b5f6-04cf4b795879" [label = "24: Technician 
+ Leveling" shape=polygon sides=6]	; 
+	"cadd75b8-9e86-11ee-b5f6-04cf4b795879" -> "cadd7928-9e86-11ee-b5f6-04cf4b795879"	 ;
+	"cadd7b12-9e86-11ee-b5f6-04cf4b795879" [label = "r5: Full 3D check 
+ Type: replace 
+ Direction: Core" shape=rectangle]	; 
+	"cadd6fd2-9e86-11ee-b5f6-04cf4b795879" -> "cadd7b12-9e86-11ee-b5f6-04cf4b795879"	 ;
+	"cadd7fb8-9e86-11ee-b5f6-04cf4b795879" [label = "5: 3D Measure Machine"]	; 
+	"cadd7b12-9e86-11ee-b5f6-04cf4b795879" -> "cadd7fb8-9e86-11ee-b5f6-04cf4b795879"	 ;
+	"cadd831e-9e86-11ee-b5f6-04cf4b795879" [label = "53: 3D Measure machine 
+ 3D Measuring" shape=polygon sides=6]	; 
+	"cadd7fb8-9e86-11ee-b5f6-04cf4b795879" -> "cadd831e-9e86-11ee-b5f6-04cf4b795879"	 ;
 }

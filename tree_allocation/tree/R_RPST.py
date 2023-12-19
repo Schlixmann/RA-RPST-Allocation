@@ -14,16 +14,16 @@ class CpeeElements():
         self.task_elements = [f"{{{ns['cpee1']}}}manipulate", f"{{{ns['cpee1']}}}call"]
 
     def parallel(self):
-        return self.xpath("cpee1:parallel", namespaces=self.ns)
+        return self.elems_et.xpath("cpee1:parallel", namespaces=self.ns)[0]
     
     def exclusive(self):
-        return self.xpath("cpee1:choose", namespaces=self.ns)
+        return self.elems_et.xpath("cpee1:choose", namespaces=self.ns)[0]
 
     def call(self):
-        return self.xpath("cpee1:call", namespaces=self.ns)
+        return self.elems_et.xpath("cpee1:call", namespaces=self.ns)[0]
     
     def manipulate(self):
-        return self.xpath("cpee1:manipulate", namespaces=self.ns)
+        return self.elems_et.xpath("cpee1:manipulate", namespaces=self.ns)[0]
     
 def get_label(element):
     elem_et = etree.fromstring(element)
@@ -33,6 +33,8 @@ def get_label(element):
     if elem_et.tag == f"{{{ns['cpee1']}}}call":
         to_ret = elem_et.xpath("cpee1:parameters/cpee1:label", namespaces=ns)[0].text
         return to_ret
+    else:
+        raise("Wrong Element Type: No Task element Given")
 
 
 def get_allowed_roles(element):

@@ -162,3 +162,46 @@ class TestCpeeAllocation(unittest.TestCase):
                         f.write(etree.tostring(tree))
 
                     graphix.TreeGraph().show(etree.tostring(tree))
+
+    def test_solution_creation(self):
+        with open("resource_config/drill_insert_solution.xml") as f: 
+                resource_et = etree.fromstring(f.read())
+        with open("tests/test_xml2.xml") as f:
+                task_xml = f.read()
+            
+        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
+        trees = ProcessAllocation.allocate_process()
+
+        for tree in list(trees.values()):   
+              
+            graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0])) 
+            tree.set_branches() 
+        
+        task1_branch1 = list(ProcessAllocation.allocations.values())[0].branches[2]
+        process = ProcessAllocation.apply_branch_to_process(task1_branch1.node)
+        with open("xml_out.xml", "wb") as f:
+            f.write(etree.tostring(process))
+
+    def test_full_solution_creation(self):
+        with open("resource_config/drill_insert_solution.xml") as f: 
+                resource_et = etree.fromstring(f.read())
+        with open("tests/test_xml2.xml") as f:
+                task_xml = f.read()
+            
+        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
+        trees = ProcessAllocation.allocate_process()
+
+        for tree in list(trees.values()):   
+              
+            graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0])) 
+            tree.set_branches() 
+        
+
+        ProcessAllocation.find_solutions()
+
+        for i, solution in enumerate(ProcessAllocation.solutions):
+            print("Solution {}: ".format(i), solution.__dict__)
+            with open("tests/solutions/solution_{}.xml".format(i), "wb") as f:
+                f.write(etree.tostring(solution.process))
+
+

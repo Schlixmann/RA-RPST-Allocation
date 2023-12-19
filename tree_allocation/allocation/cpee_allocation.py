@@ -2,12 +2,13 @@
 from tree_allocation.tree import task_node as tn
 from tree_allocation.tree import res_node as rn, R_RPST
 from tree_allocation.helpers import get_all_resources, get_all_tasks, get_process_model
-from tree_allocation.allocation.change_operations import *
+from tree_allocation.allocation import cpee_change_operations
 from tree_allocation.proc_resource import *
 
 # Import external packages
 from PrettyPrint import PrettyPrintTree
 from lxml import etree
+import uuid
 import warnings
 import logging
 import copy
@@ -32,6 +33,7 @@ class ProcessAllocation():
         self.resource_url = resource_url
         self.valid_allocations = []
         self.allocations = {}
+        self.solutions = []
         self.ns = None
      
     def allocate_process(self):
@@ -72,47 +74,79 @@ class ProcessAllocation():
 
         return self.allocations
 
-    def build_solution_space(self, root = None):
-        # TODO iterate through full process also considering Gateways
-        tasks = self.process.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)
-        if tasks == None:
-            raise("No valid process")
-        else:
-            set(map(self.new_solution, ))
-
-    def new_solution(self, solution=None, step=None):
+    def find_solutions(self, solution=None, task=None):
         """
         -> Add all Branches as new solutions
         -> for each branch, call, "new_solution(process, self, step+=1)"
         -> if i > 1: copy current solution and add new solution
         End: no further step
         """
-        if not solution: 
-            first_task=self.process.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)[0]
-            first_allocation = self.allocations[first_task]
-            set(map(self.new_solution, first_allocation.branches))
+        # TODO: Add your remaining logic here
+
+        if solution is None: 
+            first_task = self.process.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)[0]
+            path = etree.ElementTree(self.process).getpath(first_task)
+            next_task = self.process.xpath(path)[0].xpath("(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=self.ns)                
+            first_allocation = self.allocations[first_task.attrib["id"]]
+            for branch in first_allocation.branches:
+                solution = Solution(copy.deepcopy(self.process))
+                self.solutions.append(solution)
+                self.apply_branch_to_process(branch.node, solution.process)
         
+            if not next_task:
+                print("Final Task reached. solution found")
+                return
+            return set(map(self.find_solutions, self.solutions, next_task))
 
+        path = etree.ElementTree(solution.process).getpath(task)
+        allocation = self.allocations[task]
 
-        
+        for i, branch in enumerate(allocation.branches.node):
+            if i > 1:
+                path = etree.ElementTree(solution.process).getpath(task)
+                new_solution = copy.deepcopy(solution)
+                self.solutions.append(new_solution)
+            else:
+                new_solution = solution
 
+            self.apply_branch_to_process(branch, new_solution.process)
+            next_task = new_solution.process.xpath(path)[0].xpath("(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=self.ns)
 
-        
-            
-    
-    def apply_allocation_to_process(self, branch):
+            if not next_task:
+                print("Final Task reached. solution found")
+                return
+
+            self.find_solutions(new_solution, next_task)
+
+    def apply_branch_to_process(self, branch, process=None):
         """
         -> Find task to allocate in self.process
         -> apply change operations
         """
-        task_id = branch.xpath("/*/@id")[0]
-        self.process.xpath(f"//*[@id='{task_id}']")
+        #TODO Set allocated Resource!
+        if process is None:
+            process = self.process
+        
+        tasks = branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern)]", namespaces=self.ns)[1:]
+
+        #TODO This does it work for branches with more than 2 levels?
+        for task in tasks:
+            core_task = task.xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=self.ns)[0]
+            process = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
+        
+        return process
+    
+class Solution():
+    def __init__(self, process):
+
+        self.open_delete = False
+        self.invalid_branches = False
+        self.process = process
 
 class TaskAllocation(ProcessAllocation):
 
     def __init__(self, parent:ProcessAllocation, task:str, state='initialized' ) -> None:
         allowed_states = {'ready', 'running', 'stopped', 'finished', 'initialized'}
-
 
         self.parent = parent
         self.process = self.parent.process
@@ -120,17 +154,14 @@ class TaskAllocation(ProcessAllocation):
         self.state = state
         self.final_tree = None
         self.intermediate_trees = [] # etree
-        self.invalid_branches = bool
-        self.branches = []
+        self.invalid_branches:bool = False
+        self.branches:[Branch] = []
         
         self.lock:bool = False
         self.open_delete = False
         self.ns = None
     
-    
-    
-    def set_branches(self, node=None):
-        #TODO
+    def set_branches(self, node=None, branch_obj=None):
         """ 
         Delete Everything from a deepcopied node, which is not part of the new branch
         append branch to branches
@@ -143,69 +174,78 @@ class TaskAllocation(ProcessAllocation):
         deepcopy = self.task (otherwise tasknode is changed!)  
         """
 
-        if node == None:
-            node = Branch(self.intermediate_trees[0])
-            self.branches.append(node)
-            node = node.node
+        if node is None:
+            branch_obj = Branch(self.intermediate_trees[0])
+            self.branches.append(branch_obj)
+            node = branch_obj.node
         
 
         if node.tag == f"{{{self.ns['cpee1']}}}resprofile"or (node.tag == f"resprofile"):
             # Delete other resource profiles from branch
             parent = node.xpath("parent::node()", namespaces=self.ns)[0]
+
             if len(parent.xpath("*", namespaces=self.ns)) > 1:
                 to_remove = [elem for elem in parent.xpath("child::*", namespaces=self.ns) if elem != node] 
                 set(map(parent.remove, to_remove))  
             
             # Iter through children
             children = node.xpath("cpee1:children/*", namespaces=self.ns)
-            set(map(self.set_branches, children))
+            branches = children, [branch_obj for _ in children]
+            
+            set(map(self.set_branches, *branches))
         
         elif node.tag == f"{{{self.ns['cpee1']}}}resource" or (node.tag == f"resource"):
             # Delete other Resources from branch
             parent = node.xpath("parent::node()", namespaces=self.ns)[0]
+            
             if len(parent.xpath("*", namespaces=self.ns)) > 1:
                 to_remove = [elem for elem in parent.xpath("child::*", namespaces=self.ns) if elem != node] 
                 set(map(parent.remove, to_remove))
             
             # Create a new branch for reach resource profile
             children = node.xpath("resprofile", namespaces=self.ns)
-            branches = []
-            i = 0
-            for child in children:
-                if i > 0:
-                    path = child.getroottree().getpath(child)
+            branches = [],[]
+            
+            for i, child in enumerate(children):
+                path = child.getroottree().getpath(child)
+
+                if i > 0:    
                     new_branch = Branch(copy.deepcopy(child.xpath("/*", namespaces=self.ns)[0]))
                     self.branches.append(new_branch)
-                    new_branch = new_branch.node
-                    branches.append(new_branch.xpath(path)[0])
+                    branches[1].append(new_branch)
+                    branches[0].append(new_branch.node.xpath(path)[0])
                 else:
-                    branches.append(child)
-                i += 1
-            set(map(self.set_branches, branches))
+                    branches[0].append(child)
+                    branches[1].append(branch_obj)
+
+            set(map(self.set_branches, *branches))
         
         elif node.tag == f"{{{self.ns['cpee1']}}}call" or node.tag == f"{{{self.ns['cpee1']}}}manipulate":
             # Create new branch for each resource
-            
-            #TODO 
-            i = 0
-            if node.xpath("@type"):
-                if node.xpath("@type")[0] == "delete":
-                    self.branches[-1].open_delete = True
-
             children = node.xpath("cpee1:children/*", namespaces=self.ns)
-            branches = []
+            node_type = node.xpath("@type")
 
-            for child in children:
+            if node_type:
+                node_type = node_type[0]
+                if node_type == "delete":
+                    branch_obj.open_delete = True
+
+            if not children and node_type != 'delete':
+                branch_obj.valid = False
+                        
+            branches = [],[]
+            for i, child in enumerate(children):
+
+                path = child.getroottree().getpath(child)
                 if i > 0:
-                    path = child.getroottree().getpath(child)
                     new_branch = Branch(copy.deepcopy(child.xpath("/*", namespaces=self.ns)[0]))
                     self.branches.append(new_branch)
-                    new_branch = new_branch.node
-                    branches.append(new_branch.xpath(path)[0])
+                    branches[1].append(new_branch)
+                    branches[0].append(new_branch.node.xpath(path)[0])
                 else:
-                    branches.append(child)
-                i += 1
-            set(map(self.set_branches, branches))
+                    branches[0].append(child)
+                    branches[1].append(branch_obj)
+            set(map(self.set_branches, *branches))
         
         else:
             raise("cpee_allocation_set_branches: Wrong node Type")
@@ -261,7 +301,7 @@ class TaskAllocation(ProcessAllocation):
         
         task_elements = R_RPST.CpeeElements().task_elements
         print("Root before Tasks: ")
-        self.print_node_structure(root)
+        #self.print_node_structure(root)
 
         # End condition for recursive call
         if len(root.xpath("cpee1:children", namespaces = self.ns)) == 0: # no task parents exist

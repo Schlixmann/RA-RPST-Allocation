@@ -1,4 +1,5 @@
 <description xmlns="http://cpee.org/ns/description/1.0">
+  
   <call id="a1" endpoint="">
     <parameters>
       <label/>
@@ -45,6 +46,7 @@
     <allocation>
     </allocation>
   </call>
+
   <call id="a2" endpoint="">
     <parameters>
       <label/>
@@ -82,13 +84,16 @@
     <allocation>
     </allocation>
   </call>
+
   <manipulate id="a3" label=""/>
+  
   <parallel wait="-1" cancel="last">
     <parallel_branch pass="" local=""/>
     <parallel_branch pass="" local=""/>
     <allocation>
     </allocation>
   </parallel>
+  
   <choose mode="exclusive">
     <alternative condition=""/>
     <otherwise/>

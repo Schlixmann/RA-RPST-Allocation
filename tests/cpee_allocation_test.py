@@ -189,7 +189,10 @@ class TestCpeeAllocation(unittest.TestCase):
                 task_xml = f.read()
             
         ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
+        
         trees = ProcessAllocation.allocate_process()
+        print("Allocation Result: ")
+        ProcessAllocation.print_node_structure(ProcessAllocation.process.xpath("//cpee1:children", namespaces=ProcessAllocation.ns)[0])
 
         for tree in list(trees.values()):   
               

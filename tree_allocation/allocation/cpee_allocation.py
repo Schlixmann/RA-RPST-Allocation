@@ -51,10 +51,12 @@ class ProcessAllocation():
         for task in tasks: 
             print("The task is: ", task)
             allocation = TaskAllocation(self, etree.tostring(task))
-            x = threading.Thread(target=allocation.allocate_task, args=(None, self.resource_url))
+            x = threading.Thread(target=self.add_allocation, args=(task, allocation.allocate_task(None, self.resource_url),))
             self.allocations[task.xpath("@id")[0]] = (allocation)
             threads.append(x)
             x.start()
+
+            
         
         for thread in threads:
             thread.join()
@@ -71,8 +73,12 @@ class ProcessAllocation():
                     [hit for hit in hits if not hit.xpath("@type='delete'")]
                     #TODO -> should only be allowed to delete in branches which are not the delete branch is part of
                     # Implement
+        
 
         return self.allocations
+    
+    def add_allocation(self, task, output):
+        task.xpath("cpee1:allocation", namespaces=self.ns)[0].append(output)
 
     def find_solutions(self, solution=None, task=None):
         """
@@ -88,6 +94,7 @@ class ProcessAllocation():
             path = etree.ElementTree(self.process).getpath(first_task)
             next_task = self.process.xpath(path)[0].xpath("(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=self.ns)                
             first_allocation = self.allocations[first_task.attrib["id"]]
+            
             for branch in first_allocation.branches:
                 solution = Solution(copy.deepcopy(self.process))
                 self.solutions.append(solution)
@@ -127,7 +134,9 @@ class ProcessAllocation():
         if process is None:
             process = self.process
         
-        tasks = branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern)]", namespaces=self.ns)[1:]
+        tasks = branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate]"
+                            "[not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)[1:]
+
 
         #TODO This does it work for branches with more than 2 levels?
         for task in tasks:
@@ -135,6 +144,13 @@ class ProcessAllocation():
             process = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
         
         return process
+    
+    def print_node_structure(self, node=None, level=0):
+        if node is None:
+            node = self.process
+        print('  ' * level + node.tag)
+        for child in node.xpath("*"):
+            self.print_node_structure(child, level + 1)
     
 class Solution():
     def __init__(self, process):
@@ -277,7 +293,8 @@ class TaskAllocation(ProcessAllocation):
             print("New created root: ", root)
             self.ns = {"cpee1" : list(root.nsmap.values())[0]}
             root.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
-            return self.intermediate_trees.append(self.allocate_task(root, resource_url=resource_url))
+            self.intermediate_trees.append(self.allocate_task(root, resource_url=resource_url))
+            return self.intermediate_trees[0]
         else:
             root.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
             print("Task to allocate: ", R_RPST.get_label(etree.tostring(root)))
@@ -365,11 +382,6 @@ class TaskAllocation(ProcessAllocation):
         print('  ' * level + node.tag + ' ' + str(node.attrib))
         for child in node.xpath("*"):
             self.print_node_structure(child, level + 1)
-
-def print_node_structure(node, level=0):
-    print('  ' * level + node.tag + ' ' + str(node.attrib))
-    for child in node.xpath("*"):
-        print_node_structure(child, level + 1)
 
 class Branch():
     def __init__(self, node):

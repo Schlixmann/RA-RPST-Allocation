@@ -14,8 +14,6 @@ class ChangeOperation():
 
         return proc_tasks[0]
 
-
-
 class Insert(ChangeOperation):
     def apply(self, process:etree.Element, core_task:etree.Element, task:etree.Element):
         ns = {"cpee1" : list(process.nsmap.values())[0]}

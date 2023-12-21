@@ -30,8 +30,6 @@ class TreeGraph():
 
         self.dot_content += f'\t"{element.attrib["unid"]}" [label = "{element.attrib["id"]}: {name} \n Type: {task_type} \n Direction: {direction}" shape=rectangle]\t; \n'
 
-
-
     def tree_iter(self, node, branch=None): 
         children = node.xpath("cpee1:children/*", namespaces=self.ns)
         if node.tag == f"{{{self.ns['cpee1']}}}call" or node.tag == f"{{{self.ns['cpee1']}}}manipulate":

@@ -56,11 +56,8 @@ class ProcessAllocation():
             threads.append(x)
             x.start()
 
-            
-        
         for thread in threads:
             thread.join()
-
 
         # delete in own tree:
         for allocation in allocations:
@@ -74,7 +71,6 @@ class ProcessAllocation():
                     #TODO -> should only be allowed to delete in branches which are not the delete branch is part of
                     # Implement
         
-
         return self.allocations
     
     def add_allocation(self, task, output):
@@ -136,8 +132,6 @@ class ProcessAllocation():
             process = self.process
         
         tasks = branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)[1:]
-
-
         #TODO This does it work for branches with more than 2 levels?
         for task in tasks:
             core_task = task.xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=self.ns)[0]
@@ -314,8 +308,6 @@ class TaskAllocation(ProcessAllocation):
             if len(resource.xpath("*")) > 0:
                 root.xpath("cpee1:children", namespaces=self.ns)[0].append(resource)
                 
-
-        
         task_elements = R_RPST.CpeeElements().task_elements
         print("Root before Tasks: ")
         #self.print_node_structure(root)

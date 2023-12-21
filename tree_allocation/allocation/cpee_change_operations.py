@@ -6,9 +6,9 @@ class ChangeOperation():
     
     def get_proc_task(self, process, core_task):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
-        proc_tasks = process.xpath(f"//*[@id='{core_task.attrib['id']}']")
+        proc_tasks = process.xpath(f"//*[@id='{core_task.attrib['id']}'][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ns)
         if len(proc_tasks) != 1:
-            proc_tasks = list[filter(lambda x: R_RPST.get_label(core_task)== R_RPST.get_label(x), proc_tasks)]
+            proc_tasks = list(filter(lambda x: R_RPST.get_label(etree.tostring(core_task))== R_RPST.get_label(etree.tostring(x)), proc_tasks))
             if len(proc_tasks) != 1:
                 raise("Task identifier + label is not unique")
 
@@ -30,9 +30,9 @@ class Insert(ChangeOperation):
             case "parallel":
                 proc_task_parent = proc_task.xpath("parent::*")[0]
                 new_parent = R_RPST.CpeeElements().parallel()
-                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[0].append(copy.deepcopy(proc_task))
+                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[0].append(proc_task)
                 new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[1].append(task)
-                proc_task_parent.replace(proc_task, new_parent)
+                proc_task_parent.append(new_parent)
 
         return process
 
@@ -51,10 +51,10 @@ class Delete(ChangeOperation):
             case "parallel":
                 proc_task_parent = proc_task.xpath("parent::*")[0]
                 new_parent = R_RPST.CpeeElements().parallel()
-                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[0].append(copy.deepcopy(proc_task))
+                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[0].append(proc_task)
                 new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[1].append(task)
 
-                proc_task_parent.replace(proc_task, new_parent)
+                proc_task_parent.append(new_parent)
             
         return process
     

@@ -87,43 +87,44 @@ class ProcessAllocation():
         -> if i > 1: copy current solution and add new solution
         End: no further step
         """
-        # TODO: Add your remaining logic here
-
         if solution is None: 
             first_task = self.process.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)[0]
             path = etree.ElementTree(self.process).getpath(first_task)
             next_task = self.process.xpath(path)[0].xpath("(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=self.ns)                
+            if next_task:
+                path_next = self.process.getroottree().getpath(next_task[0])
             first_allocation = self.allocations[first_task.attrib["id"]]
             
+            next_tasks = []
             for branch in first_allocation.branches:
                 solution = Solution(copy.deepcopy(self.process))
                 self.solutions.append(solution)
+                if next_task:
+                    next_tasks.append(next_task[0])
                 self.apply_branch_to_process(branch.node, solution.process)
-        
+
             if not next_task:
                 print("Final Task reached. solution found")
                 return
-            return set(map(self.find_solutions, self.solutions, next_task))
+            
+            return set(map(self.find_solutions, self.solutions, next_tasks))
 
-        path = etree.ElementTree(solution.process).getpath(task)
-        allocation = self.allocations[task]
+        task = solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)[0]
+        next_task = task.xpath("(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=self.ns)
+        allocation = self.allocations[task.attrib['id']]
 
-        for i, branch in enumerate(allocation.branches.node):
-            if i > 1:
-                path = etree.ElementTree(solution.process).getpath(task)
+        for i, branch in enumerate(allocation.branches):
+            if i > 0:
                 new_solution = copy.deepcopy(solution)
                 self.solutions.append(new_solution)
             else:
                 new_solution = solution
+            self.apply_branch_to_process(branch.node, new_solution.process)
 
-            self.apply_branch_to_process(branch, new_solution.process)
-            next_task = new_solution.process.xpath(path)[0].xpath("(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=self.ns)
-
-            if not next_task:
+            if next_task:
+                self.find_solutions(new_solution, next_task[0])
+            else:
                 print("Final Task reached. solution found")
-                return
-
-            self.find_solutions(new_solution, next_task)
 
     def apply_branch_to_process(self, branch, process=None):
         """
@@ -134,8 +135,7 @@ class ProcessAllocation():
         if process is None:
             process = self.process
         
-        tasks = branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate]"
-                            "[not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)[1:]
+        tasks = branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)[1:]
 
 
         #TODO This does it work for branches with more than 2 levels?
@@ -191,7 +191,7 @@ class TaskAllocation(ProcessAllocation):
         """
 
         if node is None:
-            branch_obj = Branch(self.intermediate_trees[0])
+            branch_obj = Branch(copy.deepcopy(self.intermediate_trees[0]))
             self.branches.append(branch_obj)
             node = branch_obj.node
         
@@ -293,7 +293,7 @@ class TaskAllocation(ProcessAllocation):
             print("New created root: ", root)
             self.ns = {"cpee1" : list(root.nsmap.values())[0]}
             root.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
-            self.intermediate_trees.append(self.allocate_task(root, resource_url=resource_url))
+            self.intermediate_trees.append(copy.deepcopy(self.allocate_task(root, resource_url=resource_url)))
             return self.intermediate_trees[0]
         else:
             root.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))

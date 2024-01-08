@@ -105,7 +105,12 @@ class ProcessAllocation():
             
             return set(map(self.find_solutions, self.solutions, next_tasks))
 
-        task = solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)[0]
+        allo_task = solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)
+        if allo_task:
+            task = allo_task
+        else: 
+        #Non Complete Delete Operation. Delete Probably needed with threading. Problem in CPee_allocation.find_solutions
+            
         next_task = task.xpath("(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=self.ns)
         allocation = self.allocations[task.attrib['id']]
 
@@ -134,9 +139,11 @@ class ProcessAllocation():
         tasks = branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)[1:]
         #TODO This does it work for branches with more than 2 levels?
         for task in tasks:
-            core_task = task.xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=self.ns)[0]
-            process = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
-        
+            try:
+                core_task = task.xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=self.ns)[0]
+                process = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
+            except cpee_change_operations.ChangeOperationError as inst:
+                print(inst.__str__())
         return process
     
     def print_node_structure(self, node=None, level=0):

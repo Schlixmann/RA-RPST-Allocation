@@ -19,6 +19,14 @@ class Insert(ChangeOperation):
         core_task = task.xpath("/*")[0]
         proc_task= self.get_proc_task(process, core_task)
 
+        next_task = proc_task.xpath(f"(following::cpee1:call|following::cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)][1]", namespaces=ns)
+        if next_task: 
+            print(R_RPST.get_label(etree.tostring(next_task[0])))
+            next_task = next_task[0]
+        else:
+            next_task = None
+
+
         match task.attrib["direction"]:
             case "before":
                 proc_task.addprevious(task)
@@ -31,7 +39,7 @@ class Insert(ChangeOperation):
                 new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[1].append(task)
                 proc_task_parent.append(new_parent)
 
-        return process
+        return process, next_task
 
 class Delete(ChangeOperation):
     # TODO Delete is in v01 handled like an insert
@@ -90,22 +98,34 @@ class Delete(ChangeOperation):
                 else:
                     raise ChangeOperationError("No matching task to delete found in Process Model")
 
-
                 to_del = process.xpath(f"//*[@id='{to_del_id}'][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ns)[0]
                 process.remove(to_del)
-
+                
+                next_task = proc_task.xpath(f"(following::cpee1:call|following::cpee1:manipulate)[not(@id='{to_del_id}')][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)][1]", namespaces=ns)
+                if next_task: 
+                    print(R_RPST.get_label(etree.tostring(next_task[0])))
+                    next_task = next_task[0]
+                else:
+                    next_task = None
             
-        return process
+        return process, next_task
     
 class Replace(ChangeOperation):
     def apply(self, process, core_task, task):
-
+        ns = {"cpee1" : list(process.nsmap.values())[0]}
         core_task = task.xpath("/*")[0]
         proc_task= self.get_proc_task(process, core_task)
         path = etree.ElementTree(process).getpath(proc_task)
         proc_task.xpath("parent::*")[0].replace(proc_task, task)
 
-        return process
+        next_task = proc_task.xpath(f"(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=ns)
+        if next_task: 
+            print(R_RPST.get_label(etree.tostring(next_task[0])))
+            next_task = next_task[0]
+        else:
+            next_task = None
+
+        return process, next_task
 
     def apply_delete(): 
         pass

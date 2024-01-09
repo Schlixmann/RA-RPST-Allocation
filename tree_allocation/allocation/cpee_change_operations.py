@@ -5,6 +5,8 @@ import copy
 class ChangeOperation():
     def get_proc_task(self, process, core_task):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
+        with open("z_out.xml", "wb") as f:
+            f.write(etree.tostring(process))
         proc_tasks = process.xpath(f"//*[@id='{core_task.attrib['id']}'][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ns)
         if len(proc_tasks) != 1:
             proc_tasks = list(filter(lambda x: R_RPST.get_label(etree.tostring(core_task))== R_RPST.get_label(etree.tostring(x)), proc_tasks))
@@ -12,6 +14,13 @@ class ChangeOperation():
                 raise("Task identifier + label is not unique")
 
         return proc_tasks[0]
+
+    def add_res_allocation(self, task, output):
+        ns = {"cpee1" : list(task.nsmap.values())[0]}
+        if not task.xpath("cpee1:allocation", namespaces=ns):
+            task.xpath(".")[0].append(etree.Element(f"{{{ns['cpee1']}}}allocation"))
+        #task.xpath("cpee1:allocation", namespaces=ns)[0].append(etree.Element(f"{{{ns['cpee1']}}}res_allocation"))
+        task.xpath("cpee1:allocation", namespaces=ns)[0].append(output)
 
 class Insert(ChangeOperation):
     def apply(self, process:etree.Element, core_task:etree.Element, task:etree.Element):
@@ -38,6 +47,9 @@ class Insert(ChangeOperation):
                 new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[0].append(proc_task)
                 new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[1].append(task)
                 proc_task_parent.append(new_parent)
+        
+        resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
+        self.add_res_allocation(task, resource_info)
 
         return process, next_task
 
@@ -45,6 +57,7 @@ class Delete(ChangeOperation):
     # TODO Delete is in v01 handled like an insert
     def apply(self, process:etree.Element, core_task:etree.Element, task:etree.Element):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
+        print(task)
         core_task = task.xpath("/*")[0]
         proc_task= self.get_proc_task(process, core_task)
 
@@ -125,10 +138,10 @@ class Replace(ChangeOperation):
         else:
             next_task = None
 
-        return process, next_task
+        resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
+        self.add_res_allocation(task, resource_info)
 
-    def apply_delete(): 
-        pass
+        return process, next_task
 
 class ChangeOperationError(Exception):
     "Raised when an Error Occurs during application of a change operation"

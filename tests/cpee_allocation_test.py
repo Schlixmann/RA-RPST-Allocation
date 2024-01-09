@@ -264,8 +264,8 @@ class TestCpeeAllocation(unittest.TestCase):
             ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
             
             trees = ProcessAllocation.allocate_process()
-            print("Allocation Result: ")
-            ProcessAllocation.print_node_structure(ProcessAllocation.process.xpath("//cpee1:children", namespaces=ProcessAllocation.ns)[0])
+            #print("Allocation Result: ")
+            #ProcessAllocation.print_node_structure(ProcessAllocation.process.xpath("//cpee1:children", namespaces=ProcessAllocation.ns)[0])
 
             allocation = list(ProcessAllocation.allocations.values())[0]
             allocation.branches

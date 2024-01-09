@@ -74,7 +74,14 @@ class ProcessAllocation():
         return self.allocations
     
     def add_allocation(self, task, output):
-        task.xpath("cpee1:allocation", namespaces=self.ns)[0].append(output)
+        #task.xpath("cpee1:allocation", namespaces=self.ns)[0].append(output)
+        pass
+    
+    #def add_res_allocation(self, task, output):
+    #    if not task.xpath("cpee1:allocation", namespaces=self.ns):
+    #        task.xpath(".")[0].append(etree.Element(f"{{{self.ns['cpee1']}}}allocation"))
+    #    task.xpath("cpee1:allocation", namespaces=self.ns)[0].append(etree.Element(f"{{{self.ns['cpee1']}}}res_allocation"))
+    #    task.xpath("cpee1:allocation/cpee1:res_allocation", namespaces=self.ns)[0].append(output)
 
     def find_solutions(self, solution=None, task=None):
         """
@@ -132,10 +139,23 @@ class ProcessAllocation():
         next_task = next_task
         tasks = branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)[1:]
         #TODO This does it work for branches with more than 2 levels?
+        
+        with open("branch.xml", "wb") as f:
+            f.write(etree.tostring(branch))
+        
+        resource_info = copy.deepcopy(branch.xpath("cpee1:children/*", namespaces=self.ns)[0])
+        dummy = cpee_change_operations.ChangeOperation()
+        task = dummy.get_proc_task(process, branch)
+        dummy.add_res_allocation(task, resource_info)
+
         for task in tasks:
             try:
                 core_task = task.xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=self.ns)[0]
                 process, next_task = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
+
+                resource_info = copy.deepcopy(core_task.xpath("cpee1:children/*", namespaces=self.ns)[0])
+                #self.add_res_allocation(task, resource_info)
+
             except cpee_change_operations.ChangeOperationError as inst:
                 solution.invalid_branches = True
                 print(inst.__str__())
@@ -156,6 +176,9 @@ class Solution():
         self.open_delete = False
         self.invalid_branches = False
         self.process = process
+    
+    #TODO: Implement Method to Calculate Costs of solution (based on measure)
+        # start search of solution space
 
 class TaskAllocation(ProcessAllocation):
 
@@ -391,7 +414,7 @@ class ResourceError(Exception):
     
     def __init__(self, task, message="{} No valid resource allocation can be found for the given set of available resources"):
         self.task = task
-        self.message = message.format(self.task.label)
+        self.message = message.format(R_RPST.get_label(etree.tostring(self.task)))
         super().__init__(self.message)
 
 class ResourceWarning(UserWarning):

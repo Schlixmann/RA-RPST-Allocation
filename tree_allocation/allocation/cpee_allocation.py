@@ -176,6 +176,11 @@ class Solution():
         self.open_delete = False
         self.invalid_branches = False
         self.process = process
+        self.ns = {"cpee1" : list(process.nsmap.values())[0]}
+    
+    def get_measure(self, measure):
+        values = self.process.xpath(f".//cpee1:allocation/resource/resprofile/measures/{measure}", namespaces=self.ns)
+        return [float(value.text) for value in values]
     
     #TODO: Implement Method to Calculate Costs of solution (based on measure)
         # start search of solution space

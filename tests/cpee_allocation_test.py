@@ -301,3 +301,19 @@ class TestCpeeAllocation(unittest.TestCase):
                 with open("tests/solutions/solution_{}.xml".format(i), "wb") as f:
                     f.write(etree.tostring(solution.process))
 
+    def test_value_calc(self):
+            with open("resource_config/drill_delete_solution.xml") as f: 
+                    resource_et = etree.fromstring(f.read())
+            with open("tests/test_xml.xml") as f:
+                    task_xml = f.read()
+                
+            ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
+            trees = ProcessAllocation.allocate_process()
+            
+            for tree in list(trees.values()):
+                tree.set_branches()
+
+            ProcessAllocation.find_solutions()
+            for sol in ProcessAllocation.solutions:
+                print(sol.get_measure("cost"))
+                print(sum(sol.get_measure("cost")))

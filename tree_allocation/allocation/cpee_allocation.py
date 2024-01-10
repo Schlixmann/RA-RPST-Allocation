@@ -119,6 +119,8 @@ class ProcessAllocation():
             task = new_solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)[0]
             next_tasks = task.xpath("(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=self.ns)
             next_task = next_tasks[0] if next_tasks else None
+            if branch.valid == False:
+                new_solution.invalid_branches = True
             process, next_task = self.apply_branch_to_process(branch.node, new_solution.process, new_solution, next_task)
 
             if next_task:
@@ -128,6 +130,7 @@ class ProcessAllocation():
                 self.find_solutions(new_solution, next_task)
             else:
                 print("Final Task reached. solution found")
+                
                 #TODO IF invalid branches: Delete Solution or try to solve delete?
                 # currently: Solution is kept and delete just was not necessary
 
@@ -151,13 +154,17 @@ class ProcessAllocation():
         with open("branch.xml", "wb") as f:
             f.write(etree.tostring(branch))
         
-        resource_info = copy.deepcopy(branch.xpath("cpee1:children/*", namespaces=self.ns)[0])
         dummy = cpee_change_operations.ChangeOperation()
         task = dummy.get_proc_task(process, branch)
-        dummy.add_res_allocation(task, resource_info)
+        if branch.xpath("cpee1:children/*", namespaces=self.ns):
+            resource_info = copy.deepcopy(branch.xpath("cpee1:children/*", namespaces=self.ns)[0])
+            dummy.add_res_allocation(task, resource_info)
+        
+      
 
         for task in tasks:
             try:
+
                 core_task = task.xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=self.ns)[0]
                 process, next_task = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
 
@@ -413,6 +420,16 @@ class Solution():
     def get_measure(self, measure, operator=sum):
         values = self.process.xpath(f".//cpee1:allocation/resource/resprofile/measures/{measure}", namespaces=self.ns)
         return operator([float(value.text) for value in values])
+    
+    def check_validity(self):
+        tasks = self.process.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)and not(ancestor::cpee1:children)]", namespaces=self.ns)   
+        for task in tasks:
+            a = task.xpath("cpee1:allocation/*", namespaces=self.ns)
+            if not task.xpath("cpee1:allocation/*", namespaces=self.ns):
+                self.invalid_branches=True
+                break
+            else:
+                self.invalid_branches=False
 
 class ResourceError(Exception):
     # Exception is raised if no sufficiant allocation for a task can be found for available resources

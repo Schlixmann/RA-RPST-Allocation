@@ -173,7 +173,7 @@ class TestCpeeAllocation(unittest.TestCase):
         
         trees = ProcessAllocation.allocate_process()
         print("Allocation Result: ")
-        ProcessAllocation.print_node_structure(ProcessAllocation.process.xpath("//cpee1:children", namespaces=ProcessAllocation.ns)[0])
+        #ProcessAllocation.print_node_structure(ProcessAllocation.process.xpath("//cpee1:children", namespaces=ProcessAllocation.ns)[0])
 
         allocation = list(ProcessAllocation.allocations.values())[0]
         allocation.branches
@@ -238,9 +238,9 @@ class TestCpeeAllocation(unittest.TestCase):
             with open("xml_out2.xml", "wb") as f: 
                 f.write(etree.tostring(branch))
             print("New Tree: ")
-            ProcessAllocation.print_node_structure(branch)
+            #ProcessAllocation.print_node_structure(branch)
             #branch = etree.fromstring(etree.tostring(branch))
-            ProcessAllocation.print_node_structure(branch)
+            #ProcessAllocation.print_node_structure(branch)
             print(branch.xpath("/*"), " ", branch.xpath("parent::*"))
 
             print(branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate]"
@@ -284,9 +284,9 @@ class TestCpeeAllocation(unittest.TestCase):
                 with open("xml_out2.xml", "wb") as f: 
                     f.write(etree.tostring(branch))
                 print("New Tree: ")
-                ProcessAllocation.print_node_structure(branch)
+                #ProcessAllocation.print_node_structure(branch)
                 #branch = etree.fromstring(etree.tostring(branch))
-                ProcessAllocation.print_node_structure(branch)
+                #ProcessAllocation.print_node_structure(branch)
                 print(branch.xpath("/*"), " ", branch.xpath("parent::*"))
 
                 print(branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate]"
@@ -334,3 +334,51 @@ class TestCpeeAllocation(unittest.TestCase):
         print(worst_solution, worst_solution.get_measure("cost"))
         best_solution = ProcessAllocation.get_best_solution("cost")
         print(best_solution, best_solution.get_measure("cost"))
+
+    def test_with_incomplete_resources(self):
+            with open("resource_config/drill_delete_solution_incomplete.xml") as f: 
+                    resource_et = etree.fromstring(f.read())
+            with open("tests/test_processes/test_insuf_resources_delete.xml") as f:
+                    task_xml = f.read()
+                
+            ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
+            
+            trees = ProcessAllocation.allocate_process()
+            #print("Allocation Result: ")
+            #ProcessAllocation.print_node_structure(ProcessAllocation.process.xpath("//cpee1:children", namespaces=ProcessAllocation.ns)[0])
+
+            allocation = list(ProcessAllocation.allocations.values())[0]
+            allocation.branches
+            for i, tree in enumerate(list(trees.values())):   
+                
+                graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), filename=f"out_{i}") 
+                #tree.set_branches() 
+                            
+                with open("xml_out2.xml", "wb") as f: 
+                    f.write(etree.tostring(tree.branches[0].node))
+
+                #graphix.TreeGraph().show(etree.tostring(tree.branches[0].node,), filename="branch") 
+                
+                
+                branch = tree.branches[0].node
+                with open("xml_out2.xml", "wb") as f: 
+                    f.write(etree.tostring(branch))
+                print("New Tree: ")
+                #ProcessAllocation.print_node_structure(branch)
+                #branch = etree.fromstring(etree.tostring(branch))
+                #ProcessAllocation.print_node_structure(branch)
+                print(branch.xpath("/*"), " ", branch.xpath("parent::*"))
+
+                print(branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate]"
+                                "[not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ProcessAllocation.ns))
+                test = branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ProcessAllocation.ns)
+            
+
+            ProcessAllocation.find_solutions()
+
+            for i, solution in enumerate(ProcessAllocation.solutions):
+                solution.check_validity()
+                print("Solution {}: ".format(i), solution.__dict__)
+                with open("tests/solutions/solution_{}.xml".format(i), "wb") as f:
+                    f.write(etree.tostring(solution.process))
+                

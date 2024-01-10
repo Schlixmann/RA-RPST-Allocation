@@ -25,7 +25,7 @@ class ChangeOperation():
 class Insert(ChangeOperation):
     def apply(self, process:etree.Element, core_task:etree.Element, task:etree.Element):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
-        core_task = task.xpath("/*")[0]
+        #core_task = task.xpath("/*")[0]
         proc_task= self.get_proc_task(process, core_task)
 
         next_task = proc_task.xpath(f"(following::cpee1:call|following::cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)][1]", namespaces=ns)
@@ -48,8 +48,11 @@ class Insert(ChangeOperation):
                 new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[1].append(task)
                 proc_task_parent.append(new_parent)
         
-        resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
-        self.add_res_allocation(task, resource_info)
+        if task.xpath("cpee1:children/*", namespaces=ns):
+            resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
+            self.add_res_allocation(task, resource_info)
+        else: 
+            raise ChangeOperationError("No Resource available. Invalid Allocation")
 
         return process, next_task
 
@@ -58,7 +61,9 @@ class Delete(ChangeOperation):
     def apply(self, process:etree.Element, core_task:etree.Element, task:etree.Element):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         print(task)
-        core_task = task.xpath("/*")[0]
+        with open("z_out.xml", "wb") as f:
+            f.write(etree.tostring(task.xpath("/*")[0]))
+        #core_task = task.xpath("/*")[0]
         proc_task= self.get_proc_task(process, core_task)
 
         match task.attrib["direction"]:
@@ -111,7 +116,10 @@ class Delete(ChangeOperation):
                 else:
                     raise ChangeOperationError("No matching task to delete found in Process Model")
 
-                to_del = process.xpath(f"//*[@id='{to_del_id}'][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ns)[0]
+                to_dels = process.xpath(f"//*[@id='{to_del_id}'][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)and not(ancestor::cpee1:children)]", namespaces=ns)
+                to_del = to_dels[0]
+                with open("z_out.xml", "wb") as f:
+                    f.write(etree.tostring(process))
                 process.remove(to_del)
                 
                 next_task = proc_task.xpath(f"(following::cpee1:call|following::cpee1:manipulate)[not(@id='{to_del_id}')][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)][1]", namespaces=ns)
@@ -125,11 +133,14 @@ class Delete(ChangeOperation):
     
 class Replace(ChangeOperation):
     def apply(self, process, core_task, task):
+        
         ns = {"cpee1" : list(process.nsmap.values())[0]}
-        core_task = task.xpath("/*")[0]
+        #core_task = task.xpath("/*")[0]
         proc_task= self.get_proc_task(process, core_task)
         path = etree.ElementTree(process).getpath(proc_task)
         proc_task.xpath("parent::*")[0].replace(proc_task, task)
+        #proc_task.xpath("parent::*")[0].append(task)
+        #proc_task.xpath("parent::*")[0].remove(proc_task)
 
         next_task = proc_task.xpath(f"(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=ns)
         if next_task: 
@@ -138,8 +149,11 @@ class Replace(ChangeOperation):
         else:
             next_task = None
 
-        resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
-        self.add_res_allocation(task, resource_info)
+        if task.xpath("cpee1:children/*", namespaces=ns):
+            resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
+            self.add_res_allocation(task, resource_info)
+        else: 
+            raise ChangeOperationError("No Resource available. Invalid Allocation")
 
         return process, next_task
 
@@ -147,6 +161,9 @@ class ChangeOperationError(Exception):
     "Raised when an Error Occurs during application of a change operation"
     pass
 
+class ResourceAllocationError(Exception):
+    "Raised when no fitting resource is available"
+    pass
 
 def ChangeOperationFactory(process, core_task, task, cptype):
     localizer =  {

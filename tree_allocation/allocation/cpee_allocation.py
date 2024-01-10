@@ -78,8 +78,6 @@ class ProcessAllocation():
     
     def add_allocation(self, task, output):
         #task.xpath("cpee1:allocation", namespaces=self.ns)[0].append(output)
-        
-
         pass
     
     #def add_res_allocation(self, task, output):
@@ -179,22 +177,6 @@ class ProcessAllocation():
         print('  ' * level + node.tag)
         for child in node.xpath("*"):
             self.print_node_structure(child, level + 1)
-    
-class Solution():
-    def __init__(self, process):
-
-        self.open_delete = False
-        self.invalid_branches = False
-        self.process = process
-        self.ns = {"cpee1" : list(process.nsmap.values())[0]}
-    
-    def get_measure(self, measure, operator=sum):
-        values = self.process.xpath(f".//cpee1:allocation/resource/resprofile/measures/{measure}", namespaces=self.ns)
-        return operator([float(value.text) for value in values])
-    
-    
-    #TODO: Implement Method to Calculate Costs of solution (based on measure)
-        # start search of solution space
 
 class TaskAllocation(ProcessAllocation):
 
@@ -303,11 +285,6 @@ class TaskAllocation(ProcessAllocation):
         else:
             raise("cpee_allocation_set_branches: Wrong node Type")
 
-    def print_node_structure(self, node, level=0):
-        print('  ' * level + node.tag)
-        for child in node.xpath("*"):
-            self.print_node_structure(child, level + 1)
-            
     def allocate_task(self, root=None, resource_url=None, excluded=[]):
         """
         Build the allocation tree for self.task. 
@@ -424,6 +401,18 @@ class Branch():
         self.valid = True
         self.open_delete = False
         self.current_path = ''
+    
+class Solution():
+    def __init__(self, process):
+
+        self.open_delete = False
+        self.invalid_branches = False
+        self.process = process
+        self.ns = {"cpee1" : list(process.nsmap.values())[0]}
+    
+    def get_measure(self, measure, operator=sum):
+        values = self.process.xpath(f".//cpee1:allocation/resource/resprofile/measures/{measure}", namespaces=self.ns)
+        return operator([float(value.text) for value in values])
 
 class ResourceError(Exception):
     # Exception is raised if no sufficiant allocation for a task can be found for available resources

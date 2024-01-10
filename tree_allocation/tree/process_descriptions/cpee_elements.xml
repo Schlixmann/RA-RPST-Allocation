@@ -90,8 +90,6 @@
   <parallel wait="-1" cancel="last">
     <parallel_branch pass="" local=""/>
     <parallel_branch pass="" local=""/>
-    <allocation>
-    </allocation>
   </parallel>
   
   <choose mode="exclusive">

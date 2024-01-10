@@ -95,8 +95,6 @@
   <choose mode="exclusive">
     <alternative condition=""/>
     <otherwise/>
-    <allocation>
-    </allocation>
   </choose>
   <stop id="a4"/>
   

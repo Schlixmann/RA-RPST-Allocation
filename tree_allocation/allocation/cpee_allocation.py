@@ -128,6 +128,11 @@ class ProcessAllocation():
                 #TODO IF invalid branches: Delete Solution or try to solve delete?
                 # currently: Solution is kept and delete just was not necessary
 
+    def get_best_solution(self, measure, operator=min, consider_all_solutions=True):
+        solutions_to_evaluate = self.solutions if not consider_all_solutions else filter(lambda x: x.invalid_branches == False, self.solutions)
+        solution_measure = {solution: solution.get_measure(measure) for solution in solutions_to_evaluate}
+        return operator(solution_measure, key=solution_measure.get)
+    
     def apply_branch_to_process(self, branch, process=None, solution=None, next_task=None):
         """
         -> Find task to allocate in self.process
@@ -178,9 +183,10 @@ class Solution():
         self.process = process
         self.ns = {"cpee1" : list(process.nsmap.values())[0]}
     
-    def get_measure(self, measure):
+    def get_measure(self, measure, operator=sum):
         values = self.process.xpath(f".//cpee1:allocation/resource/resprofile/measures/{measure}", namespaces=self.ns)
-        return [float(value.text) for value in values]
+        return operator([float(value.text) for value in values])
+    
     
     #TODO: Implement Method to Calculate Costs of solution (based on measure)
         # start search of solution space

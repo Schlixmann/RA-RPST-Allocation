@@ -130,7 +130,7 @@ class ProcessAllocation():
                 self.find_solutions(new_solution, next_task)
             else:
                 print("Final Task reached. solution found")
-                
+                new_solution.check_validity()
                 #TODO IF invalid branches: Delete Solution or try to solve delete?
                 # currently: Solution is kept and delete just was not necessary
 

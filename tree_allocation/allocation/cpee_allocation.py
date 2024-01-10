@@ -58,6 +58,9 @@ class ProcessAllocation():
 
         for thread in threads:
             thread.join()
+        
+        for allocation in list(self.allocations.values()):
+            allocation.set_branches()
 
         # delete in own tree:
         for allocation in allocations:
@@ -75,6 +78,8 @@ class ProcessAllocation():
     
     def add_allocation(self, task, output):
         #task.xpath("cpee1:allocation", namespaces=self.ns)[0].append(output)
+        
+
         pass
     
     #def add_res_allocation(self, task, output):

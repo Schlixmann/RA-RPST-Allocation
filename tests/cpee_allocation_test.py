@@ -272,7 +272,7 @@ class TestCpeeAllocation(unittest.TestCase):
             for i, tree in enumerate(list(trees.values())):   
                 
                 graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), filename=f"out_{i}") 
-                tree.set_branches() 
+                #tree.set_branches() 
                             
                 with open("xml_out2.xml", "wb") as f: 
                     f.write(etree.tostring(tree.branches[0].node))
@@ -310,13 +310,12 @@ class TestCpeeAllocation(unittest.TestCase):
             ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
             trees = ProcessAllocation.allocate_process()
             
-            for tree in list(trees.values()):
-                tree.set_branches()
+            #for tree in list(trees.values()):
+            #    tree.set_branches()
 
             ProcessAllocation.find_solutions()
             for sol in ProcessAllocation.solutions:
                 print(sol.get_measure("cost"))
-                print(sum(sol.get_measure("cost")))
     
     def test_best(self):
         with open("resource_config/drill_delete_solution.xml") as f: 
@@ -327,8 +326,8 @@ class TestCpeeAllocation(unittest.TestCase):
         ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
         trees = ProcessAllocation.allocate_process()
         
-        for tree in list(trees.values()):
-            tree.set_branches()
+        #for tree in list(trees.values()):
+        #    tree.set_branches()
 
         ProcessAllocation.find_solutions()
         worst_solution = ProcessAllocation.get_best_solution("cost", max)

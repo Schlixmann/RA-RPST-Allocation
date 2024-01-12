@@ -409,6 +409,8 @@ class Branch():
         self.open_delete = False
         self.current_path = ''
     
+    #TODO Calculate costs of Branch --> needed for heuristical decision
+    
 class Solution():
     def __init__(self, process):
 

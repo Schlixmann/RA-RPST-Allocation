@@ -419,6 +419,12 @@ class Solution():
         self.process = process
         self.ns = {"cpee1" : list(process.nsmap.values())[0]}
     
+    def get_measure(self):
+        "Calculate the measure for one Branch"
+        #TODO should calculate the sum of the measure for the branch
+        # For one allocation the best bracnch should then be found (or best 2,3,4 etc)
+        pass
+    
     def get_measure(self, measure, operator=sum):
         values = self.process.xpath(f".//cpee1:allocation/resource/resprofile/measures/{measure}", namespaces=self.ns)
         return operator([float(value.text) for value in values])

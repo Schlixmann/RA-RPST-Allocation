@@ -87,6 +87,7 @@ class ProcessAllocation():
     #    task.xpath("cpee1:allocation/cpee1:res_allocation", namespaces=self.ns)[0].append(output)
 
     def find_solutions(self, solution=None, task=None):
+        #TODO should be callable with different options (Direct, Genetic, Heuristic, SemiHeuristic)
         """
         -> Add all Branches as new solutions
         -> for each branch, call, "new_solution(process, self, step+=1)"
@@ -113,6 +114,7 @@ class ProcessAllocation():
             else: 
                 solution_index=len(self.solutions)-1
 
+        #TODO if less branches should be used: lower the amount of allocation.branches here
         for i, branch in enumerate(allocation.branches):
             #TODO Delete Solution if error in Change Operation
             new_solution = self.solutions[solution_index + i]
@@ -140,6 +142,7 @@ class ProcessAllocation():
         return operator(solution_measure, key=solution_measure.get)
     
     def apply_branch_to_process(self, branch, process=None, solution=None, next_task=None):
+        #TODO should be part of "Branch"
         """
         -> Find task to allocate in self.process
         -> apply change operations
@@ -410,6 +413,11 @@ class Branch():
         self.current_path = ''
     
     #TODO Calculate costs of Branch --> needed for heuristical decision
+    def get_measure(self):
+        "Calculate the measure for one Branch"
+        #TODO should calculate the sum of the measure for the branch
+        # For one allocation the best bracnch should then be found (or best 2,3,4 etc)
+        pass
     
 class Solution():
     def __init__(self, process):
@@ -418,12 +426,6 @@ class Solution():
         self.invalid_branches = False
         self.process = process
         self.ns = {"cpee1" : list(process.nsmap.values())[0]}
-    
-    def get_measure(self):
-        "Calculate the measure for one Branch"
-        #TODO should calculate the sum of the measure for the branch
-        # For one allocation the best bracnch should then be found (or best 2,3,4 etc)
-        pass
     
     def get_measure(self, measure, operator=sum):
         values = self.process.xpath(f".//cpee1:allocation/resource/resprofile/measures/{measure}", namespaces=self.ns)

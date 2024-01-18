@@ -3,26 +3,76 @@ from tree_allocation.allocation.cpee_allocation import *
 
 # Import external packages
 from lxml import etree
+import numpy as np
+import random
 
 class SolutionSearch():
     pass
 
 class Genetic():
-    pass
+    def __init__(self, pop_size, genome_size, generations):
+        self.pop_size = pop_size
+        #TODO Genome = Process that is to be allocated/changed
+        self.genome_size = genome_size
+        self.generations = generations
+
+    def init_population(self, pop_size, genome_size):  # initialize the population of bit vectors
+        #TODO create random solutions with number of pop_size
+        #
+        return [random.choices(range(2), k=genome_size) for _ in range(pop_size)]
+    
+    def fitness(self, individual):
+        #TODO fitness = measure of the solution
+        return sum(individual)
+    
+    # tournament selection
+    def selection(self, population, fitnesses, k=3):
+        # keep the best solution
+        # first random selection
+        tournament = random.sample(range(len(population)), k=3)
+        tournament_fitnesses = [fitnesses[i] for i in tournament]
+        winner_index = tournament[np.argmax(tournament_fitnesses)]
+        return population[winner_index]
+    
+    def crossover(self, parent1, parent2): 
+        #TODO Split the process and cross between the two parents
+        # whats the best approach for handovers?
+        xo_point = random.randint(1, len(parent1) - 1)
+        return ([parent1[:xo_point] + parent2[xo_point:],
+                 parent2[:xo_point] + parent1[xo_point:]])
+    
+    def mutation(self, individual):
+        #TODO change allocation randomly on one task
+        for i in range(len(individual)):
+            if random.random() < 0.1:
+                individual = individual[:i] + [1-individual[i]] + individual[i + 1:]
+        return individual
+
+    def find_solution(self, process_allocation):
+        #TODO change for process setting
+        population = self.init_population(self.pop_size, self.genome_size)
+        for gen in range(self.generations):
+            fitnesses = [self.fitness(individual) for individual in population]
+            print('Generation ', gen, '\n', list(zip(population, fitnesses)))
+            nextgen_population = []
+            for i in range(int(self.pop_size / 2)):
+                parent1 = self.selection(population, fitnesses)  # select first parent
+                parent2 = self.selection(population, fitnesses)  # select second parent
+                offspring1, offspring2 = self.crossover(parent1, parent2)  # perform crossover between both parents
+                nextgen_population += [self.mutation(offspring1), self.mutation(offspring2)]  # mutate offspring
+            population = nextgen_population
+        
+        return population
 
 class Heuristic():
     pass
 
 class Brute():
-        
-    def find_solutions(self, process_allocation, solution=None, task=None):
+    pass
+    """
+    def find_solutions(process_allocation, solution=None, task=None):
         #TODO should be callable with different options (Direct, Genetic, Heuristic, SemiHeuristic)
-        """
-        -> Add all Branches as new solutions
-        -> for each branch, call, "new_solution(process, self, step+=1)"
-        -> if i > 1: copy current solution and add new solution
-        End: no further step
-        """
+
         if solution is None: 
             first_task = self.process.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)[0]
             path = etree.ElementTree(self.process).getpath(first_task)
@@ -64,7 +114,7 @@ class Brute():
                 new_solution.check_validity()
                 #TODO IF invalid branches: Delete Solution or try to solve delete?
                 # currently: Solution is kept and delete just was not necessary
-
+"""
 
 def solution_search_factory():
     pass

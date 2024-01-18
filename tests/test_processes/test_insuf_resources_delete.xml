@@ -1,0 +1,120 @@
+<description xmlns="http://cpee.org/ns/description/1.0">
+    <call id="a6" endpoint="">
+        <parameters>
+            <label>Drill Hole into product</label>
+            <method>:post</method>
+            <arguments/>
+        </parameters>
+        <annotations>
+            <_timing>
+                <_timing_weight/>
+                <_timing_avg/>
+                <explanations/>
+            </_timing>
+            <_shifting>
+                <_shifting_type>Duration</_shifting_type>
+            </_shifting>
+            <_context_data_analysis>
+                <probes/>
+                <ips/>
+            </_context_data_analysis>
+            <report>
+                <url/>
+            </report>
+            <_notes>
+                <_notes_general/>
+            </_notes>
+        </annotations>
+        <documentation>
+            <input/>
+            <output/>
+            <implementation>
+                <description/>
+            </implementation>
+        </documentation>
+        <resources allocated_to="not_allocated">
+            <resource>Drill</resource>
+        </resources>
+        <allocation>
+        </allocation>
+    </call>
+
+    <call id="a7" endpoint="">
+        <parameters>
+            <label>Check quality of product</label>
+            <method>:post</method>
+            <arguments/>
+        </parameters>
+        <annotations>
+            <_timing>
+                <_timing_weight/>
+                <_timing_avg/>
+                <explanations/>
+            </_timing>
+            <_shifting>
+                <_shifting_type>Duration</_shifting_type>
+            </_shifting>
+            <_context_data_analysis>
+                <probes/>
+                <ips/>
+            </_context_data_analysis>
+            <report>
+                <url/>
+            </report>
+            <_notes>
+                <_notes_general/>
+            </_notes>
+        </annotations>
+        <documentation>
+            <input/>
+            <output/>
+            <implementation>
+                <description/>
+            </implementation>
+        </documentation>
+        <resources allocated_to="not_allocated">
+            <resource>Technician</resource>
+        </resources>
+        <allocation>
+        </allocation>
+    </call>
+    <call id="a8" endpoint="">
+        <parameters>
+            <label>Packaging</label>
+            <method>:post</method>
+            <arguments/>
+        </parameters>
+        <annotations>
+            <_timing>
+                <_timing_weight/>
+                <_timing_avg/>
+                <explanations/>
+            </_timing>
+            <_shifting>
+                <_shifting_type>Duration</_shifting_type>
+            </_shifting>
+            <_context_data_analysis>
+                <probes/>
+                <ips/>
+            </_context_data_analysis>
+            <report>
+                <url/>
+            </report>
+            <_notes>
+                <_notes_general/>
+            </_notes>
+        </annotations>
+        <documentation>
+            <input/>
+            <output/>
+            <implementation>
+                <description/>
+            </implementation>
+        </documentation>
+        <resources allocated_to="not_allocated">
+            <resource>Package Manager</resource>
+        </resources>
+        <allocation>
+        </allocation>
+    </call>
+</description>

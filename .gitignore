@@ -10,9 +10,11 @@ rdpm_env/
 Dockerfile
 steps_local_cpee.txt
 ssh_config
+tests/branches/*
+tests/solutions/*
 
 # Untracked File Types
-*.xml
+*_out*.xml
 *.png
 *.dot
 # Keep config tracked

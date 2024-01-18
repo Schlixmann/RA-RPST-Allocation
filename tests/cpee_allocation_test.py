@@ -381,4 +381,3 @@ class TestCpeeAllocation(unittest.TestCase):
                 print("Solution {}: ".format(i), solution.__dict__)
                 with open("tests/solutions/solution_{}.xml".format(i), "wb") as f:
                     f.write(etree.tostring(solution.process))
-                

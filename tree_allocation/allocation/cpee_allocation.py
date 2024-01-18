@@ -123,7 +123,7 @@ class ProcessAllocation():
             next_task = next_tasks[0] if next_tasks else None
             if branch.valid == False:
                 new_solution.invalid_branches = True
-            process, next_task = self.apply_branch_to_process(branch.node, new_solution.process, new_solution, next_task)
+            process, next_task = branch.apply_to_process(new_solution.process, new_solution, next_task)
 
             if next_task:
                 # check if next task still exists if not, find new next task:
@@ -140,46 +140,6 @@ class ProcessAllocation():
         solutions_to_evaluate = self.solutions if not consider_all_solutions else filter(lambda x: x.invalid_branches == False, self.solutions)
         solution_measure = {solution: solution.get_measure(measure) for solution in solutions_to_evaluate}
         return operator(solution_measure, key=solution_measure.get)
-    
-    def apply_branch_to_process(self, branch, process=None, solution=None, next_task=None):
-        #TODO should be part of "Branch"
-        """
-        -> Find task to allocate in self.process
-        -> apply change operations
-        """
-        #TODO Set allocated Resource!
-        if process is None:
-            process = self.process
-        next_task = next_task
-        tasks = branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)[1:]
-        #TODO This does it work for branches with more than 2 levels?
-        
-        with open("branch.xml", "wb") as f:
-            f.write(etree.tostring(branch))
-        
-        dummy = cpee_change_operations.ChangeOperation()
-        task = dummy.get_proc_task(process, branch)
-        if branch.xpath("cpee1:children/*", namespaces=self.ns):
-            resource_info = copy.deepcopy(branch.xpath("cpee1:children/*", namespaces=self.ns)[0])
-            dummy.add_res_allocation(task, resource_info)
-        
-      
-
-        for task in tasks:
-            try:
-
-                core_task = task.xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=self.ns)[0]
-                process, next_task = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
-
-                resource_info = copy.deepcopy(core_task.xpath("cpee1:children/*", namespaces=self.ns)[0])
-                #self.add_res_allocation(task, resource_info)
-
-            except cpee_change_operations.ChangeOperationError as inst:
-                solution.invalid_branches = True
-                print(inst.__str__())
-                print("Solution invalid_branches = True")
-
-        return process, next_task
     
     def print_node_structure(self, node=None, level=0):
         if node is None:
@@ -418,6 +378,43 @@ class Branch():
         #TODO should calculate the sum of the measure for the branch
         # For one allocation the best bracnch should then be found (or best 2,3,4 etc)
         pass
+
+    def apply_to_process(self, process=None, solution=None, next_task=None):
+        #TODO should be part of "Branch"
+        """
+        -> Find task to allocate in self.process
+        -> apply change operations
+        """
+        ns = {"cpee1" : list(process.nsmap.values())[0]}
+        #TODO Set allocated Resource!
+        if process is None:
+            process = self.process
+        next_task = next_task
+        tasks = self.node.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ns)[1:]
+        #TODO This does it work for branches with more than 2 levels?
+        
+        with open("branch.xml", "wb") as f:
+            f.write(etree.tostring(self.node))
+        
+        dummy = cpee_change_operations.ChangeOperation()
+        task = dummy.get_proc_task(process, self.node)
+        if self.node.xpath("cpee1:children/*", namespaces=ns):
+            resource_info = copy.deepcopy(self.node.xpath("cpee1:children/*", namespaces=ns)[0])
+            dummy.add_res_allocation(task, resource_info)
+        
+        for task in tasks:
+            try:
+                core_task = task.xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=ns)[0]
+                process, next_task = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
+                resource_info = copy.deepcopy(core_task.xpath("cpee1:children/*", namespaces=ns)[0])
+                #self.add_res_allocation(task, resource_info)
+
+            except cpee_change_operations.ChangeOperationError as inst:
+                solution.invalid_branches = True
+                print(inst.__str__())
+                print("Solution invalid_branches = True")
+
+        return process, next_task
     
 class Solution():
     def __init__(self, process):

@@ -20,6 +20,7 @@ class ChangeOperation():
         if not task.xpath("cpee1:allocation", namespaces=ns):
             task.xpath(".")[0].append(etree.Element(f"{{{ns['cpee1']}}}allocation"))
         #task.xpath("cpee1:allocation", namespaces=ns)[0].append(etree.Element(f"{{{ns['cpee1']}}}res_allocation"))
+        task.xpath("cpee1:resources", namespaces=ns)[0].set("allocated_to", output.xpath("@name")[0])
         task.xpath("cpee1:allocation", namespaces=ns)[0].append(output)
 
 class Insert(ChangeOperation):
@@ -37,15 +38,16 @@ class Insert(ChangeOperation):
 
         match task.attrib["direction"]:
             case "before":
-                proc_task.addprevious(task)
+                proc_task.addprevious(copy.deepcopy(task))
             case "after":
-                proc_task.addnext(task)
+                proc_task.addnext(copy.deepcopy(task))
             case "parallel":
                 proc_task_parent = proc_task.xpath("parent::*")[0]
                 new_parent = R_RPST.CpeeElements().parallel()
-                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[0].append(proc_task)
-                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[1].append(task)
-                proc_task_parent.append(new_parent)
+                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[0].append(copy.deepcopy(proc_task))
+                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[1].append(copy.deepcopy(task))
+                proc_task.addnext(new_parent)
+                proc_task_parent.remove(proc_task)
         
         if task.xpath("cpee1:children/*", namespaces=ns):
             resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
@@ -53,7 +55,7 @@ class Insert(ChangeOperation):
         else: 
             raise ChangeOperationError("No Resource available. Invalid Allocation")
 
-        open("xml_out.xml", "wb").write(etree.tostring(process))
+        open("xml_out4.xml", "wb").write(etree.tostring(process))
         return process, next_task
 
 class Delete(ChangeOperation):
@@ -84,8 +86,8 @@ class Delete(ChangeOperation):
                 # Delete Task from Process Tree
                 proc_task_parent = proc_task.xpath("parent::*")[0]
                 new_parent = R_RPST.CpeeElements().parallel()
-                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[0].append(proc_task)
-                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[1].append(task)
+                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[0].append(copy.deepcopy(proc_task))
+                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[1].append(copy.deepcopy(task))
 
                 proc_task_parent.append(new_parent)
 
@@ -133,16 +135,11 @@ class Delete(ChangeOperation):
     
 class Replace(ChangeOperation):
     def apply(self, process, core_task, task):
-        
         ns = {"cpee1" : list(process.nsmap.values())[0]}
-        #core_task = task.xpath("/*")[0]
         proc_task= self.get_proc_task(process, core_task)
-        path = etree.ElementTree(process).getpath(proc_task)
         proc_task.xpath("parent::*")[0].replace(proc_task, task)
-        #proc_task.xpath("parent::*")[0].append(task)
-        #proc_task.xpath("parent::*")[0].remove(proc_task)
-
         next_task = proc_task.xpath(f"(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=ns)
+
         if next_task: 
             print(R_RPST.get_label(etree.tostring(next_task[0])))
             next_task = next_task[0]

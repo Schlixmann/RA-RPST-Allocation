@@ -4,6 +4,7 @@ from tree_allocation.tree import res_node as rn, R_RPST
 from tree_allocation.helpers import get_all_resources, get_all_tasks, get_process_model
 from tree_allocation.allocation import cpee_change_operations
 from tree_allocation.proc_resource import *
+from tree_allocation.tree import graphix
 
 # Import external packages
 from PrettyPrint import PrettyPrintTree
@@ -404,10 +405,14 @@ class Branch():
         
         for task in tasks:
             try:
+                #graphix.TreeGraph().show(etree.tostring(self.node), filename=f"branch") 
                 core_task = task.xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=ns)[0]
                 process, next_task = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
                 resource_info = copy.deepcopy(core_task.xpath("cpee1:children/*", namespaces=ns)[0])
-                #self.add_res_allocation(task, resource_info)
+                #with open("branch.xml", "wb") as f:
+                #    f.write(etree.tostring(self.node))
+                #graphix.TreeGraph().show(etree.tostring(self.node), filename=f"branch") 
+                #print("a")
 
             except cpee_change_operations.ChangeOperationError as inst:
                 solution.invalid_branches = True

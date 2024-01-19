@@ -106,7 +106,10 @@ class Brute(SolutionSearch):
                 break
         
         allocation = self.process_allocation.allocations[task.attrib['id']]
-                
+        test = allocation.branches[0].node
+        with open("branch.xml", "wb") as f:
+            f.write(etree.tostring(test))
+        print("a")
         for i, branch in enumerate(allocation.branches):
             if i > 0:
                 new_solution = copy.deepcopy(solution)
@@ -126,9 +129,19 @@ class Brute(SolutionSearch):
 
             if branch.valid == False:
                 solution.invalid_branches = True
+            
             branch.apply_to_process(solution.process, solution, task)
             open("xml_out3.xml", "wb").write(etree.tostring(solution.process))
             self.find_solutions(copy.deepcopy(tasks_iter), solution)
+        
+    def get_best_solutions(self, measure, operator=min, include_invalid=True, top_n=1):
+        solutions_to_evaluate = self.solutions if include_invalid else filter(lambda x: x.invalid_branches == False, self.solutions)
+        solution_measure = {solution: solution.get_measure(measure) for solution in solutions_to_evaluate}
+        # Get the top N solutions
+        sorted_solutions = sorted(solution_measure.items(), key=lambda x: x[1], reverse=(operator == max))
+        top_solutions = [solution for solution, _ in sorted_solutions[:top_n]]
+
+        return {solution: solution.get_measure("cost") for solution in top_solutions}
 
 def solution_search_factory():
     pass

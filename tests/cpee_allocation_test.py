@@ -485,6 +485,10 @@ class TestCpeeAllocation(unittest.TestCase):
             best_solutions = brute_solutions.get_best_solutions("cost", include_invalid=False, top_n=5)
             print(best_solutions)
 
+            with open("tests/solutions/best_solution.xml", "wb") as f:
+                key = next(iter(best_solutions[0]))
+                f.write(etree.tostring(key.process))
+
     def test_all_options(self):
             with open("resource_config/all_options.xml") as f: 
                     resource_et = etree.fromstring(f.read())

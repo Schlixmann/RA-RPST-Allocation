@@ -141,7 +141,7 @@ class Brute(SolutionSearch):
         sorted_solutions = sorted(solution_measure.items(), key=lambda x: x[1], reverse=(operator == max))
         top_solutions = [solution for solution, _ in sorted_solutions[:top_n]]
 
-        return {solution: solution.get_measure("cost") for solution in top_solutions}
+        return [{solution: solution.get_measure("cost")} for solution in top_solutions]
 
 def solution_search_factory():
     pass

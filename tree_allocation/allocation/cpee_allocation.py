@@ -121,6 +121,7 @@ class ProcessAllocation():
             task = new_solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)[0]
             next_tasks = task.xpath("(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=self.ns)
             next_task = next_tasks[0] if next_tasks else None
+            nest_task = next_task
             if branch.valid == False:
                 new_solution.invalid_branches = True
             process, next_task = branch.apply_to_process(new_solution.process, new_solution, next_task)
@@ -387,8 +388,7 @@ class Branch():
         """
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         #TODO Set allocated Resource!
-        if process is None:
-            process = self.process
+
         next_task = next_task
         tasks = self.node.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ns)[1:]
         #TODO This does it work for branches with more than 2 levels?
@@ -413,8 +413,8 @@ class Branch():
                 solution.invalid_branches = True
                 print(inst.__str__())
                 print("Solution invalid_branches = True")
-
-        return process, next_task
+        open("xml_out2.xml", "wb").write(etree.tostring(process))
+        return process
     
 class Solution():
     def __init__(self, process):

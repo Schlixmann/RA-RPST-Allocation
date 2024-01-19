@@ -1,5 +1,6 @@
 # Import modules
 from tree_allocation.allocation.cpee_allocation import *
+from tree_allocation.tree import R_RPST
 
 # Import external packages
 from lxml import etree
@@ -7,10 +8,13 @@ import numpy as np
 import random
 
 class SolutionSearch():
-    pass
+    def __init__(self, process_allocation):
+        self.solutions = []
+        self.process_allocation = process_allocation
 
-class Genetic():
-    def __init__(self, pop_size, genome_size, generations):
+class Genetic(SolutionSearch):
+    def __init__(self, process_allocation, pop_size, genome_size, generations):
+        super(Genetic, self).__init__(process_allocation)
         self.pop_size = pop_size
         #TODO Genome = Process that is to be allocated/changed
         self.genome_size = genome_size
@@ -67,24 +71,41 @@ class Genetic():
 class Heuristic():
     pass
 
-class Brute():
-    pass
-    """
-    def find_solutions(process_allocation, solution=None, task=None):
+class Brute(SolutionSearch):
+    def __init__(self, process_allocation):
+        super(Brute, self).__init__(process_allocation)
+    
+    def find_solutions(self, tasks_iter=None, solution=None):
         #TODO should be callable with different options (Direct, Genetic, Heuristic, SemiHeuristic)
-
-        if solution is None: 
-            first_task = self.process.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)[0]
-            path = etree.ElementTree(self.process).getpath(first_task)
-            next_task = self.process.xpath(path)[0].xpath("(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=self.ns)
-            first_allocation = self.allocations[first_task.attrib["id"]]
-            solution = Solution(copy.deepcopy(self.process)) 
-            self.solutions.append(solution)
-
-            #next_tasks = [next_task for _ in range(len(first_allocation.branches))]
-            return self.find_solutions(self.solutions[0], first_task)
+        """
+        -> Add all Branches as new solutions
+        -> for each branch, call, "new_solution(process, self, step+=1)"
+        -> if i > 1: copy current solution and add new solution
+        End: no further step
+        """
+        ns = {"cpee1" : list(self.process_allocation.process.nsmap.values())[0]}
+        if not self.solutions: 
+            
+            tasklist = self.process_allocation.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)
+            self.solutions.append(Solution(copy.deepcopy(self.process_allocation.process)))
+            return self.find_solutions(iter(tasklist), self.solutions[0])
         
-        allocation = self.allocations[task.attrib['id']]
+        # Find next task for solution
+        while True:
+            task = next(tasks_iter, "end")
+            if task == "end":
+                print("Final Task reached. solution found")
+                solution.check_validity()
+                return
+            
+            # check that next task was not deleted:
+            elif not solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns):
+                pass
+            
+            else:
+                break
+        
+        allocation = self.process_allocation.allocations[task.attrib['id']]
                 
         for i, branch in enumerate(allocation.branches):
             if i > 0:
@@ -96,25 +117,18 @@ class Brute():
         #TODO if less branches should be used: lower the amount of allocation.branches here
         for i, branch in enumerate(allocation.branches):
             #TODO Delete Solution if error in Change Operation
-            new_solution = self.solutions[solution_index + i]
-            task = new_solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)[0]
-            next_tasks = task.xpath("(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=self.ns)
-            next_task = next_tasks[0] if next_tasks else None
-            if branch.valid == False:
-                new_solution.invalid_branches = True
-            process, next_task = self.apply_branch_to_process(branch.node, new_solution.process, new_solution, next_task)
+            if i > 0:
+                solution = self.solutions[solution_index + i]
+            #TODO ensure that label is the same too
+            tasklabel = R_RPST.get_label(etree.tostring(task))
+            task = solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)[0]
+            
 
-            if next_task:
-                # check if next task still exists if not, find new next task:
-                if not new_solution.process.xpath(f"//*[@id='{next_task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns):
-                    next_task = task.xpath("(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=self.ns)[0]
-                self.find_solutions(new_solution, next_task)
-            else:
-                print("Final Task reached. solution found")
-                new_solution.check_validity()
-                #TODO IF invalid branches: Delete Solution or try to solve delete?
-                # currently: Solution is kept and delete just was not necessary
-"""
+            if branch.valid == False:
+                solution.invalid_branches = True
+            branch.apply_to_process(solution.process, solution, task)
+            open("xml_out3.xml", "wb").write(etree.tostring(solution.process))
+            self.find_solutions(copy.deepcopy(tasks_iter), solution)
 
 def solution_search_factory():
     pass

@@ -27,7 +27,6 @@ class Insert(ChangeOperation):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         #core_task = task.xpath("/*")[0]
         proc_task= self.get_proc_task(process, core_task)
-
         next_task = proc_task.xpath(f"(following::cpee1:call|following::cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)][1]", namespaces=ns)
         if next_task: 
             print(R_RPST.get_label(etree.tostring(next_task[0])))
@@ -54,6 +53,7 @@ class Insert(ChangeOperation):
         else: 
             raise ChangeOperationError("No Resource available. Invalid Allocation")
 
+        open("xml_out.xml", "wb").write(etree.tostring(process))
         return process, next_task
 
 class Delete(ChangeOperation):

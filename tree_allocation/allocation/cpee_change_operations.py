@@ -11,7 +11,7 @@ class ChangeOperation():
         if len(proc_tasks) != 1:
             proc_tasks = list(filter(lambda x: R_RPST.get_label(etree.tostring(core_task))== R_RPST.get_label(etree.tostring(x)), proc_tasks))
             if len(proc_tasks) != 1:
-                raise("Task identifier + label is not unique")
+                raise ProcessError(f"Task identifier + label is not unique for task {R_RPST.get_label(etree.tostring(core_task)), core_task.attrib}")
 
         return proc_tasks[0]
 
@@ -20,35 +20,38 @@ class ChangeOperation():
         if not task.xpath("cpee1:allocation", namespaces=ns):
             task.xpath(".")[0].append(etree.Element(f"{{{ns['cpee1']}}}allocation"))
         #task.xpath("cpee1:allocation", namespaces=ns)[0].append(etree.Element(f"{{{ns['cpee1']}}}res_allocation"))
+        with open("res2_xml.xml", "wb") as f:
+            f.write(etree.tostring(output))
         task.xpath("cpee1:resources", namespaces=ns)[0].set("allocated_to", output.xpath("@name")[0])
         task.xpath("cpee1:allocation", namespaces=ns)[0].append(output)
 
 class Insert(ChangeOperation):
     def apply(self, process:etree.Element, core_task:etree.Element, task:etree.Element):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
+        process = copy.deepcopy(process)
         #core_task = task.xpath("/*")[0]
         proc_task= self.get_proc_task(process, core_task)
 
-        match task.attrib["direction"]:
-            case "before":
-                proc_task.addprevious(copy.deepcopy(task))
-            case "after":
-                proc_task.addnext(copy.deepcopy(task))
-            case "parallel":
-                proc_task_parent = proc_task.xpath("parent::*")[0]
-                new_parent = R_RPST.CpeeElements().parallel()
-                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[0].append(copy.deepcopy(proc_task))
-                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[1].append(copy.deepcopy(task))
-                proc_task.addnext(new_parent)
-                proc_task_parent.remove(proc_task)
-        
+        task = copy.deepcopy(task)
         if task.xpath("cpee1:children/*", namespaces=ns):
             resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
             self.add_res_allocation(task, resource_info)
         else: 
             raise ChangeOperationError("No Resource available. Invalid Allocation")
 
-        open("xml_out4.xml", "wb").write(etree.tostring(process))
+        match task.attrib["direction"]:
+            case "before":
+                proc_task.addprevious(task)
+            case "after":
+                proc_task.addnext(task)
+            case "parallel":
+                proc_task_parent = proc_task.xpath("parent::*")[0]
+                new_parent = R_RPST.CpeeElements().parallel()
+                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[0].append(copy.deepcopy(proc_task))
+                new_parent.xpath("cpee1:parallel_branch", namespaces=ns)[1].append(task)
+                proc_task.addnext(new_parent)
+                proc_task_parent.remove(proc_task)
+
         return process
     
 class Delete(ChangeOperation):
@@ -113,6 +116,9 @@ class Delete(ChangeOperation):
                     f.write(etree.tostring(process))
                 process.remove(to_del)
             
+        with open("xml2_out.xml", "wb") as f:
+            f.write(etree.tostring(process))
+            
         return process
     
 class Replace(ChangeOperation):
@@ -134,6 +140,10 @@ class ChangeOperationError(Exception):
     pass
 
 class ResourceAllocationError(Exception):
+    "Raised when no fitting resource is available"
+    pass
+
+class ProcessError(Exception):
     "Raised when no fitting resource is available"
     pass
 

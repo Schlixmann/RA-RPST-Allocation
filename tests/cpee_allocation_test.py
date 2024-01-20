@@ -437,7 +437,7 @@ class TestCpeeAllocation(unittest.TestCase):
     def test_bigger_process(self):
             with open("resource_config/offer_resources.xml") as f: 
                     resource_et = etree.fromstring(f.read())
-            with open("tests/test_processes/offer_process.xml") as f:
+            with open("tests/test_processes/offer_process_short.xml") as f:
                     task_xml = f.read()
                 
             ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)

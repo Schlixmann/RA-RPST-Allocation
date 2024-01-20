@@ -381,7 +381,7 @@ class Branch():
         # For one allocation the best bracnch should then be found (or best 2,3,4 etc)
         pass
 
-    def apply_to_process(self, process=None, solution=None, next_task=None):
+    def apply_to_process(self, process, solution=None, next_task=None):
         #TODO should be part of "Branch"
         """
         -> Find task to allocate in self.process
@@ -390,7 +390,7 @@ class Branch():
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         #TODO Set allocated Resource!
 
-        next_task = next_task
+        next_task = next_task #can be deleted
         tasks = self.node.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ns)[1:]
         #TODO This does it work for branches with more than 2 levels?
         
@@ -405,14 +405,18 @@ class Branch():
         
         for task in tasks:
             try:
-                #graphix.TreeGraph().show(etree.tostring(self.node), filename=f"branch") 
                 core_task = task.xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=ns)[0]
+                i = 0
+                if i == 1:
+                    with open("xml_out.xml", "wb") as f:
+                        f.write(etree.tostring(process))
+
                 process, next_task = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
                 resource_info = copy.deepcopy(core_task.xpath("cpee1:children/*", namespaces=ns)[0])
-                #with open("branch.xml", "wb") as f:
-                #    f.write(etree.tostring(self.node))
+                with open("branch.xml", "wb") as f:
+                    f.write(etree.tostring(self.node))
                 #graphix.TreeGraph().show(etree.tostring(self.node), filename=f"branch") 
-                #print("a")
+
 
             except cpee_change_operations.ChangeOperationError as inst:
                 solution.invalid_branches = True

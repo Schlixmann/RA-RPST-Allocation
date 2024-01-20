@@ -6,66 +6,132 @@ from tree_allocation.tree import R_RPST
 from lxml import etree
 import numpy as np
 import random
+import time
 
 class SolutionSearch():
     def __init__(self, process_allocation):
         self.solutions = []
         self.process_allocation = process_allocation
+        self.process = process_allocation.process
+        self.ns = {"cpee1" : list(self.process.nsmap.values())[0]}
 
 class Genetic(SolutionSearch):
-    def __init__(self, process_allocation, pop_size, genome_size, generations):
+    def __init__(self, process_allocation, pop_size, generations):
         super(Genetic, self).__init__(process_allocation)
         self.pop_size = pop_size
         #TODO Genome = Process that is to be allocated/changed
-        self.genome_size = genome_size
+        #self.genome_size = genome_size
         self.generations = generations
-
-    def init_population(self, pop_size, genome_size):  # initialize the population of bit vectors
+        
+    def init_population(self, pop_size): #, genome_size): initialize the population of bit vectors
         #TODO create random solutions with number of pop_size
-        #
-        return [random.choices(range(2), k=genome_size) for _ in range(pop_size)]
+        string = open("check_p").read()
+        if not etree.tostring(self.process) == open("check_p", "rb").read():
+            raise "Problem"
+        population = []
+        self.tasklist = self.process_allocation.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)
+        with open("check_p", "wb") as f:
+            f.write(etree.tostring(self.process))
+        
+        for pop in range(pop_size):   
+            # choose random branch per task:
+            proc = copy.deepcopy(self.process)
+            solution = Solution(proc)
+            used_branches = {}
+            for task in self.tasklist:
+                allocation = self.process_allocation.allocations[task.attrib['id']]
+                branch_no = random.randint(0, len(allocation.branches)-1)
+                used_branches[task] = branch_no
+                branch = allocation.branches[branch_no]
+                solution.process = branch.apply_to_process(proc, solution=solution)
+        
+            population.append({"solution":solution, "branches" : used_branches})
+        
+
+
+        return population
     
-    def fitness(self, individual):
+    def fitness(self, solution, measure):
         #TODO fitness = measure of the solution
-        return sum(individual)
+        return solution.get_measure(measure)
     
     # tournament selection
     def selection(self, population, fitnesses, k=3):
         # keep the best solution
         # first random selection
-        tournament = random.sample(range(len(population)), k=3)
+        tournament = random.sample(range(len(population)-1), k=3)
         tournament_fitnesses = [fitnesses[i] for i in tournament]
-        winner_index = tournament[np.argmax(tournament_fitnesses)]
+        winner_index = tournament[np.argmin(tournament_fitnesses)]
         return population[winner_index]
     
     def crossover(self, parent1, parent2): 
         #TODO Split the process and cross between the two parents
         # whats the best approach for handovers?
-        xo_point = random.randint(1, len(parent1) - 1)
-        return ([parent1[:xo_point] + parent2[xo_point:],
-                 parent2[:xo_point] + parent1[xo_point:]])
+        proc_len = len(parent1.values())
+        xo_point = random.randint(1, proc_len - 1)
+        parent1_list = list(parent1["branches"].values())
+        parent2_list = list(parent2["branches"].values())
+        ([parent1_list[:xo_point] + parent2_list[xo_point:],
+                 parent2_list[:xo_point] + parent1_list[xo_point:]])
+        
+        parent1["branches"], parent2["branches"] = (dict(zip(list(parent1["branches"].keys()), parent1_list)), 
+                                                        dict(zip(list(parent2["branches"].keys()), parent2_list)))
+        return (parent1, parent2)
     
     def mutation(self, individual):
         #TODO change allocation randomly on one task
-        for i in range(len(individual)):
-            if random.random() < 0.1:
-                individual = individual[:i] + [1-individual[i]] + individual[i + 1:]
+        #for i in range(len(individual["used_branches"])):
+        #    if random.random() < 0.1:
+        #        individual["used_branches"] = individual["used_branches"][:i] + [1-individual["used_branches"][i]] + individual["used_branches"][i + 1:]
         return individual
+    
+    def evaluate_solution(self, individual):
+        proc = copy.deepcopy(self.process)
+        i=0
 
-    def find_solution(self, process_allocation):
+        new_solution = Solution(proc)
+        new_solution.process = copy.deepcopy(self.process)
+
+        if i ==1: 
+            with open("xml2_out.xml", "wb") as f:
+                f.write(etree.tostring(proc))
+            with open("xml3_out.xml", "wb") as f:
+                f.write(etree.tostring(self.process))
+
+        for task in self.tasklist:
+            allocation = self.process_allocation.allocations[task.attrib['id']]
+            branch_no = individual["branches"].get(task)
+            branch = allocation.branches[branch_no]
+            #graphix.TreeGraph().show(etree.tostring(branch.node), filename="branch") 
+
+                
+            branch.apply_to_process(proc, solution=new_solution)
+        
+        new_solution.process = copy.deepcopy(proc)
+
+        return {"solution":new_solution, "branches" : individual["branches"]}
+    
+    def find_solutions(self, measure):
         #TODO change for process setting
-        population = self.init_population(self.pop_size, self.genome_size)
+        population = self.init_population(self.pop_size) #, self.genome_size) -> genome_size = size of process
         for gen in range(self.generations):
-            fitnesses = [self.fitness(individual) for individual in population]
+            start = time.time()
+            fitnesses = [self.fitness(individual["solution"], measure) for individual in population]
             print('Generation ', gen, '\n', list(zip(population, fitnesses)))
             nextgen_population = []
             for i in range(int(self.pop_size / 2)):
                 parent1 = self.selection(population, fitnesses)  # select first parent
                 parent2 = self.selection(population, fitnesses)  # select second parent
                 offspring1, offspring2 = self.crossover(parent1, parent2)  # perform crossover between both parents
-                nextgen_population += [self.mutation(offspring1), self.mutation(offspring2)]  # mutate offspring
+
+                # create new solutions and calculate measure
+                nextgen_population.append(self.evaluate_solution(offspring1))
+                nextgen_population.append(self.evaluate_solution(offspring2))
+                #nextgen_population += [self.mutation(offspring1), self.mutation(offspring2)]  # mutate offspring
+
             population = nextgen_population
-        
+            end = time.time()
+            print(f"Time for genereation: {end-start}")
         return population
 
 class Heuristic():

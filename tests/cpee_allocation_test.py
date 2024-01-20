@@ -439,40 +439,18 @@ class TestCpeeAllocation(unittest.TestCase):
                     resource_et = etree.fromstring(f.read())
             with open("tests/test_processes/offer_process_short.xml") as f:
                     task_xml = f.read()
+            show_graph = False
                 
             ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
-            
             trees = ProcessAllocation.allocate_process()
-            #print("Allocation Result: ")
-            #ProcessAllocation.print_node_structure(ProcessAllocation.process.xpath("//cpee1:children", namespaces=ProcessAllocation.ns)[0])
 
             allocation = list(ProcessAllocation.allocations.values())[0]
             allocation.branches
             for i, tree in enumerate(list(trees.values())):   
                 
-                if i == 1:
+                if show_graph:
                     graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), filename=f"out_{i}") 
-                #tree.set_branches() 
-                            
-                with open("xml_out2.xml", "wb") as f: 
-                    f.write(etree.tostring(tree.branches[0].node))
 
-                #graphix.TreeGraph().show(etree.tostring(tree.branches[0].node,), filename="branch") 
-                
-                
-                branch = tree.branches[0].node
-                with open("xml_out2.xml", "wb") as f: 
-                    f.write(etree.tostring(branch))
-                print("New Tree: ")
-                #ProcessAllocation.print_node_structure(branch)
-                #branch = etree.fromstring(etree.tostring(branch))
-                #ProcessAllocation.print_node_structure(branch)
-                print(branch.xpath("/*"), " ", branch.xpath("parent::*"))
-
-                print(branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate]"
-                                "[not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ProcessAllocation.ns))
-                test = branch.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ProcessAllocation.ns)
-            
             start = time.time()
             brute_solutions = Brute(ProcessAllocation)
             brute_solutions.find_solutions()
@@ -485,43 +463,48 @@ class TestCpeeAllocation(unittest.TestCase):
             best_solutions = brute_solutions.get_best_solutions("cost", include_invalid=False, top_n=5)
             print(best_solutions)
 
-            with open("tests/solutions/best_solution.xml", "wb") as f:
-                key = next(iter(best_solutions[0]))
-                f.write(etree.tostring(key.process))
+            #for i, solution in enumerate(best_solutions):
+            #    with open(f"tests/benchmarks/best_brute_{i}.xml", "wb") as f:
+            #        key = next(iter(solution))
+            #        f.write(etree.tostring(key.process))
+
+            for i, solution in enumerate(best_solutions):
+                with open(f"tests/benchmarks/best_brute_{i}.xml", "rb") as f:
+                    key = next(iter(solution))                    
+                    self.assertEqual(etree.tostring(key.process), f.read())
+                
 
     def test_all_options(self):
             with open("resource_config/all_options.xml") as f: 
                     resource_et = etree.fromstring(f.read())
             with open("tests/test_processes/test_insuf_resources_delete.xml") as f:
                     task_xml = f.read()
-                
-            ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
             
+            show_graphs = False
+            ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
             trees = ProcessAllocation.allocate_process()
-            #print("Allocation Result: ")
-            #ProcessAllocation.print_node_structure(ProcessAllocation.process.xpath("//cpee1:children", namespaces=ProcessAllocation.ns)[0])
-
             allocation = list(ProcessAllocation.allocations.values())[0]
-            #allocation.branches
+
             for i, tree in enumerate(ProcessAllocation.allocations.values()):   
                 
-                graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), filename=f"out_{i}") 
-                #tree.set_branches() 
-                            
-                with open("xml_out2.xml", "wb") as f: 
-                    f.write(etree.tostring(tree.branches[0].node))
+                if show_graphs:  
+                    graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), filename=f"out_{i}")
                     
                 if i == 1:
                     for i, branch in enumerate(tree.branches):
-                        graphix.TreeGraph().show(etree.tostring(branch.node), filename=f"branch_{i}")
+                        if show_graphs:
+                            graphix.TreeGraph().show(etree.tostring(branch.node), filename=f"branch_{i}")
 
             brute_solutions = Brute(ProcessAllocation)
-            test = ProcessAllocation.allocations['a7'].branches[0].node
-
             brute_solutions.find_solutions()
 
             for i, solution in enumerate(brute_solutions.solutions):
-                #solution.check_validity()
-                print("Solution {}: ".format(i), solution.__dict__)
-                with open("tests/solutions/solution_{}.xml".format(i), "wb") as f:
-                    f.write(etree.tostring(solution.process))
+                with open(f"tests/benchmarks/brute_options_{i}.xml", "rb") as f:
+                    self.assertEqual(etree.tostring(solution.process), f.read())
+
+            #for i, solution in enumerate(brute_solutions.solutions):
+            #    solution.check_validity()
+            #    print("Solution {}: ".format(i), solution.__dict__)
+            #    with open(f"tests/benchmarks/brute_options_{i}.xml", "wb") as f:
+            #        f.write(etree.tostring(solution.process))
+            

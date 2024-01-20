@@ -390,7 +390,6 @@ class Branch():
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         #TODO Set allocated Resource!
 
-        next_task = next_task #can be deleted
         tasks = self.node.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ns)[1:]
         #TODO This does it work for branches with more than 2 levels?
         
@@ -405,7 +404,7 @@ class Branch():
         
         for task in tasks:
             try:
-                core_task = task.xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=ns)[0]
+                core_task = (task.xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=ns)[0])
                 i = 0
                 if i == 1:
                     with open("xml_out.xml", "wb") as f:

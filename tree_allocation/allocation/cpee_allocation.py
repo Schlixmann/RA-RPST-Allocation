@@ -410,17 +410,17 @@ class Branch():
                     with open("xml_out.xml", "wb") as f:
                         f.write(etree.tostring(process))
 
-                process, next_task = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
+                process = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
                 resource_info = copy.deepcopy(core_task.xpath("cpee1:children/*", namespaces=ns)[0])
                 with open("branch.xml", "wb") as f:
                     f.write(etree.tostring(self.node))
                 #graphix.TreeGraph().show(etree.tostring(self.node), filename=f"branch") 
 
-
             except cpee_change_operations.ChangeOperationError as inst:
                 solution.invalid_branches = True
                 print(inst.__str__())
                 print("Solution invalid_branches = True")
+                
         open("xml_out2.xml", "wb").write(etree.tostring(process))
         return process
     

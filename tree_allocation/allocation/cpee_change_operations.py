@@ -28,13 +28,6 @@ class Insert(ChangeOperation):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         #core_task = task.xpath("/*")[0]
         proc_task= self.get_proc_task(process, core_task)
-        next_task = proc_task.xpath(f"(following::cpee1:call|following::cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)][1]", namespaces=ns)
-        if next_task: 
-            print(R_RPST.get_label(etree.tostring(next_task[0])))
-            next_task = next_task[0]
-        else:
-            next_task = None
-
 
         match task.attrib["direction"]:
             case "before":
@@ -56,16 +49,12 @@ class Insert(ChangeOperation):
             raise ChangeOperationError("No Resource available. Invalid Allocation")
 
         open("xml_out4.xml", "wb").write(etree.tostring(process))
-        return process, next_task
-
+        return process
+    
 class Delete(ChangeOperation):
     # TODO Delete is in v01 handled like an insert
     def apply(self, process:etree.Element, core_task:etree.Element, task:etree.Element):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
-        print(task)
-        with open("z_out.xml", "wb") as f:
-            f.write(etree.tostring(task.xpath("/*")[0]))
-        #core_task = task.xpath("/*")[0]
         proc_task= self.get_proc_task(process, core_task)
 
         match task.attrib["direction"]:
@@ -123,28 +112,14 @@ class Delete(ChangeOperation):
                 with open("z_out.xml", "wb") as f:
                     f.write(etree.tostring(process))
                 process.remove(to_del)
-                
-                next_task = proc_task.xpath(f"(following::cpee1:call|following::cpee1:manipulate)[not(@id='{to_del_id}')][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)][1]", namespaces=ns)
-                if next_task: 
-                    print(R_RPST.get_label(etree.tostring(next_task[0])))
-                    next_task = next_task[0]
-                else:
-                    next_task = None
             
-        return process, next_task
+        return process
     
 class Replace(ChangeOperation):
     def apply(self, process, core_task, task):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         proc_task= self.get_proc_task(process, core_task)
         proc_task.xpath("parent::*")[0].replace(proc_task, task)
-        next_task = proc_task.xpath(f"(following::cpee1:call|following::cpee1:manipulate)[1]", namespaces=ns)
-
-        if next_task: 
-            print(R_RPST.get_label(etree.tostring(next_task[0])))
-            next_task = next_task[0]
-        else:
-            next_task = None
 
         if task.xpath("cpee1:children/*", namespaces=ns):
             resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
@@ -152,7 +127,7 @@ class Replace(ChangeOperation):
         else: 
             raise ChangeOperationError("No Resource available. Invalid Allocation")
 
-        return process, next_task
+        return process
 
 class ChangeOperationError(Exception):
     "Raised when an Error Occurs during application of a change operation"

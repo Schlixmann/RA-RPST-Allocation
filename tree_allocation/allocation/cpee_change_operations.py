@@ -103,7 +103,7 @@ class Delete(ChangeOperation):
                             pos_deletes.append(x.xpath("@id", namespaces=ns)[0])
 
                     except TypeError as inst:
-                        print(inst.__str__())
+                        #print(inst.__str__())
                         pass
                 if pos_deletes:
                     to_del_id = pos_deletes[0]

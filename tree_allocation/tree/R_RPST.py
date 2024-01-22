@@ -37,7 +37,6 @@ def get_label(element):
     else:
         raise TypeError("Wrong Element Type: No Task element Given. Type is: ", elem_et.tag) 
 
-
 def get_allowed_roles(element):
     elem_et = etree.fromstring(element)
     ns = {"cpee1" : list(elem_et.nsmap.values())[0]}

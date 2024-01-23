@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import json
 
 # Your JSON data
-for i in range(0,4):
+for i in range(0,5):
     with open(f"findings_{i}.json", "r") as f:
         json_data = json.loads(f.read())
 
@@ -25,6 +25,7 @@ for i in range(0,4):
     plt.title("Fitness Over Executions")
     plt.legend()
     plt.grid(True)
+    plt.title(f"{json_data['solver']}")
 
     # Show the plot
     plt.show()

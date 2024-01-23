@@ -10,6 +10,7 @@ import time
 from collections import defaultdict
 
 class SolutionSearch():
+
     def __init__(self, process_allocation):
         self.solutions = []
         self.process_allocation = process_allocation
@@ -17,6 +18,7 @@ class SolutionSearch():
         self.ns = {"cpee1" : list(self.process.nsmap.values())[0]}
 
 class Genetic(SolutionSearch):
+
     def __init__(self, process_allocation, pop_size, generations,k_sel=3, k_mut=0.1):
         super(Genetic, self).__init__(process_allocation)
         self.pop_size = pop_size
@@ -26,9 +28,11 @@ class Genetic(SolutionSearch):
         self.k_mut = k_mut
         self.k_sel = k_sel
         self.best_tournament = [1000]
+        self.best_tournament_str = []
         
     def init_population(self, pop_size): #, genome_size): initialize the population of bit vectors
-        #TODO create random solutions with number of pop_size
+        # create random solutions for number of pop_size
+
         population = []
         self.tasklist = self.process_allocation.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)
         for pop in range(pop_size): 
@@ -37,8 +41,8 @@ class Genetic(SolutionSearch):
 
     def build_individual(self):
         # choose random branch per task:
-        proc = copy.deepcopy(self.process)
-        solution = Solution(proc)
+
+        solution = Solution(copy.deepcopy(self.process))
         used_branches = {task:0 for task in self.tasklist}
 
         tasks_iter = iter(self.tasklist)
@@ -48,59 +52,56 @@ class Genetic(SolutionSearch):
             branch_no = random.randint(0, len(allocation.branches)-1)
             used_branches[task] = branch_no
             branch = allocation.branches[branch_no]
-            solution.process = branch.apply_to_process(proc, solution=solution)
+            solution.process = branch.apply_to_process(solution.process, solution=solution)
             task = self.get_next_task(tasks_iter, solution)
             if task == "end":
                 break
         return used_branches
     
-    def fitness(self, individual, measure):
-        #TODO fitness = measure of the solution
-        proc = copy.deepcopy(self.process)
-        new_solution = Solution(proc)
-        check = new_solution.get_measure(measure)
-        branch_measure = []
+    def fitness(self, individual, measure:str="cost", rtype:str = "value"):
+        # calculate the fitness of a solution
 
-        tasks_iter = iter(self.tasklist)
-        task = self.get_next_task(tasks_iter, new_solution)
+        new_solution = Solution(copy.deepcopy(self.process)) # create solution
+        tasks_iter = iter(self.tasklist) # iterator
+        task = self.get_next_task(tasks_iter, new_solution) # gets next tasks and checks for deletes
+
         while True:
-            allocation = self.process_allocation.allocations[task.attrib['id']]
-            branch_no = individual["branches"].get(task)
-            branch = allocation.branches[branch_no]
-            branch_measure.append(branch.get_measure("cost"))
-            proc = branch.apply_to_process(proc, solution=new_solution)
-            new_solution.process = proc
+            allocation = self.process_allocation.allocations[task.attrib['id']] # get allocatin
+
+            branch_no = individual["branches"].get(task)    # get choosen number of branch
+            branch = allocation.branches[branch_no] # get actual branch as R-RPST
+
+            new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
+            
             task = self.get_next_task(tasks_iter, new_solution)
             if task == "end":
                 break
-            
-        
-        value = new_solution.get_measure(measure)
+        value = new_solution.get_measure(measure)   # calc. fitness of solution
 
-        return value
+        if rtype=="solution":
+            return new_solution
+        else:
+            return value
     
     # tournament selection
-    def selection(self, population, fitnesses):
-        # keep the best solution
-        # first random selection
-        xo = False
+    def selection(self, population, fitnesses, gen):
+        
+        xo = False # init xo flag
         tournament = random.sample(range(len(population)-1), self.k_sel)
         tournament_fitnesses = [fitnesses[i] for i in tournament]
         winner_index = tournament[np.argmin(tournament_fitnesses)]
-        for fitness in tournament_fitnesses:
-            if fitness <= self.best_tournament[-1]:
-                self.best_tournament.append(fitness)
-                xo = True
-                with open("xml7_out.xml", "wb") as f:
-                    f.write(etree.tostring(self.evaluate_solution(population[winner_index]).process ))
+ 
+        if fitnesses[winner_index] <= self.best_tournament[-1]:
 
-                
-        #[self.best_tournament.append(fitness) for fitness in tournament_fitnesses if fitness < self.best_tournament[-1]]
-        return population[winner_index], xo
+            self.best_tournament.append(fitnesses[winner_index])
+            xo = True # flag to keep as elitist parent
+
+        return copy.copy(population[winner_index]), xo
     
+    # parent crossover
     def crossover(self, parent1, parent2): 
-        #TODO Split the process and cross between the two parents
-        # whats the best approach for handovers?
+        parent1, parent2 = (copy.copy(parent1), copy.copy(parent2))
+
         proc_len = len(parent1["branches"].values())
         xo_point = random.randint(1, proc_len - 2)
         parent1_list = list(parent1["branches"].values())
@@ -112,8 +113,9 @@ class Genetic(SolutionSearch):
         parent2["branches"] = dict(zip(list(parent2["branches"].keys()), parent2_list))
         return (parent1, parent2)
     
+    # mutation
     def mutation(self, individual, k_mut = 0.1):
-        #TODO change allocation randomly on one task
+
         for task, i in individual["branches"].items():
             b_range = len(self.process_allocation.allocations[task.attrib['id']].branches)-1
             if random.random() < k_mut and b_range > 0:
@@ -122,14 +124,15 @@ class Genetic(SolutionSearch):
                     if no != i:
                         break
                 individual["branches"][task] = no
-        return individual
+        return copy.copy(individual)
     
-    def get_next_task(self,tasks_iter, solution):
+    # iterate open tasks
+    def get_next_task(self, tasks_iter, solution):
         
         while True:
             task = next(tasks_iter, "end")
             if task == "end":
-                print("Final Task reached. solution found")
+                #print("Final Task reached. solution found")
                 solution.check_validity()
                 return task
             
@@ -141,209 +144,126 @@ class Genetic(SolutionSearch):
                 break
         return task
 
-    def evaluate_solution(self, individual):
-        proc = copy.deepcopy(self.process)
-        i=0
-
-        new_solution = Solution(proc)
-        new_solution.process = copy.deepcopy(self.process)
-                # Find next task for solution
-
-        tasks_iter = iter(self.tasklist)
-        task = self.get_next_task(tasks_iter, new_solution)
-        while True:
-            allocation = self.process_allocation.allocations[task.attrib['id']]
-            branch_no = individual["branches"].get(task)
-            branch = allocation.branches[branch_no]
-            #graphix.TreeGraph().show(etree.tostring(branch.node), filename="branch") 
-
-            proc = branch.apply_to_process(proc, solution=new_solution)
-            new_solution.process = proc
-            task = self.get_next_task(tasks_iter, new_solution)
-            if task == "end":
-                break
-
-        return new_solution
+    def build_solution(self, ind, measure="cost", rtype="solution"):
+        return self.fitness(ind, measure, rtype)   
     
-    def find_solutions(self, measure):
-        #TODO change for process setting
-        data = defaultdict(list)
-        population = self.init_population(self.pop_size) #, self.genome_size) -> genome_size = size of process
-        for gen in range(self.generations):
+    def evolve(self, ev_type, population, fitnesses, gen):
 
-            start = time.time()
-            fitnesses = [self.fitness(individual, measure) for individual in population]
-            #print('Generation ', gen, '\n', list(zip(population, fitnesses)))
-            nextgen_population = []
-            for i in range(int(self.pop_size / 2)):
-                parent1, xo1 = self.selection(population, fitnesses)  # select first parent
-                parent2, xo2 = self.selection(population, fitnesses)  # select second parent
+        localizer={
+            "plain" : self.plain_evolve,
+            "random" : self.random_insert_evolve,
+            "parent" : self.parent_evolve,
+            "randomparent" : self.random_parent_evolve,
+            "elitist" : self.elitist_evolve
 
-                offspring1, offspring2 = self.crossover(parent1, parent2)  # perform crossover between both parents
-                # create new solutions and calculate measure
-                nextgen_population += [self.mutation(offspring1, k_mut=self.k_mut), self.mutation(offspring2, k_mut=self.k_mut)]
-                #nextgen_population += [self.mutation(offspring1), self.mutation(offspring2)]  # mutate offspring
-                a=1
-            population = nextgen_population
-            end = time.time()
-            #print(f"Time for genereation: {end-start}")
-            data["fitnesses"].append(fitnesses)
-            data["avg_fit"].append(sum(fitnesses)/len(fitnesses))
-            data["min_fit"].append(min(fitnesses))
-            data["max_fit"].append(max(fitnesses))
-        
-        fin_pop = []
-        for option in population:
-            option["solution"] = self.evaluate_solution(option)
-            fin_pop.append(option)
-        
-            with open("output.txt", "a") as f: 
-            #{{'branches':list(option['branches'].values()), 'costs': list(option['solution'].get_measure(measure))} for option in population}
-                string =str(list(option['branches'].values())) + "costs: " + str(option['solution'].get_measure(measure))
-                f.write(string + "\n")
-
-        return population, data
-    
-    def find_solutions_best_parents(self, measure):
-        #TODO change for process setting
-        data = defaultdict(list)
-        population = self.init_population(self.pop_size) #, self.genome_size) -> genome_size = size of process
-        for gen in range(self.generations):
-
-            start = time.time()
-            fitnesses = [self.fitness(individual, measure) for individual in population]
-            #print('Generation ', gen, '\n', list(zip(population, fitnesses)))
-            nextgen_population = []
-            for i in range(int(self.pop_size / 2)):
-                parent1, xo1 = self.selection(population, fitnesses)  # select first parent
-                parent2, xo2 = self.selection(population, fitnesses)  # select second parent
-                if xo1 or xo2:
-                    nextgen_population +=  [parent1, parent2]
-
-                else:
-                    offspring1, offspring2 = self.crossover(parent1, parent2)  # perform crossover between both parents
-                    # create new solutions and calculate measure
-                    nextgen_population += [self.mutation(offspring1, k_mut=self.k_mut), self.mutation(offspring2, k_mut=self.k_mut)]
-                #nextgen_population += [self.mutation(offspring1), self.mutation(offspring2)]  # mutate offspring
-                a=1
-            population = nextgen_population
-            data["fitnesses"].append(fitnesses)
-            data["avg_fit"].append(sum(fitnesses)/len(fitnesses))
-            data["min_fit"].append(min(fitnesses))
-            data["max_fit"].append(max(fitnesses))
-            
-
-            end = time.time()
-            #print(f"Time for genereation: {end-start}")
-        
-        fin_pop = []
-        for option in population:
-            option["solution"] = self.evaluate_solution(option)
-            fin_pop.append(option)
-        
-            with open("output.txt", "a") as f: 
-            #{{'branches':list(option['branches'].values()), 'costs': list(option['solution'].get_measure(measure))} for option in population}
-                string =str(list(option['branches'].values())) + "costs: " + str(option['solution'].get_measure(measure))
-                f.write(string + "\n")
-
-        return population, data
-    
-    def find_solutions_random_insert_and_parent(self, measure):
-        #TODO change for process setting
-        data = defaultdict(list)
-        population = self.init_population(self.pop_size) #, self.genome_size) -> genome_size = size of process
-        for gen in range(self.generations):
-
-            start = time.time()
-            fitnesses = [self.fitness(individual, measure) for individual in population]
-            #print('Generation ', gen, '\n', list(zip(population, fitnesses)))
-            nextgen_population = []
-            for i in range(int(self.pop_size / 2)-2):
-                parent1, xo1 = self.selection(population, fitnesses)  # select first parent
-                parent2, xo2 = self.selection(population, fitnesses)  # select second parent
-                if xo1 or xo2:
-                    nextgen_population +=  [parent1, parent2]
-
-                else:
-                    offspring1, offspring2 = self.crossover(parent1, parent2)  # perform crossover between both parents
-                    # create new solutions and calculate measure
-                    nextgen_population += [self.mutation(offspring1, k_mut=self.k_mut), self.mutation(offspring2, k_mut=self.k_mut)]
-                #nextgen_population += [self.mutation(offspring1), self.mutation(offspring2)]  # mutate offspring
-                a=1
-            nextgen_population += [{"branches" : self.build_individual(), "branches": self.build_individual()}]
-            population = nextgen_population
-            end = time.time()
-            
-            data["fitnesses"].append(fitnesses)
-            data["avg_fit"].append(sum(fitnesses)/len(fitnesses))
-            data["min_fit"].append(min(fitnesses))
-            data["max_fit"].append(max(fitnesses))
-            #print(f"Time for genereation: {end-start}")
-
-        
-        fin_pop = []
-        for option in population:
-            option["solution"] = self.evaluate_solution(option)
-            fin_pop.append(option)
-        
-            with open("output.txt", "a") as f: 
-            #{{'branches':list(option['branches'].values()), 'costs': list(option['solution'].get_measure(measure))} for option in population}
-                string =str(list(option['branches'].values())) + "costs: " + str(option['solution'].get_measure(measure))
-                f.write(string + "\n")
-
-        return population, data
-    
-    def find_solutions_random_insert(self, measure):
-        #TODO change for process setting
-        data = defaultdict(list)
-        population = self.init_population(self.pop_size) #, self.genome_size) -> genome_size = size of process
-        for gen in range(self.generations):
-
-            start = time.time()
-            fitnesses = [self.fitness(individual, measure) for individual in population]
-            #print('Generation ', gen, '\n', list(zip(population, fitnesses)))
-            nextgen_population = []
-            for i in range(int(self.pop_size / 2)-2):
-                parent1, xo1 = self.selection(population, fitnesses)  # select first parent
-                parent2, xo2 = self.selection(population, fitnesses)  # select second parent
-
-                offspring1, offspring2 = self.crossover(parent1, parent2)  # perform crossover between both parents
-                # create new solutions and calculate measure
-                nextgen_population += [self.mutation(offspring1, k_mut=self.k_mut), self.mutation(offspring2, k_mut=self.k_mut)]
-                #nextgen_population += [self.mutation(offspring1), self.mutation(offspring2)]  # mutate offspring
-                a=1
-            nextgen_population += [{"branches" : self.build_individual(), "branches": self.build_individual()}]
-            population = nextgen_population
-            end = time.time()
-            
-            data["fitnesses"].append(fitnesses)
-            data["avg_fit"].append(sum(fitnesses)/len(fitnesses))
-            data["min_fit"].append(min(fitnesses))
-            data["max_fit"].append(max(fitnesses))
-            #print(f"Time for genereation: {end-start}")
-
-        
-        fin_pop = []
-        for option in population:
-            option["solution"] = self.evaluate_solution(option)
-            fin_pop.append(option)
-        
-            with open("output.txt", "a") as f: 
-            #{{'branches':list(option['branches'].values()), 'costs': list(option['solution'].get_measure(measure))} for option in population}
-                string =str(list(option['branches'].values())) + "costs: " + str(option['solution'].get_measure(measure))
-                f.write(string + "\n")
-
-        return population, data
-
-    def solver_factory(self, solve_type:str="plain", measure="cost"):
-        localizer =  {
-        "plain": self.find_solutions(measure),
-        "random": self.find_solutions_random_insert(measure),
-        "randomparent": self.find_solutions_random_insert_and_parent(measure),
-        "parent": self.find_solutions_best_parents(measure)
         }
-        return localizer[solve_type]
+        return localizer[ev_type](population, fitnesses, gen)
+    
+    def plain_evolve(self, population, fitnesses, gen):
 
+        nextgen_population = []
+        for i in range(int(self.pop_size / 2)):
+            parent1, xo1 = self.selection(population, fitnesses, gen)  # select first parent
+            parent2, xo2 = self.selection(population, fitnesses, gen)  # select second parent
+
+            offspring1, offspring2 = self.crossover(parent1, parent2)  # perform crossover between both parents
+            nextgen_population += [self.mutation(offspring1, k_mut=self.k_mut), self.mutation(offspring2, k_mut=self.k_mut)] # mutate offspring
+       
+        return nextgen_population    
+
+    def random_insert_evolve(self, population, fitnesses, gen):
+            
+        nextgen_population = []
+
+        for i in range(int(self.pop_size / 2)-2): # keep to spaces open for random individuals
+            parent1, xo1 = self.selection(population, fitnesses, gen)  # select first parent
+            parent2, xo2 = self.selection(population, fitnesses, gen)  # select second parent
+
+            offspring1, offspring2 = self.crossover(parent1, parent2)  # perform crossover between both parents
+            nextgen_population += [self.mutation(offspring1, k_mut=self.k_mut), self.mutation(offspring2, k_mut=self.k_mut)]    # mutate offspring
+
+        nextgen_population += [{"branches" : self.build_individual(), "branches": self.build_individual()}]     # insert 2 new random individuals
+        return nextgen_population
+    
+    def parent_evolve(self, population, fitnesses, gen):
+        
+        nextgen_population = []
+        for i in range(int(self.pop_size / 2)):
+            parent1, xo1 = self.selection(population, fitnesses, gen)  # select first parent
+            parent2, xo2 = self.selection(population, fitnesses, gen)  # select second parent
+            if xo1 or xo2:
+                nextgen_population +=  [parent1, parent2]
+
+            else:
+                offspring1, offspring2 = self.crossover(parent1, parent2)  # perform crossover between both parents
+                nextgen_population += [self.mutation(offspring1, k_mut=self.k_mut), self.mutation(offspring2, k_mut=self.k_mut)] # mutate offspring
+
+        return nextgen_population
+    
+    
+    def elitist_evolve(self, population, fitnesses, gen):
+        
+        # top_two_fitnesses: 
+        top_indices = np.argsort(fitnesses)[:2]
+        nextgen_population = [copy.copy(population[i]) for i in top_indices]
+
+        for i in range(int(self.pop_size / 2) - 2):
+            parent1, xo1 = self.selection(population, fitnesses, gen)  # select first parent
+            parent2, xo2 = self.selection(population, fitnesses, gen)  # select second parent
+
+            offspring1, offspring2 = self.crossover(parent1, parent2)  # perform crossover between both parents
+            nextgen_population += [self.mutation(offspring1, k_mut=self.k_mut), self.mutation(offspring2, k_mut=self.k_mut)] # mutate offspring
+
+        return nextgen_population
+
+    def random_parent_evolve(self, population, fitnesses, gen):
+            
+            nextgen_population = []
+            for i in range(int(self.pop_size / 2)-2):
+                parent1, xo1 = self.selection(population, fitnesses, gen)  # select first parent
+                parent2, xo2 = self.selection(population, fitnesses, gen)  # select second parent
+                if xo1 or xo2:
+                    nextgen_population +=  [parent1, parent2]
+
+                else:
+                    offspring1, offspring2 = self.crossover(parent1, parent2)  # perform crossover between both parents
+                    nextgen_population += [self.mutation(offspring1, k_mut=self.k_mut), self.mutation(offspring2, k_mut=self.k_mut)] # mutate offspring
+                
+            nextgen_population += [{"branches" : self.build_individual(), "branches": self.build_individual()}]
+            return nextgen_population
+         
+    
+    def find_solutions(self, ev_type, measure):
+
+        data = defaultdict(list)
+        data["solver"].append(ev_type)
+        population = self.init_population(self.pop_size) #, self.genome_size) -> genome_size = size of process
+        
+        start = time.time()     # Start of evolution
+        for gen in range(self.generations):
+
+            fitnesses = [self.fitness(individual, measure) for individual in population]
+            population = self.evolve(ev_type, population, fitnesses, gen) # Next Evolution Step
+
+            # write data per generation
+            data["fitnesses"].append(fitnesses)
+            data["avg_fit"].append(sum(fitnesses)/len(fitnesses))
+            data["min_fit"].append(min(fitnesses))
+            data["max_fit"].append(max(fitnesses))
+
+        end = time.time()
+
+        # write data for whole search
+        data["time"].append(end-start)
+        data["best"].append(self.best_tournament[-1])
+
+        # add solutions to population
+        fin_pop = []
+        for ind in population:
+            ind["solution"] = self.build_solution(ind, measure=measure)
+            fin_pop.append(ind)
+
+        return population, data
 
 class Heuristic():
     pass

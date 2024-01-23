@@ -160,14 +160,17 @@ class TestGenetic(unittest.TestCase):
         ProcessAllocation.allocate_process()
 
         findings = []
-        solv_types = ["plain", "random", "randomparent", "parent"]
-        for i,type in enumerate(solv_types):
+        solv_types = ["plain", "random", "randomparent", "parent", "elitist"]
+        #solv_types = ["elitist"]
+        for i, stype in enumerate(solv_types):
+            
             findings.append(defaultdict(list))
             start = time.time()
-            genetic_solutions = Genetic(ProcessAllocation, pop_size=25, generations=25, k_mut=0.50)
-            population, data = genetic_solutions.solver_factory(type, "cost")
+            genetic_solutions = Genetic(ProcessAllocation, pop_size=25, generations=25, k_mut=0.2)
+            population, data = genetic_solutions.find_solutions(stype, "cost")
             end = time.time()
             gen_time = end - start
+            findings[i]["solver"].append(stype)
             findings[i]["time"].append(gen_time)
             findings[i]["best"].append(genetic_solutions.best_tournament[-1])
             findings[i]["fitnesses"] = data["fitnesses"]
@@ -180,13 +183,11 @@ class TestGenetic(unittest.TestCase):
 
 
             
-        
+            print(f"{stype} Solutions:")
             for solution in population:
                 print("Branches: ", solution["branches"].values())
                 print("Solution Costs: ", solution["solution"].get_measure("cost"))
             print("Gen_time: ", gen_time)
-            print(genetic_solutions.best_tournament)
 
-        #print(population)
         with open("tests/solutions/gen_solution.xml", "wb") as f:
             f.write(etree.tostring(population[0]["solution"].process))

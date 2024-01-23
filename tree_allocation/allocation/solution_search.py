@@ -1,6 +1,7 @@
 # Import modules
 from tree_allocation.allocation.cpee_allocation import *
 from tree_allocation.tree import R_RPST
+from tree_allocation.allocation.utils import get_next_task
 
 # Import external packages
 from lxml import etree
@@ -46,14 +47,14 @@ class Genetic(SolutionSearch):
         used_branches = {task:0 for task in self.tasklist}
 
         tasks_iter = iter(self.tasklist)
-        task = self.get_next_task(tasks_iter, solution)
+        task = get_next_task(tasks_iter, solution)
         while True:
             allocation = self.process_allocation.allocations[task.attrib['id']]
             branch_no = random.randint(0, len(allocation.branches)-1)
             used_branches[task] = branch_no
             branch = allocation.branches[branch_no]
             solution.process = branch.apply_to_process(solution.process, solution=solution)
-            task = self.get_next_task(tasks_iter, solution)
+            task = get_next_task(tasks_iter, solution)
             if task == "end":
                 break
         return used_branches
@@ -63,7 +64,7 @@ class Genetic(SolutionSearch):
 
         new_solution = Solution(copy.deepcopy(self.process)) # create solution
         tasks_iter = iter(self.tasklist) # iterator
-        task = self.get_next_task(tasks_iter, new_solution) # gets next tasks and checks for deletes
+        task = get_next_task(tasks_iter, new_solution) # gets next tasks and checks for deletes
 
         while True:
             allocation = self.process_allocation.allocations[task.attrib['id']] # get allocatin
@@ -73,7 +74,7 @@ class Genetic(SolutionSearch):
 
             new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
             
-            task = self.get_next_task(tasks_iter, new_solution)
+            task = get_next_task(tasks_iter, new_solution)
             if task == "end":
                 break
         value = new_solution.get_measure(measure)   # calc. fitness of solution
@@ -125,24 +126,6 @@ class Genetic(SolutionSearch):
                         break
                 individual["branches"][task] = no
         return copy.copy(individual)
-    
-    # iterate open tasks
-    def get_next_task(self, tasks_iter, solution):
-        
-        while True:
-            task = next(tasks_iter, "end")
-            if task == "end":
-                #print("Final Task reached. solution found")
-                solution.check_validity()
-                return task
-            
-            # check that next task was not deleted:
-            elif not solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns):
-                pass
-            
-            else:
-                break
-        return task
 
     def build_solution(self, ind, measure="cost", rtype="solution"):
         return self.fitness(ind, measure, rtype)   

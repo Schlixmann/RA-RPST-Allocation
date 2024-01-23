@@ -19,13 +19,13 @@
                         <resources allocated_to="not_allocated">
                             <resource>level2</resource>
                         </resources>
-                    <children><resource id="r_4" name="level2">
+                    <children><resource id="r_2" name="level2">
         <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
             <measures>
                 <cost>15</cost>
             </measures>
         <children/></resprofile>
-        </resource>
+    </resource>
     </children></manipulate>
                 </children></resprofile>
         </resource>

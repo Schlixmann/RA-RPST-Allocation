@@ -17,7 +17,7 @@ class TestCpeeAllocation(unittest.TestCase):
                 resource_et = etree.fromstring(f.read())
         with open("tests/test_processes/offer_process.xml") as f:
                 task_xml = f.read()
-        show_graph = True
+        show_graph = False
             
         ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
         trees = ProcessAllocation.allocate_process()
@@ -31,7 +31,7 @@ class TestCpeeAllocation(unittest.TestCase):
 
         start = time.time()
         brute_solutions = Brute(ProcessAllocation)
-        brute_solutions.find_solutions_with_heuristic(measure="cost", top_n=2)
+        brute_solutions.find_solutions_with_heuristic(measure="cost", top_n=1)
         end = time.time()
 
         print("Number of Solutions: {}".format(len(brute_solutions.solutions)))

@@ -11,6 +11,7 @@ class Solution():
         return operator([float(value.text) for value in values])
 
     def check_validity(self):
+        #TODO Expand to also check if same resource is allocated in a parallel branch
         tasks = self.process.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)and not(ancestor::cpee1:children)]", namespaces=self.ns)
         for task in tasks:
             a = task.xpath("cpee1:allocation/*", namespaces=self.ns)

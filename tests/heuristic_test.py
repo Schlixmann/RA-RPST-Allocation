@@ -31,7 +31,7 @@ class TestCpeeAllocation(unittest.TestCase):
 
         start = time.time()
         brute_solutions = Brute(ProcessAllocation)
-        brute_solutions.find_solutions_with_heuristic(measure="cost", top_n=1)
+        brute_solutions.find_solutions_with_heuristic( measure="cost", top_n=1)
         end = time.time()
 
         print("Number of Solutions: {}".format(len(brute_solutions.solutions)))

@@ -292,7 +292,6 @@ class Brute(SolutionSearch):
             else: 
                 solution_index=len(self.solutions)-1
 
-        #TODO if less branches should be used: lower the amount of allocation.branches here
         for i, branch in enumerate(allocation.branches):
             #TODO Delete Solution if error in Change Operation
             if i > 0:

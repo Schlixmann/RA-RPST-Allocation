@@ -55,7 +55,9 @@ class Insert(ChangeOperation):
         return process
     
 class Delete(ChangeOperation):
-    # TODO Delete is in v01 handled like an insert
+    # TODO Cascade delete of allocations
+    # TODO if DELETE is only task in a parallel/ choose branch, full parallel must be deleted
+
     def apply(self, process:etree.Element, core_task:etree.Element, task:etree.Element):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         proc_task= self.get_proc_task(process, core_task)
@@ -115,9 +117,6 @@ class Delete(ChangeOperation):
                 with open("z_out.xml", "wb") as f:
                     f.write(etree.tostring(process))
                 process.remove(to_del)
-            
-        with open("xml2_out.xml", "wb") as f:
-            f.write(etree.tostring(process))
             
         return process
     

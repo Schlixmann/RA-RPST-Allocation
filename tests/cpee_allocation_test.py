@@ -456,6 +456,50 @@ class TestCpeeAllocation(unittest.TestCase):
                     key = next(iter(solution))            
                     test_solution = Solution(etree.fromstring(f.read()))
                     self.assertEqual(key.get_measure(measure), test_solution.get_measure(measure))
+
+    def test_long_process(self):
+            with open("resource_config/offer_resources.xml") as f: 
+                    resource_et = etree.fromstring(f.read())
+            with open("tests/test_processes/offer_process.xml") as f:
+                    task_xml = f.read()
+            show_graph = False
+                
+            ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
+            trees = ProcessAllocation.allocate_process()
+
+            allocation = list(ProcessAllocation.allocations.values())[0]
+            allocation.branches
+            for i, tree in enumerate(list(trees.values())):   
+                
+                if show_graph:
+                    graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), filename=f"out_{i}") 
+
+            start = time.time()
+            brute_solutions = Brute(ProcessAllocation)
+            brute_solutions.find_solutions()
+            end = time.time()
+
+            print("Number of Solutions: {}".format(len(brute_solutions.solutions)))
+            print("Solutions found in: {} s".format(end-start))
+
+            measure = "cost"
+            ProcessAllocation.solutions = brute_solutions.solutions
+            best_solutions = brute_solutions.get_best_solutions(measure, include_invalid=False, top_n=5)
+            print(best_solutions)
+
+            #for i, solution in enumerate(best_solutions):
+            #    with open(f"tests/benchmarks/best_brute_{i}.xml", "wb") as f:
+            #        key = next(iter(solution))
+            #        f.write(etree.tostring(key.process))             
+            
+            for i, solution in enumerate(best_solutions):
+                with open(f"tests/solutions/test_long_proc_brute_{i}.xml", "wb") as f:
+                    f.write(etree.tostring(list(solution.keys())[0].process))
+
+                with open(f"tests/benchmarks/test_short_proc_{i}.xml", "rb") as f:
+                    key = next(iter(solution))            
+                    test_solution = Solution(etree.fromstring(f.read()))
+                    self.assertEqual(key.get_measure(measure), test_solution.get_measure(measure))
                 
 
     def test_all_options_brute(self):

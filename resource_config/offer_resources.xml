@@ -59,7 +59,7 @@
         </resprofile>
         <resprofile id="rp_5" name="send_offer" role="level1" task="send_offer">
             <measures>
-                <cost>30</cost>
+                <cost>40</cost>
             </measures>
         </resprofile>
     </resource>
@@ -91,14 +91,14 @@
                 </description>
             </changepattern>
         </resprofile>
-        <resprofile id="rp_9" name="design_offer" role="level2" task="design_offer">
+        <resprofile id="rp_89" name="design_offer" role="level2" task="design_offer">
             <measures>
                 <cost>20</cost>
             </measures>
         </resprofile>
         <resprofile id="rp_10" name="send_offer" role="level2" task="send_offer">
             <measures>
-                <cost>25</cost>
+                <cost>40</cost>
             </measures>
         </resprofile>
         <resprofile id="rp_11" name="initiate_next_process" role="level2" task="initiate_next_process">
@@ -162,14 +162,14 @@
                 </description>
             </changepattern>
         </resprofile>
-        <resprofile id="rp_9" name="design_offer" role="level2" task="design_offer">
+        <resprofile id="rp_99" name="design_offer" role="level2" task="design_offer">
             <measures>
                 <cost>20</cost>
             </measures>
         </resprofile>
         <resprofile id="rp_10" name="send_offer" role="level2" task="send_offer">
             <measures>
-                <cost>25</cost>
+                <cost>50</cost>
             </measures>
         </resprofile>
         <resprofile id="rp_11" name="initiate_next_process" role="level2" task="initiate_next_process">
@@ -233,7 +233,7 @@
         </resprofile>
         <resprofile id="rp_17" name="send_offer" role="level3" task="send_offer">
             <measures>
-                <cost>30</cost>
+                <cost>50</cost>
             </measures>
         </resprofile>
         <resprofile id="rp_18" name="initiate_next_process" role="level3" task="initiate_next_process">
@@ -253,7 +253,7 @@
         </resprofile>
         <resprofile id="rp_9" name="design_offer" role="level3" task="design_offer">
             <measures>
-                <cost>20</cost>
+                <cost>50</cost>
             </measures>
             <changepattern type="delete">
                 <parameters>

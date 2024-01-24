@@ -1,0 +1,150 @@
+<description xmlns="http://cpee.org/ns/description/1.0">
+    <manipulate id="r1" label="Setup Drill" type="insert" direction="before">
+                        <resources allocated_to="Technician">
+                            <resource>Technician</resource>
+                        </resources>
+                    <children><resource id="2" name="Technician" activeRole="">
+        <resprofile id="21" name="Setup Drill" role="Technician" task="Setup Drill">            <!--{{{-->
+            <measures>
+                <cost>10</cost>
+                <time>10</time>
+            </measures>
+        <children/></resprofile>
+        </resource>
+    </children><allocation><resource id="2" name="Technician" activeRole="">
+        <resprofile id="21" name="Setup Drill" role="Technician" task="Setup Drill">            <!--{{{-->
+            <measures>
+                <cost>10</cost>
+                <time>10</time>
+            </measures>
+        <children/></resprofile>
+        </resource>
+    </allocation></manipulate>
+                <call id="a6" endpoint="">
+        <parameters>
+            <label>Drill Hole into product</label>
+            <method>:post</method>
+            <arguments/>
+        </parameters>
+        <annotations>
+            <_timing>
+                <_timing_weight/>
+                <_timing_avg/>
+                <explanations/>
+            </_timing>
+            <_shifting>
+                <_shifting_type>Duration</_shifting_type>
+            </_shifting>
+            <_context_data_analysis>
+                <probes/>
+                <ips/>
+            </_context_data_analysis>
+            <report>
+                <url/>
+            </report>
+            <_notes>
+                <_notes_general/>
+            </_notes>
+        </annotations>
+        <documentation>
+            <input/>
+            <output/>
+            <implementation>
+                <description/>
+            </implementation>
+        </documentation>
+        <resources allocated_to="Good Drill">
+            <resource>Drill</resource>
+        </resources>
+        <allocation>
+        <resource id="1" name="Good Drill" activeRole="">
+        <resprofile id="11" name="autodrill" role="Drill" task="Drill Hole into product">            <!--{{{-->
+            <measures>
+                <cost>50</cost>
+                <time>10</time>
+            </measures>
+            <changepattern type="insert">
+                <parameters>
+                    <direction>before</direction>
+                </parameters>
+                <description>
+                    <manipulate id="r1" label="Setup Drill" type="insert" direction="before">
+                        <resources allocated_to="not_allocated">
+                            <resource>Technician</resource>
+                        </resources>
+                    </manipulate>
+                </description>
+            </changepattern>
+            <changepattern type="delete">
+                <parameters>
+                    <direction>any</direction>
+                </parameters>
+                <description>
+                    </description>
+            </changepattern>
+        <children><manipulate id="r1" label="Setup Drill" type="insert" direction="before">
+                        <resources allocated_to="not_allocated">
+                            <resource>Technician</resource>
+                        </resources>
+                    <children><resource id="2" name="Technician" activeRole="">
+        <resprofile id="21" name="Setup Drill" role="Technician" task="Setup Drill">            <!--{{{-->
+            <measures>
+                <cost>10</cost>
+                <time>10</time>
+            </measures>
+        <children/></resprofile>
+        </resource>
+    </children></manipulate>
+                <manipulate id="r1" label="Check quality of product" type="delete" direction="any">
+                        <resources allocated_to="not_allocated">
+                        </resources>
+                    </manipulate>
+                    <manipulate id="r1" label="Check anything" type="delete" direction="any">
+                        <resources allocated_to="not_allocated">
+                        </resources>
+                    </manipulate>
+                </children></resprofile>
+        </resource>
+    </allocation>
+    </call>
+
+    <call id="a8" endpoint="">
+        <parameters>
+            <label>Packaging</label>
+            <method>:post</method>
+            <arguments/>
+        </parameters>
+        <annotations>
+            <_timing>
+                <_timing_weight/>
+                <_timing_avg/>
+                <explanations/>
+            </_timing>
+            <_shifting>
+                <_shifting_type>Duration</_shifting_type>
+            </_shifting>
+            <_context_data_analysis>
+                <probes/>
+                <ips/>
+            </_context_data_analysis>
+            <report>
+                <url/>
+            </report>
+            <_notes>
+                <_notes_general/>
+            </_notes>
+        </annotations>
+        <documentation>
+            <input/>
+            <output/>
+            <implementation>
+                <description/>
+            </implementation>
+        </documentation>
+        <resources allocated_to="not_allocated">
+            <resource>Package Manager</resource>
+        </resources>
+        <allocation>
+        </allocation>
+    </call>
+</description>

@@ -1,0 +1,163 @@
+<description xmlns="http://cpee.org/ns/description/1.0">
+    <call id="a6" endpoint="">
+        <parameters>
+            <label>Drill Hole into product</label>
+            <method>:post</method>
+            <arguments/>
+        </parameters>
+        <annotations>
+            <_timing>
+                <_timing_weight/>
+                <_timing_avg/>
+                <explanations/>
+            </_timing>
+            <_shifting>
+                <_shifting_type>Duration</_shifting_type>
+            </_shifting>
+            <_context_data_analysis>
+                <probes/>
+                <ips/>
+            </_context_data_analysis>
+            <report>
+                <url/>
+            </report>
+            <_notes>
+                <_notes_general/>
+            </_notes>
+        </annotations>
+        <documentation>
+            <input/>
+            <output/>
+            <implementation>
+                <description/>
+            </implementation>
+        </documentation>
+        <resources allocated_to="Slow Drill">
+            <resource>Drill</resource>
+        </resources>
+        <allocation>
+        <resource id="2" name="Slow Drill" activeRole="">
+        <resprofile id="11" name="autodrill" role="Drill" task="drill hole into product">            <!--{{{-->
+            <measures>
+                <cost>15</cost>
+                <time>55</time>
+            </measures>
+            <changepattern type="insert">
+                <parameters>
+                    <direction>after</direction>
+                </parameters>
+                <description>
+                    <manipulate id="r1" label="check drill" type="insert" direction="after">
+                        <resources allocated_to="not_allocated">
+                            <resource>Technician</resource>
+                        </resources>
+                    </manipulate>
+                </description>
+            </changepattern>
+        <children><manipulate id="r1" label="check drill" type="insert" direction="after">
+                        <resources allocated_to="not_allocated">
+                            <resource>Technician</resource>
+                        </resources>
+                    <children><resource id="2" name="Technician" activeRole="">
+        <resprofile id="23" name="Check Drill" role="Technician" task="Check Drill">            <!--{{{-->
+            <measures>
+                <cost>35</cost>
+                <time>5</time>
+            </measures>
+        <children/></resprofile>
+        </resource>
+    </children></manipulate>
+                </children></resprofile>
+    </resource>
+
+    </allocation>
+    </call><manipulate id="r1" label="check drill" type="insert" direction="after">
+                        <resources allocated_to="Technician">
+                            <resource>Technician</resource>
+                        </resources>
+                    <children><resource id="2" name="Technician" activeRole="">
+        <resprofile id="23" name="Check Drill" role="Technician" task="Check Drill">            <!--{{{-->
+            <measures>
+                <cost>35</cost>
+                <time>5</time>
+            </measures>
+        <children/></resprofile>
+        </resource>
+    </children><allocation><resource id="2" name="Technician" activeRole="">
+        <resprofile id="23" name="Check Drill" role="Technician" task="Check Drill">            <!--{{{-->
+            <measures>
+                <cost>35</cost>
+                <time>5</time>
+            </measures>
+        <children/></resprofile>
+        </resource>
+    </allocation></manipulate>
+                
+
+    <manipulate id="r5" label="Level 3D measure machine" type="insert" direction="before">
+                        <resources allocated_to="Technician">
+                            <resource>Technician</resource>
+                        </resources>
+                    <children><resource id="2" name="Technician" activeRole="">
+        <resprofile id="24" name="Leveling" role="Technician" task="Level 3D measure machine">            <!--{{{-->
+            <measures>
+                <cost>30</cost>
+                <time>5</time>
+            </measures>
+        <children/></resprofile>
+    </resource>
+    </children><allocation><resource id="2" name="Technician" activeRole="">
+        <resprofile id="24" name="Leveling" role="Technician" task="Level 3D measure machine">            <!--{{{-->
+            <measures>
+                <cost>30</cost>
+                <time>5</time>
+            </measures>
+        <children/></resprofile>
+    </resource>
+    </allocation></manipulate>
+                <manipulate id="r5" label="Full 3D check" type="replace">
+                        <resources allocated_to="3D Measure Machine">
+                            <resource>3D Measure machine</resource>
+                        </resources>
+                    <children><resource id="5" name="3D Measure Machine" activeRole="">
+        <resprofile id="53" name="3D Measuring" role="3D Measure machine" task="Full 3D check">            <!--{{{-->
+            <measures>
+                <cost>50</cost>
+                <time>10</time>
+            </measures>
+            <changepattern type="delete">
+                <parameters>
+                    <direction>any</direction>
+                </parameters>
+                <description>
+                    </description>
+            </changepattern>
+
+        <children><manipulate id="a8" label="Packaging" type="delete" direction="any">
+                        <resources allocated_to="not_allocated">
+                        </resources>
+                    </manipulate>
+                </children></resprofile>
+    </resource>
+    </children><allocation><resource id="5" name="3D Measure Machine" activeRole="">
+        <resprofile id="53" name="3D Measuring" role="3D Measure machine" task="Full 3D check">            <!--{{{-->
+            <measures>
+                <cost>50</cost>
+                <time>10</time>
+            </measures>
+            <changepattern type="delete">
+                <parameters>
+                    <direction>any</direction>
+                </parameters>
+                <description>
+                    </description>
+            </changepattern>
+
+        <children><manipulate id="a8" label="Packaging" type="delete" direction="any">
+                        <resources allocated_to="not_allocated">
+                        </resources>
+                    </manipulate>
+                </children></resprofile>
+    </resource>
+    </allocation></manipulate>
+                </description>

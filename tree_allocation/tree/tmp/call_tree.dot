@@ -1,32 +1,5 @@
 digraph CallTree {
-	"fc9cdb4a-b775-11ee-a71b-04cf4b795879" [label = "a7: Check quality of product 
+	"6666028c-ba90-11ee-9c29-04cf4b795879" [label = "a8: Packaging 
  Type: Core 
  Direction: Core" shape=rectangle]	; 
-	"fc9ce55e-b775-11ee-a71b-04cf4b795879" [label = "5: 3D Measure Machine"]	; 
-	"fc9cdb4a-b775-11ee-a71b-04cf4b795879" -> "fc9ce55e-b775-11ee-a71b-04cf4b795879"	 ;
-	"fc9ce81a-b775-11ee-a71b-04cf4b795879" [label = "51: Technician 
- 3D Measurement for check" shape=polygon sides=6]	; 
-	"fc9ce55e-b775-11ee-a71b-04cf4b795879" -> "fc9ce81a-b775-11ee-a71b-04cf4b795879"	 ;
-	"fc9ce9a0-b775-11ee-a71b-04cf4b795879" [label = "r5: Level 3D measure machine 
- Type: insert 
- Direction: before" shape=rectangle]	; 
-	"fc9ce81a-b775-11ee-a71b-04cf4b795879" -> "fc9ce9a0-b775-11ee-a71b-04cf4b795879"	 ;
-	"fc9ceca2-b775-11ee-a71b-04cf4b795879" [label = "2: Technician"]	; 
-	"fc9ce9a0-b775-11ee-a71b-04cf4b795879" -> "fc9ceca2-b775-11ee-a71b-04cf4b795879"	 ;
-	"fc9cf256-b775-11ee-a71b-04cf4b795879" [label = "24: Technician 
- Leveling" shape=polygon sides=6]	; 
-	"fc9ceca2-b775-11ee-a71b-04cf4b795879" -> "fc9cf256-b775-11ee-a71b-04cf4b795879"	 ;
-	"fc9cf5da-b775-11ee-a71b-04cf4b795879" [label = "r5: Full 3D check 
- Type: replace 
- Direction: Core" shape=rectangle]	; 
-	"fc9ce81a-b775-11ee-a71b-04cf4b795879" -> "fc9cf5da-b775-11ee-a71b-04cf4b795879"	 ;
-	"fc9cfbe8-b775-11ee-a71b-04cf4b795879" [label = "5: 3D Measure Machine"]	; 
-	"fc9cf5da-b775-11ee-a71b-04cf4b795879" -> "fc9cfbe8-b775-11ee-a71b-04cf4b795879"	 ;
-	"fc9d0052-b775-11ee-a71b-04cf4b795879" [label = "53: 3D Measure machine 
- 3D Measuring" shape=polygon sides=6]	; 
-	"fc9cfbe8-b775-11ee-a71b-04cf4b795879" -> "fc9d0052-b775-11ee-a71b-04cf4b795879"	 ;
-	"fc9d02be-b775-11ee-a71b-04cf4b795879" [label = "a8: Packaging 
- Type: delete 
- Direction: any" shape=rectangle]	; 
-	"fc9d0052-b775-11ee-a71b-04cf4b795879" -> "fc9d02be-b775-11ee-a71b-04cf4b795879"	 ;
 }

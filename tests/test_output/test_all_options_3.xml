@@ -1,6 +1,6 @@
 <description xmlns="http://cpee.org/ns/description/1.0">
     <manipulate id="r1" label="Setup Drill" type="insert" direction="before">
-                        <resources allocated_to="not_allocated">
+                        <resources allocated_to="new_Technician">
                             <resource>Technician</resource>
                         </resources>
                     <children><resource id="4" name="new_Technician" activeRole="">
@@ -11,7 +11,15 @@
             </measures>
         <children/></resprofile>
     </resource>
-</children></manipulate>
+</children><allocation><resource id="4" name="new_Technician" activeRole="">
+        <resprofile id="21" name="Setup Drill" role="Technician" task="Setup Drill">            <!--{{{-->
+            <measures>
+                <cost>10</cost>
+                <time>10</time>
+            </measures>
+        <children/></resprofile>
+    </resource>
+</allocation></manipulate>
                 <call id="a6" endpoint="">
         <parameters>
             <label>Drill Hole into product</label>

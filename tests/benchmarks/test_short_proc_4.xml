@@ -1,5 +1,5 @@
 <description xmlns="http://cpee.org/ns/description/1.0">
-  <manipulate id="a1" label="start_process">level1level2level3<resources allocated_to="level1"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_1" name="level1">
+  <manipulate id="a1" label="start_process"><resources allocated_to="level1"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_1" name="level1">
         <resprofile id="rp_1" name="start_process" role="level1" task="start_process">
             <measures>
                 <cost>10</cost>
@@ -7,7 +7,7 @@
         <children/></resprofile>
         </resource>
     </allocation></manipulate>
-  <manipulate id="a2" label="data_gathering">level1level2<resources allocated_to="level2"><resource>level1</resource><resource>level2</resource></resources><allocation><resource id="r_2" name="level2">
+  <manipulate id="a2" label="data_gathering"><resources allocated_to="level2"><resource>level1</resource><resource>level2</resource></resources><allocation><resource id="r_4" name="level2">
         <resprofile id="rp_7" name="data_gathering" role="level2" task="data_gathering">
             <measures>
                 <cost>20</cost>
@@ -52,7 +52,7 @@
                 </description>
             </changepattern>
         <children><manipulate id="r2" label="head_confirmation" type="insert" direction="before">
-                        <resources allocated_to="level3">
+                        <resources allocated_to="not_allocated">
                             <resource>level3</resource>
                         </resources>
                     <children><resource id="r_3" name="level3">
@@ -62,14 +62,7 @@
             </measures>
         <children/></resprofile>
         </resource>
-</children><allocation><resource id="r_3" name="level3">
-        <resprofile id="rp_23" name="head_confirmation" role="level3" task="head_confirmation">
-            <measures>
-                <cost>5</cost>
-            </measures>
-        <children/></resprofile>
-        </resource>
-</allocation></manipulate>
+</children></manipulate>
                 </children></resprofile>
         </resource>
     </allocation></manipulate>
@@ -83,7 +76,7 @@
 </allocation></manipulate>
   <parallel wait="-1" cancel="last">
     <parallel_branch pass="" local="">
-      <call id="a7" endpoint=""><parameters><label>design_offer</label><method>:post</method><arguments/></parameters><code><prepare/><finalize output="result"/><update output="result"/><rescue output="result"/></code><annotations><_timing><_timing_weight/><_timing_avg/><explanations/></_timing><_shifting><_shifting_type>Duration</_shifting_type></_shifting><_context_data_analysis><probes/><ips/></_context_data_analysis><report><url/></report><_notes><_notes_general/></_notes></annotations><documentation><input/><output/><implementation><description/></implementation><code><description/></code></documentation><resources allocated_to="level2"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_2" name="level2">
+      <call id="a7" endpoint=""><parameters><label>design_offer</label><method>:post</method><arguments/></parameters><code><prepare/><finalize output="result"/><update output="result"/><rescue output="result"/></code><annotations><_timing><_timing_weight/><_timing_avg/><explanations/></_timing><_shifting><_shifting_type>Duration</_shifting_type></_shifting><_context_data_analysis><probes/><ips/></_context_data_analysis><report><url/></report><_notes><_notes_general/></_notes></annotations><documentation><input/><output/><implementation><description/></implementation><code><description/></code></documentation><resources allocated_to="level2"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_4" name="level2">
         <resprofile id="rp_9" name="design_offer" role="level2" task="design_offer">
             <measures>
                 <cost>20</cost>

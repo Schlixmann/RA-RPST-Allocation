@@ -72,7 +72,7 @@
 
     </allocation>
     </call><manipulate id="r1" label="check drill" type="insert" direction="after">
-                        <resources allocated_to="not_allocated">
+                        <resources allocated_to="Technician">
                             <resource>Technician</resource>
                         </resources>
                     <children><resource id="2" name="Technician" activeRole="">
@@ -83,11 +83,19 @@
             </measures>
         <children/></resprofile>
         </resource>
-    </children></manipulate>
+    </children><allocation><resource id="2" name="Technician" activeRole="">
+        <resprofile id="23" name="Check Drill" role="Technician" task="Check Drill">            <!--{{{-->
+            <measures>
+                <cost>35</cost>
+                <time>5</time>
+            </measures>
+        <children/></resprofile>
+        </resource>
+    </allocation></manipulate>
                 
 
     <manipulate id="r5" label="Level 3D measure machine" type="insert" direction="before">
-                        <resources allocated_to="not_allocated">
+                        <resources allocated_to="Technician">
                             <resource>Technician</resource>
                         </resources>
                     <children><resource id="2" name="Technician" activeRole="">
@@ -98,7 +106,15 @@
             </measures>
         <children/></resprofile>
     </resource>
-    </children></manipulate>
+    </children><allocation><resource id="2" name="Technician" activeRole="">
+        <resprofile id="24" name="Leveling" role="Technician" task="Level 3D measure machine">            <!--{{{-->
+            <measures>
+                <cost>30</cost>
+                <time>5</time>
+            </measures>
+        <children/></resprofile>
+    </resource>
+    </allocation></manipulate>
                 <manipulate id="r5" label="Full 3D check" type="replace">
                         <resources allocated_to="3D Measure Machine">
                             <resource>3D Measure machine</resource>

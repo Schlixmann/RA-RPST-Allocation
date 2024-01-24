@@ -306,6 +306,54 @@ class Brute(SolutionSearch):
             
             solution.process = branch.apply_to_process(solution.process, solution, task)
             self.find_solutions(copy.deepcopy(tasks_iter), solution)
+    
+    def find_solutions_with_heuristic(self, tasks_iter=None, solution=None, measure="cost", top_n=1):
+        #TODO should be callable with different options (Direct, Genetic, Heuristic, SemiHeuristic)
+        """
+        -> Add all Branches as new solutions
+        -> for each branch, call, "new_solution(process, self, step+=1)"
+        -> if i > 1: copy current solution and add new solution
+        End: no further step
+        """
+        ns = {"cpee1" : list(self.process_allocation.process.nsmap.values())[0]}
+        if not self.solutions: 
+            
+            tasklist = self.process_allocation.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)
+            self.solutions.append(Solution(copy.deepcopy(self.process_allocation.process)))
+            return self.find_solutions(iter(tasklist), self.solutions[0])
+        
+        # Find next task for solution
+        task = get_next_task(tasks_iter, solution)
+        if task == "end":
+            return
+        
+        allocation = self.process_allocation.allocations[task.attrib['id']]
+
+        # select top n branches
+        indices = np.argsort([branch.get_measure(measure, operator=sum) for branch in allocation.branches])[:top_n]
+        used_branches = [allocation.branches[i] for i in indices]
+
+        for i, branch in enumerate(used_branches):
+            if i > 0:
+                new_solution = copy.deepcopy(solution)
+                self.solutions.append(new_solution)
+            else: 
+                solution_index=len(self.solutions)-1
+
+        #TODO if less branches should be used: lower the amount of allocation.branches here
+        for i, branch in enumerate(allocation.branches):
+            #TODO Delete Solution if error in Change Operation
+            if i > 0:
+                solution = self.solutions[solution_index + i]
+            #TODO ensure that label is the same too
+            tasklabel = R_RPST.get_label(etree.tostring(task))
+            task = solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)[0]
+
+            if branch.valid == False:
+                solution.invalid_branches = True
+            
+            solution.process = branch.apply_to_process(solution.process, solution, task)
+            self.find_solutions(copy.deepcopy(tasks_iter), solution)
         
     def get_best_solutions(self, measure, operator=min, include_invalid=True, top_n=1):
         #TODO get_best_solutions in parent class

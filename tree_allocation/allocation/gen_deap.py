@@ -3,7 +3,7 @@ import random
 import copy
 from lxml import etree
 
-from tree_allocation.allocation import cpee_allocation
+from tree_allocation.allocation import solution
 
 
 class DeapGen():
@@ -87,7 +87,7 @@ class DeapGen():
 
     def build_individual(self,):
             proc = copy.deepcopy(self.process)
-            solution = cpee_allocation.Solution(proc)
+            solution = solution.Solution(proc)
             used_branches = {task:0 for task in self.tasklist}
             self.tasklist = self.process_allocation.process.xpath(
                  "(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)
@@ -125,7 +125,7 @@ class DeapGen():
     def fitness(self, individual, measure="cost"):
         #TODO fitness = measure of the solution
         proc = copy.deepcopy(self.process)
-        new_solution = cpee_allocation.Solution(proc)
+        new_solution = solution.Solution(proc)
         check = new_solution.get_measure(measure)
         branch_measure = []
 

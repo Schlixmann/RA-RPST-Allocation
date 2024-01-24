@@ -438,19 +438,24 @@ class TestCpeeAllocation(unittest.TestCase):
             print("Number of Solutions: {}".format(len(brute_solutions.solutions)))
             print("Solutions found in: {} s".format(end-start))
 
+            measure = "cost"
             ProcessAllocation.solutions = brute_solutions.solutions
-            best_solutions = brute_solutions.get_best_solutions("cost", include_invalid=False, top_n=5)
+            best_solutions = brute_solutions.get_best_solutions(measure, include_invalid=False, top_n=5)
             print(best_solutions)
 
             #for i, solution in enumerate(best_solutions):
             #    with open(f"tests/benchmarks/best_brute_{i}.xml", "wb") as f:
             #        key = next(iter(solution))
             #        f.write(etree.tostring(key.process))             
-
+            
             for i, solution in enumerate(best_solutions):
+                with open(f"tests/solutions/test_short_proc_{i}.xml", "wb") as f:
+                    f.write(etree.tostring(list(solution.keys())[0].process))
+
                 with open(f"tests/benchmarks/test_short_proc_{i}.xml", "rb") as f:
-                    key = next(iter(solution))                    
-                    #self.assertEqual(etree.tostring(key.process), f.read())
+                    key = next(iter(solution))            
+                    test_solution = Solution(etree.fromstring(f.read()))
+                    self.assertEqual(key.get_measure(measure), test_solution.get_measure(measure))
                 
 
     def test_all_options_brute(self):

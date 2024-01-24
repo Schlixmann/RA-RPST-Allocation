@@ -1,5 +1,6 @@
 # Import modules
 from tree_allocation.allocation.cpee_allocation import *
+from tree_allocation.allocation.solution import Solution
 from tree_allocation.tree import R_RPST
 from tree_allocation.allocation.utils import get_next_task
 
@@ -77,7 +78,12 @@ class Genetic(SolutionSearch):
             task = get_next_task(tasks_iter, new_solution)
             if task == "end":
                 break
-        value = new_solution.get_measure(measure)   # calc. fitness of solution
+        
+        new_solution.check_validity
+        if new_solution.invalid_branches:
+            value = np.nan        
+        else:
+            value = new_solution.get_measure(measure)   # calc. fitness of solution
 
         if rtype=="solution":
             return new_solution
@@ -245,6 +251,8 @@ class Genetic(SolutionSearch):
         for ind in population:
             ind["solution"] = self.build_solution(ind, measure=measure)
             fin_pop.append(ind)
+        
+        #TODO Check if whole population is invalid
 
         return population, data
 
@@ -300,15 +308,21 @@ class Brute(SolutionSearch):
             self.find_solutions(copy.deepcopy(tasks_iter), solution)
         
     def get_best_solutions(self, measure, operator=min, include_invalid=True, top_n=1):
-        solutions_to_evaluate = self.solutions if include_invalid else filter(lambda x: x.invalid_branches == False, self.solutions)
-        solution_measure = {solution: solution.get_measure(measure) for solution in solutions_to_evaluate}
-        
+        #TODO get_best_solutions in parent class
+        solutions_to_evaluate = filter(self.solutions) if include_invalid else filter(lambda x: x.invalid_branches == False, self.solutions)
+        a = list(solutions_to_evaluate)
+        solution_measure = {solution: solution.get_measure(measure) for solution in a}
+
         # Get the top N solutions
         sorted_solutions = sorted(solution_measure.items(), key=lambda x: x[1], reverse=(operator == max))
         sorted_solutions2 = np.argsort(list(solution_measure.values()))[:top_n]
         top_solutions = [solution for solution, _ in sorted_solutions[:top_n]]
-
-        return [{solution: solution.get_measure("cost")} for solution in top_solutions]
+        sorti = list(sorted_solutions2)
+        top_solutions2 = [a[i] for i in sorti]
+        fin = [{solution: solution.get_measure("cost")} for solution in top_solutions]
+        fin2 = [{solution: solution.get_measure("cost")} for solution in top_solutions2]
+        #assert(fin== fin2)
+        return fin2
 
 def solution_search_factory():
     pass

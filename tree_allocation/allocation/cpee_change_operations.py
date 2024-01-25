@@ -5,8 +5,6 @@ import copy
 class ChangeOperation():
     def get_proc_task(self, process, core_task):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
-        with open("z_out.xml", "wb") as f:
-            f.write(etree.tostring(process))
         proc_tasks = process.xpath(f"//*[@id='{core_task.attrib['id']}'][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ns)
         if len(proc_tasks) != 1:
             proc_tasks = list(filter(lambda x: R_RPST.get_label(etree.tostring(core_task))== R_RPST.get_label(etree.tostring(x)), proc_tasks))
@@ -113,11 +111,16 @@ class Delete(ChangeOperation):
                     raise ChangeOperationError("No matching task to delete found in Process Model")
 
                 to_dels = process.xpath(f"//*[@id='{to_del_id}'][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)and not(ancestor::cpee1:children)]", namespaces=ns)
+
+                #TODO Delete Cascade: if to_del has change patterns in allocation, they need to be deleted as well. 
                 to_del = to_dels[0]
-                with open("z_out.xml", "wb") as f:
-                    f.write(etree.tostring(process))
                 process.remove(to_del)
-            
+
+                # Delete Cascade:
+                for to_del in to_del.xpath("cpee1:allocation/resource/resprofile/cpee1:children/*", namespaces=ns):
+                    to_del.attrib["type"], to_del.attrib["direction"] = task.attrib["type"], task.attrib["direction"]
+                    process = Delete().apply(process, core_task, to_del)
+
         return process
     
 class Replace(ChangeOperation):

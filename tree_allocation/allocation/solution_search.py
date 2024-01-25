@@ -79,7 +79,7 @@ class Genetic(SolutionSearch):
             if task == "end":
                 break
         
-        new_solution.check_validity
+        new_solution.check_validity()
         if new_solution.invalid_branches:
             value = np.nan        
         else:
@@ -222,7 +222,7 @@ class Genetic(SolutionSearch):
             return nextgen_population
          
     
-    def find_solutions(self, ev_type, measure):
+    def find_solutions(self, ev_type, measure, early_abandon=True):
 
         data = defaultdict(list)
         data["solver"].append(ev_type)
@@ -239,7 +239,13 @@ class Genetic(SolutionSearch):
             data["avg_fit"].append(sum(fitnesses)/len(fitnesses))
             data["min_fit"].append(min(fitnesses))
             data["max_fit"].append(max(fitnesses))
-
+            
+            abandon_after = 11
+            if early_abandon and gen > abandon_after:
+                arr = np.array(data["min_fit"][-11:])
+                if np.all(np.equal(arr, arr[0])):
+                    print(f"Stopped after {gen} iterations")
+                    break
         end = time.time()
 
         # write data for whole search

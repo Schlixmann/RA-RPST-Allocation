@@ -18,6 +18,7 @@ for i in range(0,5):
     plt.plot(execution_numbers, avg_fit, label="Average Fitness", marker='o')
     plt.plot(execution_numbers, min_fit, label="Minimum Fitness", marker='o')
     plt.plot(execution_numbers, max_fit, label="Maximum Fitness", marker='o')
+    plt.axhline(y=179, color='r', linestyle='--', label='Target')
 
     # Adding labels and title
     plt.xlabel("Execution Number")

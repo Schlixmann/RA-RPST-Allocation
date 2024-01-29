@@ -624,4 +624,16 @@ class TestCpeeAllocation(unittest.TestCase):
         a = brute_solutions.retrieve_pickle("tmp/test_pkl_3.pkl")
 
         print(a[:10])
+
+    def test_build_best(self):
+        with open("tmp/results/best_solution", "rb") as f:
+            best = pickle.load(f)
+            process = best[-1]["solution"].process
+        
+        with open("xml_out.xml", "wb") as f:
+            f.write(process)
+        
+        best1 = best[-1]
+        best1["solution"].process = etree.fromstring(best1["solution"].process)
+        print(best1["solution"].get_measure("cost", flag=True))
             

@@ -28,16 +28,17 @@ class SolutionSearch():
 
 class Genetic(SolutionSearch):
 
-    def __init__(self, process_allocation, pop_size, generations,k_sel=3, k_mut=0.1):
+    def __init__(self, process_allocation, pop_size, generations, k_sel=3, k_mut=0.1, early_abandon=True):
         super(Genetic, self).__init__(process_allocation)
-        self.pop_size = pop_size
+        self.pop_size:int = pop_size
         #TODO Genome = Process that is to be allocated/changed
         #self.genome_size = genome_size
-        self.generations = generations
-        self.k_mut = k_mut
-        self.k_sel = k_sel
+        self.generations:int = generations
+        self.k_mut:float = k_mut
+        self.k_sel:int = k_sel
         self.best_tournament = [1000]
-        self.best_tournament_str = []
+        self.best_tournament_str:str = []
+        self.early_abandon:bool=early_abandon
         
     def init_population(self, pop_size): #, genome_size): initialize the population of bit vectors
         # create random solutions for number of pop_size
@@ -53,9 +54,6 @@ class Genetic(SolutionSearch):
 
         solution = Solution(copy.deepcopy(self.process))
         used_branches = {task:0 for task in self.tasklist}
-
-
-
         tasks_iter = iter(self.tasklist)
         task = get_next_task(tasks_iter, solution)
         while True:
@@ -232,7 +230,7 @@ class Genetic(SolutionSearch):
             return nextgen_population
          
     
-    def find_solutions(self, ev_type, measure, early_abandon=True):
+    def find_solutions(self, ev_type, measure):
 
         data = defaultdict(list)
         data["solver"].append(ev_type)
@@ -251,7 +249,7 @@ class Genetic(SolutionSearch):
             data["max_fit"].append(max(fitnesses))
             
             abandon_after = 11
-            if early_abandon and gen > abandon_after:
+            if self.early_abandon and gen > abandon_after:
                 arr = np.array(data["min_fit"][-11:])
                 if np.all(np.equal(arr, arr[0])):
                     print(f"Stopped after {gen} iterations")
@@ -266,11 +264,13 @@ class Genetic(SolutionSearch):
         fin_pop = []
         for ind in population:
             ind["solution"] = self.build_solution(ind, measure=measure)
+            ind[measure] = ind["solution"].get_measure(measure)
+            ind.pop("branches")
             fin_pop.append(ind)
         
         #TODO Check if whole population is invalid
-
-        return population, data
+        fin_pop = sorted(fin_pop, key=lambda d: d['cost'], reverse=True) 
+        return fin_pop, data
 
 class Heuristic():
     pass
@@ -436,10 +436,6 @@ class Brute(SolutionSearch):
 
         return best_solutions
 
- 
-
-        
-
     def retrieve_pickle(self, file_path):
         data = []
         file = open(file_path, 'rb') 
@@ -463,15 +459,16 @@ class Brute(SolutionSearch):
         solution_measure = {solution: solution.get_measure(measure) for solution in a}
 
         # Get the top N solutions
-        sorted_solutions = sorted(solution_measure.items(), key=lambda x: x[1], reverse=(operator == max))
-        sorted_solutions2 = np.argsort(list(solution_measure.values()))[:top_n]
-        top_solutions = [solution for solution, _ in sorted_solutions[:top_n]]
-        sorti = list(sorted_solutions2)
-        top_solutions2 = [a[i] for i in sorti]
-        fin = [{solution: solution.get_measure("cost")} for solution in top_solutions]
-        fin2 = [{solution: solution.get_measure("cost")} for solution in top_solutions2]
-        #assert(fin== fin2)
-        return fin2
+        #sorted_solutions = sorted(solution_measure.items(), key=lambda x: x[1], reverse=(operator == max))
+        sorted_solutions = np.argsort(list(solution_measure.values()))[:top_n]
+        #top_solutions = [solution for solution, _ in sorted_solutions[:top_n]]
+        sorti = list(sorted_solutions)
+        top_solutions = [a[i] for i in sorti]
+        #fin = [{solution: solution.get_measure("cost")} for solution in top_solutions]
+        fin_pop = [{"solution": solution, "cost": solution.get_measure("cost")} for solution in top_solutions]
+        
+        fin_pop = sorted(fin_pop, key=lambda d: d['cost'], reverse=True) 
+        return fin_pop
     
     def find_solutions_ab(self, solutions, measure):
 

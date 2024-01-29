@@ -478,7 +478,7 @@ class Brute(SolutionSearch):
         pool = mp.Pool()
         results = []
         num_parts = mp.cpu_count()
-        #num_parts = 2
+        #num_parts = 1
         part_size = len(solutions) // num_parts
         args = []
         list_parts = []
@@ -498,29 +498,34 @@ class Brute(SolutionSearch):
         list_parts = [solutions[part_size * i : part_size * (i + 1)] for i in range(num_parts)]
 
         # Use starmap instead of map
-        results = pool.starmap(find_best_solution_bb, [(part, measure, i) for i, part in enumerate(list_parts)])
-
+        results = pool.map(find_best_solution_bb, [(part, measure, i) for i, part in enumerate(list_parts)])
+        #results.wait()
+        #output = results.get
         pool.close()
         pool.join()
+        
         best_solutions = []
 
 def solution_search_factory():
     pass
 
-def find_best_solution_bb(solutions ,measure, n):
-    #solutions, measure, n = solutions
+def find_best_solution_bb(solutions): # ,measure, n):
+    solutions, measure, n = solutions
     with open("tmp/process.pkl", "rb") as f:
         process  = etree.fromstring(pickle.load(f))
     with open("tmp/allocations.pkl", "rb") as f:
         allocations = pickle.load(f)
         for allocation in allocations.values():
+            allocation.task = etree.fromstring(allocation.task)
             for branch in allocation.branches:
                 branch.node = etree.fromstring(branch.node)
+
     
     best_solutions = [] 
-    len(solutions)
+    print(len(solutions))
     for i, solution in enumerate(solutions):
         
+        start = time.time()
         new_solution = Solution(copy.deepcopy(process)) # create solution
         ns = {"cpee1" : list(new_solution.process.nsmap.values())[0]}
         tasklist = new_solution.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)
@@ -534,9 +539,9 @@ def find_best_solution_bb(solutions ,measure, n):
             branch_no = individual.get(task)    # get choosen number of branch
             branch = allocation.branches[branch_no] # get actual branch as R-RPST
             new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
+            task = get_next_task(tasks_iter, new_solution)
             if task == "end":
                 break
-            #task = get_next_task(tasks_iter, new_solution)
 
         new_solution.check_validity()
         if new_solution.invalid_branches:
@@ -553,10 +558,12 @@ def find_best_solution_bb(solutions ,measure, n):
                     best_solutions.pop(0)
      
         if i%1000 == 0:
-            print(f"{i}/{len(solutions)}")
+            end = time.time()
+            print(f"{i}/{len(solutions)}, Time: {end-start}")
+            start = time.time()
     
     dump_to_pickle(best_solutions, n)
-    return f"done {i}"
+    return (f"done_{n}")
 
 def dump_to_pickle(solution, i):
     for x in solution:
@@ -575,7 +582,7 @@ def dump_to_pickle(solution, i):
 
 def combine_pickles(folder_path="tmp/results"):
     print("combine_pickles")
-    return ["test"]
+    
     files = os.listdir(folder_path)
     best_solutions = []
     for file in files:

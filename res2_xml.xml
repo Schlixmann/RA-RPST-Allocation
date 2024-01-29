@@ -1,8 +1,7 @@
-<resource xmlns="http://cpee.org/ns/description/1.0" id="r_1" name="level1">
-        <resprofile id="rp_1" name="start_process" role="level1" task="start_process">
+<resource xmlns="http://cpee.org/ns/description/1.0" id="r_5" name="level3">
+        <resprofile id="rp_19" name="close_project" role="level3" task="close_project">
             <measures>
-                <cost>10</cost>
+                <cost>30</cost>
             </measures>
         <children/></resprofile>
         </resource>
-    

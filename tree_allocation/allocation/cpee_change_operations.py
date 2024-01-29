@@ -18,8 +18,8 @@ class ChangeOperation():
         if not task.xpath("cpee1:allocation", namespaces=ns):
             task.xpath(".")[0].append(etree.Element(f"{{{ns['cpee1']}}}allocation"))
         #task.xpath("cpee1:allocation", namespaces=ns)[0].append(etree.Element(f"{{{ns['cpee1']}}}res_allocation"))
-        with open("res2_xml.xml", "wb") as f:
-            f.write(etree.tostring(output))
+        #with open("res2_xml.xml", "wb") as f:
+        #    f.write(etree.tostring(output))
         task.xpath("cpee1:resources", namespaces=ns)[0].set("allocated_to", output.xpath("@name")[0])
         task.xpath("cpee1:allocation", namespaces=ns)[0].append(output)
 

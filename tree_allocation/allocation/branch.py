@@ -20,8 +20,8 @@ class Branch():
         ns = {"cpee1" : list(self.node.nsmap.values())[0]}
         #TODO should calculate the sum of the measure for the branch
         # For one allocation the best bracnch should then be found (or best 2,3,4 etc)
-        with open("xml_out.xml", "wb") as f:
-            f.write(etree.tostring(self.node))
+        #with open("xml_out.xml", "wb") as f:
+        #    f.write(etree.tostring(self.node))
         values = self.node.xpath(f".//cpee1:children/resource/resprofile/measures/{measure}", namespaces=ns)
         return operator([float(value.text) for value in values])
         pass
@@ -38,8 +38,8 @@ class Branch():
         tasks = copy.deepcopy(self.node).xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ns)[1:]
         #TODO This does it work for branches with more than 2 levels?
 
-        with open("branch.xml", "wb") as f:
-            f.write(etree.tostring(self.node))
+        #with open("branch.xml", "wb") as f:
+        #    f.write(etree.tostring(self.node))
 
         dummy = cpee_change_operations.ChangeOperation()
         task = dummy.get_proc_task(process, copy.deepcopy(self.node))

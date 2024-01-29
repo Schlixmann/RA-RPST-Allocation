@@ -6,8 +6,11 @@ class Solution():
         self.process = process
         self.ns = {"cpee1" : list(process.nsmap.values())[0]}
 
-    def get_measure(self, measure, operator=sum):
-        values = self.process.xpath(f".//cpee1:allocation/resource/resprofile/measures/{measure}", namespaces=self.ns)
+    def get_measure(self, measure, operator=sum, flag=False):
+        if flag:
+            values = self.process.xpath(f".//cpee1:allocation/cpee1:resource/cpee1:resprofile/cpee1:measures/cpee1:{measure}", namespaces=self.ns)
+        else:
+            values = self.process.xpath(f".//cpee1:allocation/resource/resprofile/measures/{measure}", namespaces=self.ns)
         return operator([float(value.text) for value in values])
 
     def check_validity(self):
@@ -20,3 +23,4 @@ class Solution():
                 break
             else:
                 self.invalid_branches=False
+

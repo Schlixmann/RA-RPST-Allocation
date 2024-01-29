@@ -10,6 +10,13 @@ import numpy as np
 import random
 import time
 from collections import defaultdict
+import os
+import pickle
+import uuid
+import itertools
+from itertools import repeat
+from tqdm import tqdm
+import multiprocessing as mp
 
 class SolutionSearch():
 
@@ -47,17 +54,20 @@ class Genetic(SolutionSearch):
         solution = Solution(copy.deepcopy(self.process))
         used_branches = {task:0 for task in self.tasklist}
 
+
+
         tasks_iter = iter(self.tasklist)
         task = get_next_task(tasks_iter, solution)
         while True:
             allocation = self.process_allocation.allocations[task.attrib['id']]
             branch_no = random.randint(0, len(allocation.branches)-1)
             used_branches[task] = branch_no
-            branch = allocation.branches[branch_no]
-            solution.process = branch.apply_to_process(solution.process, solution=solution)
+            #branch = allocation.branches[branch_no]
+            #solution.process = branch.apply_to_process(solution.process, solution=solution)
             task = get_next_task(tasks_iter, solution)
             if task == "end":
                 break
+        
         return used_branches
     
     def fitness(self, individual, measure:str="cost", rtype:str = "value"):
@@ -268,6 +278,7 @@ class Heuristic():
 class Brute(SolutionSearch):
     def __init__(self, process_allocation):
         super(Brute, self).__init__(process_allocation)
+        self.pickle_writer = 0
     
     def find_solutions(self, tasks_iter=None, solution=None):
         #TODO should be callable with different options (Direct, Genetic, Heuristic, SemiHeuristic)
@@ -337,7 +348,7 @@ class Brute(SolutionSearch):
         # select top n branches
         indices = np.argsort([branch.get_measure(measure, operator=sum) for branch in allocation.branches])[:top_n]
         used_branches = [allocation.branches[i] for i in indices]
-        print(f"used_branches: {used_branches}")
+        #print(f"used_branches: {used_branches}")
 
         for i, branch in enumerate(used_branches):
             if i > 0:
@@ -360,7 +371,91 @@ class Brute(SolutionSearch):
             
             solution.process = branch.apply_to_process(solution.process, solution, task)
             self.find_solutions_with_heuristic(copy.deepcopy(tasks_iter), solution, top_n=top_n)
+    
+   
+    def get_all_opts(self):
+        #TODO should be callable with different options (Direct, Genetic, Heuristic, SemiHeuristic)
+        """
+        -> Add all Branches as new solutions
+        -> for each branch, call, "new_solution(process, self, step+=1)"
+        -> if i > 1: copy current solution and add new solution
+        End: no further step
+        """
+        ns = {"cpee1" : list(self.process_allocation.process.nsmap.values())[0]}
+        tasklist = self.process_allocation.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)
+        # choose random branch per task:
+        translation = {task: str(uuid.uuid1()) for i, task in enumerate(tasklist)}
         
+        all_opts = []
+        for task in tasklist: 
+            allocation = self.process_allocation.allocations[task.attrib['id']]
+            all_opts.append({translation[task] : [i for i in range(len(allocation.branches))]})
+        
+        self.solution_space_size = np.prod([len(allocation.branches) for allocation in self.process_allocation.allocations.values()])
+    
+        return all_opts, tasklist
+
+        # approach with itertools.product: 
+    
+    def find_best_solution_bb(self, solutions, measure):
+        best_solutions = [] 
+        len(solutions)
+        for i, solution in enumerate(solutions):
+            
+            new_solution = Solution(copy.deepcopy(self.process)) # create solution
+            ns = {"cpee1" : list(new_solution.process.nsmap.values())[0]}
+            tasklist = new_solution.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)
+            individual = {tasklist[i]: list(solution)[i] for i in range(len(solution))}
+            tasks_iter = iter(tasklist) # iterator
+            task = get_next_task(tasks_iter, new_solution) # gets next tasks and checks for deletes
+
+            while True:
+                allocation = self.process_allocation.allocations[task.attrib['id']] # get allocatin
+
+                branch_no = individual.get(task)    # get choosen number of branch
+                branch = allocation.branches[branch_no] # get actual branch as R-RPST
+
+                new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
+                
+                task = get_next_task(tasks_iter, new_solution)
+                if task == "end":
+                    break
+            
+            new_solution.check_validity()
+            if new_solution.invalid_branches:
+                value = np.nan        
+            else:
+                value = copy.deepcopy(new_solution.get_measure(measure))   # calc. fitness of solution
+                value = float(copy.deepcopy(value))
+            if value != np.nan:
+                if not best_solutions:
+                    best_solutions.append({"cost": value})             
+                elif (value < best_solutions[-1].get("cost") or not best_solutions) and value != np.nan:
+                    best_solutions.append({"cost": value})
+            print(f"Done : {i}/{len(solutions)}")
+
+        return best_solutions
+
+ 
+
+        
+
+    def retrieve_pickle(self, file_path):
+        data = []
+        file = open(file_path, 'rb') 
+        data.append(pickle.load(file))
+        file.close()
+
+        return data
+
+    def iter_product(self, arr):
+        a = []
+        for x in itertools.product(*arr):
+            a.append(x)
+        
+        print("No of Solutions: ", len(a))
+        return a
+
     def get_best_solutions(self, measure, operator=min, include_invalid=True, top_n=1):
         #TODO get_best_solutions in parent class
         solutions_to_evaluate = filter(self.solutions) if include_invalid else filter(lambda x: x.invalid_branches == False, self.solutions)
@@ -377,6 +472,123 @@ class Brute(SolutionSearch):
         fin2 = [{solution: solution.get_measure("cost")} for solution in top_solutions2]
         #assert(fin== fin2)
         return fin2
+    
+    def find_solutions_ab(self, solutions, measure):
+
+        pool = mp.Pool()
+        results = []
+        num_parts = mp.cpu_count()
+        #num_parts = 2
+        part_size = len(solutions) // num_parts
+        args = []
+        list_parts = []
+        with open("tmp/process.pkl", "wb") as f: 
+            pickle.dump(etree.tostring(self.process), f)
+        with open("tmp/allocations.pkl", "wb") as f:
+            for allocation in self.process_allocation.allocations.values():
+                allocation.process = 0
+                allocation.parent = 0 
+                allocation.intermediate_trees = [etree.tostring(tree) for tree in allocation.intermediate_trees]
+                for branch in allocation.branches:
+                    branch.node = etree.tostring(branch.node)
+
+            pickle.dump(self.process_allocation.allocations, f)
+
+
+        list_parts = [solutions[part_size * i : part_size * (i + 1)] for i in range(num_parts)]
+
+        # Use starmap instead of map
+        results = pool.starmap(find_best_solution_bb, [(part, measure, i) for i, part in enumerate(list_parts)])
+
+        pool.close()
+        pool.join()
+        best_solutions = []
 
 def solution_search_factory():
     pass
+
+def find_best_solution_bb(solutions ,measure, n):
+    #solutions, measure, n = solutions
+    with open("tmp/process.pkl", "rb") as f:
+        process  = etree.fromstring(pickle.load(f))
+    with open("tmp/allocations.pkl", "rb") as f:
+        allocations = pickle.load(f)
+        for allocation in allocations.values():
+            for branch in allocation.branches:
+                branch.node = etree.fromstring(branch.node)
+    
+    best_solutions = [] 
+    len(solutions)
+    for i, solution in enumerate(solutions):
+        
+        new_solution = Solution(copy.deepcopy(process)) # create solution
+        ns = {"cpee1" : list(new_solution.process.nsmap.values())[0]}
+        tasklist = new_solution.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)
+        individual = {tasklist[i]: list(solution)[i] for i in range(len(solution))}
+        tasks_iter = iter(tasklist) # iterator
+        task = get_next_task(tasks_iter, new_solution) # gets next tasks and checks for deletes
+
+        while True:
+
+            allocation = allocations[task.attrib['id']] # get allocatin
+            branch_no = individual.get(task)    # get choosen number of branch
+            branch = allocation.branches[branch_no] # get actual branch as R-RPST
+            new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
+            if task == "end":
+                break
+            #task = get_next_task(tasks_iter, new_solution)
+
+        new_solution.check_validity()
+        if new_solution.invalid_branches:
+            value = np.nan        
+        else:
+            value = copy.deepcopy(new_solution.get_measure(measure, flag=True))   # calc. fitness of solution
+            value = float(copy.deepcopy(value))
+        if value != np.nan:
+            if not best_solutions:
+                best_solutions.append({"solution": new_solution, "cost": value})             
+            elif (value < best_solutions[-1].get("cost") or not best_solutions) and value != np.nan:
+                best_solutions.append({"solution": new_solution, "cost": value})
+                if len(best_solutions) > 10:
+                    best_solutions.pop(0)
+     
+        if i%1000 == 0:
+            print(f"{i}/{len(solutions)}")
+    
+    dump_to_pickle(best_solutions, n)
+    return f"done {i}"
+
+def dump_to_pickle(solution, i):
+    for x in solution:
+        x["solution"].process = etree.tostring(x["solution"].process)
+        """
+        if os.path.exists(f"tmp/results/results_{i}.pkl"):
+            with open(f"tmp/results/results_{i}.pkl", "rb") as f:
+                a = pickle.load(f)
+                a.extend(x)
+            with open(f"tmp/results/results_{i}.pkl", "wb") as f:
+                pickle.dump(a, f)
+        """
+
+    with open(f"tmp/results/results_{i}.pkl", "wb") as f:
+        pickle.dump(solution, f)
+
+def combine_pickles(folder_path="tmp/results"):
+    print("combine_pickles")
+    return ["test"]
+    files = os.listdir(folder_path)
+    best_solutions = []
+    for file in files:
+        file_path = folder_path + "/" + file
+        with open(file_path, "rb") as f:
+            dd = pickle.load(f)
+        for d in dd:
+            if best_solutions:
+                if d.get("cost") < best_solutions[0].get("cost"): best_solutions.append(d) 
+                best_solutions = sorted(best_solutions, key=lambda d: d['cost'], reverse=True) 
+                if len(best_solutions) > 10: best_solutions.pop(0)
+            else:
+                best_solutions.append(d)
+    return best_solutions
+
+

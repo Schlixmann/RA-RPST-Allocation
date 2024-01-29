@@ -70,8 +70,8 @@ class Branch():
 
             except cpee_change_operations.ChangeOperationError as inst:
                 solution.invalid_branches = True
-                print(inst.__str__())
-                print("Solution invalid_branches = True")
+                #print(inst.__str__())
+                #print("Solution invalid_branches = True")
 
         #open("xml_out2.xml", "wb").write(etree.tostring(process))
         return process

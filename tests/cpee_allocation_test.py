@@ -9,6 +9,9 @@ from PrettyPrint import PrettyPrintTree
 from tree_allocation.tree import graphix
 from tree_allocation.allocation.solution_search import *
 import time
+import multiprocessing as mp
+import os
+import pickle
 
 
 class TestCpeeAllocation(unittest.TestCase):
@@ -529,4 +532,93 @@ class TestCpeeAllocation(unittest.TestCase):
             for i, solution in enumerate(brute_solutions.solutions):
                 with open(f"tests/benchmarks/test_all_options_{i}.xml", "rb") as f:
                     self.assertEqual(etree.tostring(solution.process), f.read())
+
+    def test_long_process_pickle(self):
+        with open("resource_config/offer_resources_close_maxima.xml") as f: 
+                resource_et = etree.fromstring(f.read())
+        with open("tests/test_processes/offer_process_paper.xml") as f:
+                task_xml = f.read()
+        show_graph = False
+            
+        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
+        trees = ProcessAllocation.allocate_process()
+
+        allocation = list(ProcessAllocation.allocations.values())[0]
+        allocation.branches
+        for i, tree in enumerate(list(trees.values())):   
+            
+            if show_graph:
+                graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), filename=f"out_{i}") 
+
+        start = time.time()
+        brute_solutions = Brute(ProcessAllocation)
+        opts, tasklist = brute_solutions.get_all_opts()
+        #brute_solutions.find_solutions_pickle(opts)       
+        opts = [list(o.values())[0] for o in opts]
+        b = brute_solutions.iter_product(opts)
+        solutions = opts
+        measure = "cost"
+        results = brute_solutions.find_solutions_ab(b, "cost")
+        end = time.time()
+        
+
+
+        best_solutions = combine_pickles()
+        
+        for b in best_solutions:
+            print(b)
+        print(f"Execution time was: {end-start}")
+        print(f"Execution time in min was: {(end-start)/60}")
+
+    def test_short_process_pickle(self):
+        with open("resource_config/offer_resources_cascade_del.xml") as f: 
+                resource_et = etree.fromstring(f.read())
+        with open("tests/test_processes/offer_process_short.xml") as f:
+                task_xml = f.read()
+        show_graph = False
+            
+        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
+        trees = ProcessAllocation.allocate_process()
+
+        allocation = list(ProcessAllocation.allocations.values())[0]
+        allocation.branches
+        for i, tree in enumerate(list(trees.values())):   
+            
+            if show_graph:
+                graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), filename=f"out_{i}") 
+
+        start = time.time()
+        brute_solutions = Brute(ProcessAllocation)
+        opts, tasklist = brute_solutions.get_all_opts()
+        #brute_solutions.find_solutions_pickle(opts)       
+        opts = [list(o.values())[0] for o in opts]
+        b = brute_solutions.iter_product(opts)
+        solutions = opts
+        measure = "cost"
+        results = brute_solutions.find_solutions_ab(b, "cost")
+        print(results)
+        end = time.time()
+
+        best_solutions = combine_pickles()
+
+        for b in best_solutions:
+            print(b)
+        
+        print(f"Execution time was: {(end-start):.2f}")
+        print(f"Execution time in min was: {(end-start)/60:.2f}")
+    
+    def test_retrieve_pickle(self):
+        with open("resource_config/offer_resources_close_maxima.xml") as f: 
+                resource_et = etree.fromstring(f.read())
+        with open("tests/test_processes/offer_process_paper.xml") as f:
+                task_xml = f.read()
+        show_graph = False
+            
+        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
+        trees = ProcessAllocation.allocate_process()
+        brute_solutions = Brute(ProcessAllocation)
+        #opts = brute_solutions.get_all_opts()
+        a = brute_solutions.retrieve_pickle("tmp/test_pkl_3.pkl")
+
+        print(a[:10])
             

@@ -114,7 +114,13 @@ class Delete(ChangeOperation):
 
                 #TODO Delete Cascade: if to_del has change patterns in allocation, they need to be deleted as well. 
                 to_del = to_dels[0]
-                process.remove(to_del)
+
+                with open("xml_out.xml", "wb") as f:
+                    f.write(etree.tostring(process))
+                #print_node_structure(ns, process)
+                to_del_parent = to_del.xpath("parent::*")[0]
+                to_del_parent.remove(to_del)
+
 
                 # Delete Cascade:
                 for to_del in to_del.xpath("cpee1:allocation/resource/resprofile/cpee1:children/*", namespaces=ns):
@@ -122,6 +128,11 @@ class Delete(ChangeOperation):
                     process = Delete().apply(process, core_task, to_del)
 
         return process
+
+def print_node_structure(ns, node, level=0):
+    if node.tag==f"{{{ns['cpee1']}}}manipulate": print('  ' * level + node.tag + ' ' + str(node.attrib), node )
+    for child in node.xpath("*"):
+        print_node_structure(ns, child, level + 1)
     
 class Replace(ChangeOperation):
     def apply(self, process, core_task, task):

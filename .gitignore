@@ -12,8 +12,14 @@ steps_local_cpee.txt
 ssh_config
 tests/branches/*
 tests/solutions/*
+tmp/*
+tmp/results/*
+
+
+!tmp/results
 
 # Untracked File Types
+*findings*.json
 *_out*.xml
 *.png
 *.dot

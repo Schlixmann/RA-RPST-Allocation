@@ -96,11 +96,13 @@
                 </description>
             </changepattern>
         </resprofile>
+        <!--
         <resprofile id="rp_15" name="create_proposal" role="level3" task="create_proposal">
             <measures>
                 <cost>25</cost>
             </measures>
         </resprofile>
+        -->
         <resprofile id="rp_89" name="design_offer" role="level2" task="design_offer">
             <measures>
                 <cost>20</cost>
@@ -172,11 +174,13 @@
                 </description>
             </changepattern>
         </resprofile>
+        <!--
         <resprofile id="rp_15" name="create_proposal" role="level2" task="create_proposal">
             <measures>
                 <cost>25</cost>
             </measures>
         </resprofile>
+        -->
         <resprofile id="rp_99" name="design_offer" role="level2" task="design_offer">
             <measures>
                 <cost>20</cost>

@@ -522,10 +522,9 @@ def find_best_solution_bb(solutions): # ,measure, n):
 
     
     best_solutions = [] 
-    print(len(solutions))
+    start = time.time()
     for i, solution in enumerate(solutions):
         
-        start = time.time()
         new_solution = Solution(copy.deepcopy(process)) # create solution
         ns = {"cpee1" : list(new_solution.process.nsmap.values())[0]}
         tasklist = new_solution.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)
@@ -559,7 +558,7 @@ def find_best_solution_bb(solutions): # ,measure, n):
      
         if i%1000 == 0:
             end = time.time()
-            print(f"{i}/{len(solutions)}, Time: {end-start}")
+            print(f"{i}/{len(solutions)}, Time: {(end-start):.2f}")
             start = time.time()
     
     dump_to_pickle(best_solutions, n)

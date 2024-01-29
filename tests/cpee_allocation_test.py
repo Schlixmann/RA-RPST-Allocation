@@ -570,6 +570,9 @@ class TestCpeeAllocation(unittest.TestCase):
         print(f"Execution time was: {end-start}")
         print(f"Execution time in min was: {(end-start)/60}")
 
+        with open("tmp/results/best_solution", "wb") as f:
+            pickle.dump(best_solutions, f)
+
     def test_short_process_pickle(self):
         with open("resource_config/offer_resources_cascade_del.xml") as f: 
                 resource_et = etree.fromstring(f.read())

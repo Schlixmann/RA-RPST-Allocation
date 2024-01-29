@@ -1,32 +1,7 @@
-<resource xmlns="http://cpee.org/ns/description/1.0" id="r_2" name="level2">
-        <resprofile id="rp_12" name="close_project" role="level2" task="close_project">
+<resource xmlns="http://cpee.org/ns/description/1.0" id="r_5" name="level3">
+        <resprofile id="rp_19" name="close_project" role="level3" task="close_project">
             <measures>
-                <cost>10</cost>
-            </measures>
-            <changepattern type="insert">
-                <parameters>
-                    <direction>after</direction>
-                </parameters>
-                <description>
-                    <manipulate id="r4" label="inform_head" type="insert" direction="after">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    </manipulate>
-                </description>
-            </changepattern>
-        <children><manipulate id="r4" label="inform_head" type="insert" direction="after">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    <children><resource id="r_2" name="level2">
-        <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
-            <measures>
-                <cost>15</cost>
+                <cost>30</cost>
             </measures>
         <children/></resprofile>
-    </resource>
-    </children></manipulate>
-                </children></resprofile>
         </resource>
-    

@@ -1,16 +1,13 @@
 import matplotlib.pyplot as plt
 import json
+import os
 
-# Load JSON data from the first file
-with open("results/heur_results_paper.json", "r") as f:
-    data1 = json.loads(f.read())
-
-# Load JSON data from the second file
-with open("results/gen_results_paper.json", "r") as f:
-    data2 = json.loads(f.read())
-
-# Combine data for plotting
-combined_data = [data1, data2]
+# Load JSON data from dir_path folder
+dir_path = "results/"
+combined_data = []
+for file in os.listdir(dir_path):
+    with open(dir_path+file, "r") as f:
+        combined_data.append(json.loads(f.read()))
 
 # Extracting data for plotting
 solvers = [item["solver"][0] for item in combined_data]
@@ -23,7 +20,13 @@ fig, ax = plt.subplots(figsize=(10, 6))
 box = ax.boxplot(items, labels=solvers, vert=True, patch_artist=True)
 
 # Highlight the best values with a red line
-ax.plot(solvers, best_values, color='red', marker='o', linestyle='None', label='Best')
+#ax.plot(solvers, best_values, color='red', marker='o', linestyle='None', label='Best')
+
+# Adjust x-values for aligning with the boxplot positions
+x_values_best = [i + 1 for i in range(len(solvers))]
+
+# Highlight the best values with a red line
+ax.plot(x_values_best, best_values, color='red', marker='o', linestyle='None', label='Best')
 
 # Annotate the time on top of each whisker
 for i, (solver, time) in enumerate(zip(solvers, times)):

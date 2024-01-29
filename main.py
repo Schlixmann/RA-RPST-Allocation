@@ -1,5 +1,6 @@
-from tree_allocation.allocation.solution_search import Genetic,Brute
+from tree_allocation.allocation.solution_search import Genetic,Brute, combine_pickles
 from tree_allocation.allocation.cpee_allocation import *
+
 
 from lxml import etree
 from collections import defaultdict
@@ -67,13 +68,36 @@ def run(process_file_path, resource_file_path):
         json.dump(performance_genetic, f)
 
     # Top 10 Outcomes with Brute Force
-    # List with top 10 outcomes
-    
+    # List with top 10 outcome
 
+    measure = "cost"
+    start = time.time()
+    brute_solutions = Brute(process_allocation)
+    solutions, tasklist = brute_solutions.get_all_opts()
+    solutions = [list(o.values())[0] for o in solutions]
+    b = brute_solutions.iter_product(solutions)
+    results = brute_solutions.find_solutions_ab(b, measure)
+    outcome = combine_pickles()
+    end = time.time()
 
+    performance_brute = defaultdict(list)
+    performance_brute["solver"].append("brute")
+    performance_brute["time"].append(float(end-start))
+    performance_brute["items"]= [[solution[measure] for solution in outcome]]
+    performance_brute["best"].append(outcome[-1][measure])
 
+    print(outcome)
+    with open("results/brute_results_paper.json", "w") as f:
+        json.dump(performance_brute, f)
 
 if __name__ == "__main__":
     process = "tests/test_processes/offer_process_paper.xml"
     resource = "resource_config/offer_resources_close_maxima.xml"
     run(process, resource)
+
+# TODO dienstag: 
+    # Hyperparametertuning --> Measure in one Graph
+    # Different Branch numbers for Heuristic --> Show in one graph
+    # 
+    # Develop other use cases for testing Heuristic & GA
+    # --> Develop use cases only with different resource settings

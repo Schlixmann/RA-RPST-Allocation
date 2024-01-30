@@ -13,7 +13,7 @@ def run(process_file_path, resource_file_path):
         task_xml = f.read()
     with open(resource_file_path) as f:
         resource_et = etree.fromstring(f.read())
-    
+    print("run")
     process_allocation = ProcessAllocation(task_xml, resource_url=resource_et)
     process_allocation.allocate_process()
 

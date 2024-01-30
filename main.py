@@ -6,6 +6,7 @@ from lxml import etree
 from collections import defaultdict
 import time
 import json
+import sys
 
 def run(process_file_path, resource_file_path):
     with open(process_file_path) as f: 
@@ -79,6 +80,7 @@ def run(process_file_path, resource_file_path):
     results = brute_solutions.find_solutions_ab(b, measure)
     outcome = combine_pickles()
     end = time.time()
+    print(outcome)
 
     performance_brute = defaultdict(list)
     performance_brute["solver"].append("brute")
@@ -86,14 +88,26 @@ def run(process_file_path, resource_file_path):
     performance_brute["items"]= [[solution[measure] for solution in outcome]]
     performance_brute["best"].append(outcome[-1][measure])
 
-    print(outcome)
+
     with open("results/brute_results_paper.json", "w") as f:
         json.dump(performance_brute, f)
 
 if __name__ == "__main__":
     process = "tests/test_processes/offer_process_paper.xml"
-    resource = "resource_config/offer_resources_close_maxima.xml"
+    resource = "resource_config/offer_resources_heterogen.xml"
+
+    # short process:
+    #process = "resource_config/offer_resources_cascade_del.xml"
+    #resource = "tests/test_processes/offer_process_short.xml"
     run(process, resource)
+
+    i = None
+    if i:
+        print ('argument list', sys.argv)
+        process = int(sys.argv[1])
+        resource = int(sys.argv[2])
+        plot = int(sys.argv[3])
+        #print ("sum = {}".format(first+second))
 
 # TODO dienstag: 
     # Hyperparametertuning --> Measure in one Graph

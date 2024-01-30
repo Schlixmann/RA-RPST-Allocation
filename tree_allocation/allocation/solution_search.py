@@ -567,14 +567,7 @@ def find_best_solution_bb(solutions): # ,measure, n):
 def dump_to_pickle(solution, i):
     for x in solution:
         x["solution"].process = etree.tostring(x["solution"].process)
-        """
-        if os.path.exists(f"tmp/results/results_{i}.pkl"):
-            with open(f"tmp/results/results_{i}.pkl", "rb") as f:
-                a = pickle.load(f)
-                a.extend(x)
-            with open(f"tmp/results/results_{i}.pkl", "wb") as f:
-                pickle.dump(a, f)
-        """
+
 
     with open(f"tmp/results/results_{i}.pkl", "wb") as f:
         pickle.dump(solution, f)
@@ -585,9 +578,10 @@ def combine_pickles(folder_path="tmp/results"):
     files = os.listdir(folder_path)
     best_solutions = []
     for file in files:
-        if os.path.isdir:
-            continue
         file_path = folder_path + "/" + file
+        if os.path.isdir(file_path):
+            continue
+        
         with open(file_path, "rb") as f:
             dd = pickle.load(f)
         for d in dd:

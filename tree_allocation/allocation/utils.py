@@ -19,3 +19,6 @@ def get_next_task(tasks_iter, solution=None):
         else:
             break
     return task
+
+def vary_resource_costs():
+    pass

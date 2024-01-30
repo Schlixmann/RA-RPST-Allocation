@@ -6,6 +6,8 @@ import os
 dir_path = "results/"
 combined_data = []
 for file in os.listdir(dir_path):
+    if os.path.isdir(file):
+        continue
     with open(dir_path+file, "r") as f:
         combined_data.append(json.loads(f.read()))
 

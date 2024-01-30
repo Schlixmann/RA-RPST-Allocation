@@ -235,10 +235,11 @@ class Genetic(SolutionSearch):
         data = defaultdict(list)
         data["solver"].append(ev_type)
         population = self.init_population(self.pop_size) #, self.genome_size) -> genome_size = size of process
-        
+        unique_solutions = []
         start = time.time()     # Start of evolution
         for gen in range(self.generations):
-
+            
+            [unique_solutions.append(list(individual["branches"].values())) for individual in population if list(individual["branches"].values()) not in unique_solutions]
             fitnesses = [self.fitness(individual, measure) for individual in population]
             population = self.evolve(ev_type, population, fitnesses, gen) # Next Evolution Step
 
@@ -247,6 +248,7 @@ class Genetic(SolutionSearch):
             data["avg_fit"].append(sum(fitnesses)/len(fitnesses))
             data["min_fit"].append(min(fitnesses))
             data["max_fit"].append(max(fitnesses))
+            data["unique_solutions"].append(unique_solutions)
             
             abandon_after = 11
             if self.early_abandon and gen > abandon_after:
@@ -270,6 +272,7 @@ class Genetic(SolutionSearch):
         
         #TODO Check if whole population is invalid
         fin_pop = sorted(fin_pop, key=lambda d: d['cost'], reverse=True) 
+        
         return fin_pop, data
 
 class Heuristic():
@@ -582,6 +585,8 @@ def combine_pickles(folder_path="tmp/results"):
     files = os.listdir(folder_path)
     best_solutions = []
     for file in files:
+        if os.path.isdir:
+            continue
         file_path = folder_path + "/" + file
         with open(file_path, "rb") as f:
             dd = pickle.load(f)

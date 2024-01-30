@@ -1,54 +1,7 @@
-<call xmlns="http://cpee.org/ns/description/1.0" id="a7" endpoint="">
-        <parameters>
-          <label>design_offer</label>
-          <method>:post</method>
-          <arguments/>
-        </parameters>
-        <code>
-          <prepare/>
-          <finalize output="result"/>
-          <update output="result"/>
-          <rescue output="result"/>
-        </code>
-        <annotations>
-          <_timing>
-            <_timing_weight/>
-            <_timing_avg/>
-            <explanations/>
-          </_timing>
-          <_shifting>
-            <_shifting_type>Duration</_shifting_type>
-          </_shifting>
-          <_context_data_analysis>
-            <probes/>
-            <ips/>
-          </_context_data_analysis>
-          <report>
-            <url/>
-          </report>
-          <_notes>
-            <_notes_general/>
-          </_notes>
-        </annotations>
-        <documentation>
-          <input/>
-          <output/>
-          <implementation>
-            <description/>
-          </implementation>
-          <code>
-            <description/>
-          </code>
-        </documentation>
-        <resources allocated_to="not_allocated">
-          <resource>level1</resource>
-          <resource>level2</resource>
-          <resource>level3</resource>
-        </resources>
-      <children><resource id="r_5" name="level3">
-        <resprofile id="rp_9" name="design_offer" role="level3" task="design_offer">
+<manipulate xmlns="http://cpee.org/ns/description/1.0" id="a4" label="create_proposal">level3<resources allocated_to="not_allocated"><resource>level3</resource><resource>level2</resource></resources><children><resource id="r_5" name="level3">
+        <resprofile id="rp_15" name="create_proposal" role="level3" task="create_proposal">
             <measures>
-                <cost>50</cost>
+                <cost>99</cost>
             </measures>
             <changepattern type="delete">
                 <parameters>
@@ -57,10 +10,10 @@
                 <description>
                     </description>
             </changepattern>
-        <children><manipulate id="a8" label="send_offer" type="delete" direction="any">
+        <children><manipulate id="a15" label="proposal_approval" type="delete" direction="any">
                         <resources allocated_to="not_allocated">
                         </resources>
                     </manipulate>
                 </children></resprofile>
         </resource>
-</children><children/></call>
+</children><children/></manipulate>

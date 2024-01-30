@@ -82,7 +82,7 @@ class TestGenetic(unittest.TestCase):
 
 
     def test_approaches(self):
-        with open("resource_config/offer_resources_close_maxima.xml") as f: 
+        with open("resource_config/offer_resources_heterogen.xml") as f: 
             resource_et = etree.fromstring(f.read())
         with open("tests/test_processes/offer_process_paper.xml") as f:
             task_xml = f.read()
@@ -97,17 +97,19 @@ class TestGenetic(unittest.TestCase):
             
             findings.append(defaultdict(list))
             start = time.time()
-            genetic_solutions = Genetic(ProcessAllocation, pop_size=25, generations=25, k_mut=0.2)
+            genetic_solutions = Genetic(ProcessAllocation, pop_size=25, generations=50, k_mut=0.2, early_abandon=True)
             population, data = genetic_solutions.find_solutions(stype, "cost")
             end = time.time()
             gen_time = end - start
             findings[i]["solver"].append(stype)
             findings[i]["time"].append(gen_time)
             findings[i]["best"].append(genetic_solutions.best_tournament[-1])
+            findings[i]["no_unique_solutions"] = len(data["unique_solutions"])
             findings[i]["fitnesses"] = data["fitnesses"]
             findings[i]["avg_fit"] = data["avg_fit"]
             findings[i]["min_fit"] = data["min_fit"]
             findings[i]["max_fit"] = data["max_fit"]
+            findings[i]["unique_solutions"] = data["unique_solutions"]
             with open(f"findings_{i}.json", "w") as f:
                 json_object = json.dumps(findings[i], indent=4)
                 f.write(json_object)
@@ -116,7 +118,7 @@ class TestGenetic(unittest.TestCase):
             
             print(f"{stype} Solutions:")
             for solution in population:
-                print("Branches: ", solution["branches"].values())
+                #print("Branches: ", solution["branches"].values())
                 print("Solution Costs: ", solution["solution"].get_measure("cost"))
             print("Gen_time: ", gen_time)
 

@@ -534,7 +534,7 @@ class TestCpeeAllocation(unittest.TestCase):
                     self.assertEqual(etree.tostring(solution.process), f.read())
 
     def test_long_process_pickle(self):
-        with open("resource_config/offer_resources_close_maxima.xml") as f: 
+        with open("resource_config/offer_resources_heterogen.xml") as f: 
                 resource_et = etree.fromstring(f.read())
         with open("tests/test_processes/offer_process_paper.xml") as f:
                 task_xml = f.read()
@@ -570,7 +570,7 @@ class TestCpeeAllocation(unittest.TestCase):
         print(f"Execution time was: {end-start}")
         print(f"Execution time in min was: {(end-start)/60}")
 
-        with open("tmp/results/best_solution", "wb") as f:
+        with open("tmp/results/best/best_solution.pkl", "wb") as f:
             pickle.dump(best_solutions, f)
 
     def test_short_process_pickle(self):

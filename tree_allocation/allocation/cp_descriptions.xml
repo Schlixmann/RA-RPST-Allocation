@@ -1,0 +1,36 @@
+<description>
+<changepattern type="delete">
+  <parameters>
+    <direction>any</direction>
+  </parameters>
+  <description xmlns="http://cpee.org/ns/description/1.0">
+    <manipulate id="a15" label="proposal_approval">
+      <resources allocated_to="not_allocated">
+      </resources>
+    </manipulate>
+  </description>
+</changepattern>
+
+<changepattern type="insert">
+  <parameters>
+    <direction>before</direction>
+  </parameters>
+  <description xmlns="http://cpee.org/ns/description/1.0">
+    <manipulate id="r1" label="dummy">
+      <resources allocated_to="not_allocated">
+        <resource>level2</resource>
+      </resources>
+    </manipulate>
+  </description>
+</changepattern>
+
+<changepattern type="replace">
+  <description xmlns="http://cpee.org/ns/description/1.0">
+    <manipulate id="r5" label="dummy">
+      <resources allocated_to="not_allocated">
+        <resource>level3</resource>
+      </resources>
+    </manipulate>
+  </description>
+</changepattern>    
+</description>

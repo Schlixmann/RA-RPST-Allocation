@@ -40,12 +40,12 @@ class Genetic(SolutionSearch):
         self.best_tournament_str:str = []
         self.early_abandon:bool=early_abandon
         
-    def init_population(self, pop_size): #, genome_size): initialize the population of bit vectors
+    def init_population(self): #, genome_size): initialize the population of bit vectors
         # create random solutions for number of pop_size
 
         population = []
         self.tasklist = self.process_allocation.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)
-        for pop in range(pop_size): 
+        for pop in range(self.pop_size): 
             population.append({"branches" : self.build_individual()})
         return population
 
@@ -204,7 +204,7 @@ class Genetic(SolutionSearch):
         top_indices = np.argsort(fitnesses)[:2]
         nextgen_population = [copy.copy(population[i]) for i in top_indices]
 
-        for i in range(int(self.pop_size / 2) - 2):
+        for i in range(int((self.pop_size-2) / 2)):
             parent1, xo1 = self.selection(population, fitnesses, gen)  # select first parent
             parent2, xo2 = self.selection(population, fitnesses, gen)  # select second parent
 
@@ -234,7 +234,7 @@ class Genetic(SolutionSearch):
 
         data = defaultdict(list)
         data["solver"].append(ev_type)
-        population = self.init_population(self.pop_size) #, self.genome_size) -> genome_size = size of process
+        population = self.init_population() #, self.genome_size) -> genome_size = size of process
         unique_solutions = []
         start = time.time()     # Start of evolution
         for gen in range(self.generations):

@@ -1,33 +1,8 @@
-<resource xmlns="http://cpee.org/ns/description/1.0" id="r_5" name="level3">
-        <resprofile id="rp_16" name="contact_suppliers" role="level3" task="contact_suppliers">
+<resource xmlns="http://cpee.org/ns/description/1.0" id="r_3" name="level3">
+        <resprofile id="rp_19" name="close_project" role="level3" task="close_project">
             <measures>
-                <cost>11</cost>
+                <cost>54</cost>
             </measures>
         <children/></resprofile>
-        </resource>
-ameters>
-                    <direction>before</direction>
-                </parameters>
-                <description>
-                    <manipulate id="r2" label="head_confirmation" type="insert" direction="before">
-                        <resources allocated_to="not_allocated">
-                            <resource>level3</resource>
-                        </resources>
-                    </manipulate>
-                </description>
-            </changepattern>
-        <children><manipulate id="r2" label="head_confirmation" type="insert" direction="before">
-                        <resources allocated_to="not_allocated">
-                            <resource>level3</resource>
-                        </resources>
-                    <children><resource id="r_3" name="level3">
-        <resprofile id="rp_23" name="head_confirmation" role="level3" task="head_confirmation">
-            <measures>
-                <cost>86</cost>
-            </measures>
-        <children/></resprofile>
-        </resource>
-    </children></manipulate>
-                </children></resprofile>
         </resource>
     

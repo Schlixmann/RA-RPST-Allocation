@@ -5,18 +5,34 @@ import os
 # Load JSON data from dir_path folder
 dir_path = "results/"
 combined_data = []
+gen_data = []
 for file in os.listdir(dir_path):
-    if os.path.isdir(file):
+    if os.path.isdir(dir_path + file):
         continue
+
     with open(dir_path+file, "r") as f:
-        combined_data.append(json.loads(f.read()))
+        if file[:3] == "gen":
+            gen_data.append(json.loads(f.read()))
+        else:    
+            combined_data.append(json.loads(f.read()))
 
 # Extracting data for plotting
-solvers = [item["solver"][0] for item in combined_data]
+solvers = [[item["solver"][0]] for item in combined_data]
 times = [item["time"][0] for item in combined_data]
 items = [item["items"][0] for item in combined_data]
 best_values = [item["best"][0] for item in combined_data]
 
+# Extracting Gen Data:
+solvers_g = [[item["solver"][0]] for item in  gen_data]
+times_g = [sum(item["times"])/len(item["times"]) for item in gen_data]
+items_g = [item["min_fits"] for item in  gen_data]
+best_values_g = [item["bests"] for item in  gen_data]
+
+items += best_values_g
+times += times_g
+lables =list( solvers + solvers_g)
+
+best_values.append(min(best_values_g))
 # Plotting the data
 fig, ax = plt.subplots(figsize=(10, 6))
 box = ax.boxplot(items, labels=solvers, vert=True, patch_artist=True)

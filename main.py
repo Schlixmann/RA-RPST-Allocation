@@ -8,12 +8,12 @@ import time
 import json
 import sys
 
-def run(process_file_path, resource_file_path):
+def run(process_file_path, resource_file_path, tries=25, brute:bool =False):
     with open(process_file_path) as f: 
         task_xml = f.read()
     with open(resource_file_path) as f:
         resource_et = etree.fromstring(f.read())
-    print("run")
+    
     process_allocation = ProcessAllocation(task_xml, resource_url=resource_et)
     process_allocation.allocate_process()
 
@@ -39,58 +39,94 @@ def run(process_file_path, resource_file_path):
 
     print(outcome)
 
+
     # TOP 10 Outcome: 
     # List with 10 best processes
 
     # genetic_approach
     # genetic_config: 
-    genetic_config = {"pop_size":25, "generations":100, "k_sel":3, "k_mut":0.2,"early_abandon":True} # pop_size, generations, k_sel, k_mut, early_abandon
-    
-    start = time.time()
-    genetic_solutions = Genetic(process_allocation, genetic_config["pop_size"], genetic_config["generations"], 
-                                genetic_config["k_sel"], genetic_config["k_mut"], genetic_config["early_abandon"])
-    outcome, data = genetic_solutions.find_solutions("elitist", "cost")
-    end = time.time()
-
     performance_genetic = defaultdict(list)
-    performance_genetic["solver"].append("elitist")
-    performance_genetic["time"].append(float(end-start))
-    performance_genetic["best"].append(genetic_solutions.best_tournament[-1])
-    performance_genetic["fitnesses"] = data["fitnesses"]
-    performance_genetic["avg_fit"] = data["avg_fit"]
-    performance_genetic["min_fit"] = data["min_fit"]
-    performance_genetic["max_fit"] = data["max_fit"]
-    performance_genetic["items"] = [[solution[heuristic_config["measure"]] for solution in outcome][-10:]]
+    for i in range(tries): 
+        print(i)
+        genetic_config = {"pop_size":25, "generations":100, "k_sel":3, "k_mut":0.2,"early_abandon":True} # pop_size, generations, k_sel, k_mut, early_abandon
+        
+        start = time.time()
+        genetic_solutions = Genetic(process_allocation, genetic_config["pop_size"], genetic_config["generations"], 
+                                    genetic_config["k_sel"], genetic_config["k_mut"], genetic_config["early_abandon"])
+        outcome, data = genetic_solutions.find_solutions("plain", "cost")
+        end = time.time()
 
-    # Top 10 Outcomes: 
-    # List with top 10 outcomes
+        
+        performance_genetic["solver"].append("plain")
+        performance_genetic[f"times"].append(float(end-start))
+        performance_genetic[f"bests"].append(genetic_solutions.best_tournament[-1])
+        #performance_genetic["fitnesses"] = data["fitnesses"]
+        performance_genetic[f"avg_fits"].append(data["avg_fit"])
+        performance_genetic[f"min_fits"].append(data["min_fit"])
+        performance_genetic[f"max_fits"].append(data["max_fit"])
+        performance_genetic[f"items_{i}"] = [[solution[heuristic_config["measure"]] for solution in outcome][-10:]]
+
+
+    print(outcome) 
+    with open("results/gen_plain_results_paper.json", "w") as f:
+        json.dump(performance_genetic, f)
+    # TOP 10 Outcome: 
+    # List with 10 best processes
+
+    # genetic_approach
+    # genetic_config: 
+    performance_genetic = defaultdict(list)
+    for i in range(tries): 
+        print(i)
+        genetic_config = {"pop_size":25, "generations":100, "k_sel":3, "k_mut":0.2,"early_abandon":True} # pop_size, generations, k_sel, k_mut, early_abandon
+        
+        start = time.time()
+        genetic_solutions = Genetic(process_allocation, genetic_config["pop_size"], genetic_config["generations"], 
+                                    genetic_config["k_sel"], genetic_config["k_mut"], genetic_config["early_abandon"])
+        outcome, data = genetic_solutions.find_solutions("elitist", "cost")
+        end = time.time()
+
+        
+        performance_genetic["solver"].append("elitist")
+        performance_genetic[f"times"].append(float(end-start))
+        performance_genetic[f"bests"].append(genetic_solutions.best_tournament[-1])
+        #performance_genetic["fitnesses"] = data["fitnesses"]
+        performance_genetic[f"avg_fits"].append(data["avg_fit"])
+        performance_genetic[f"min_fits"].append(data["min_fit"])
+        performance_genetic[f"max_fits"].append(data["max_fit"])
+        performance_genetic[f"items_{i}"] = [[solution[heuristic_config["measure"]] for solution in outcome][-10:]]
+
+
     print(outcome) 
     with open("results/gen_results_paper.json", "w") as f:
         json.dump(performance_genetic, f)
 
+
     # Top 10 Outcomes with Brute Force
     # List with top 10 outcome
 
-    measure = "cost"
-    start = time.time()
-    brute_solutions = Brute(process_allocation)
-    solutions, tasklist = brute_solutions.get_all_opts()
-    solutions = [list(o.values())[0] for o in solutions]
-    b = brute_solutions.iter_product(solutions)
-    results = brute_solutions.find_solutions_ab(b, measure)
-    outcome = combine_pickles()
-    end = time.time()
-    print(outcome)
+    if brute:
+        measure = "cost"
+        start = time.time()
+        brute_solutions = Brute(process_allocation)
+        solutions, tasklist = brute_solutions.get_all_opts()
+        solutions = [list(o.values())[0] for o in solutions]
+        b = brute_solutions.iter_product(solutions)
+        results = brute_solutions.find_solutions_ab(b, measure)
+        outcome = combine_pickles()
+        end = time.time()
+        print(outcome)
 
-    performance_brute = defaultdict(list)
-    performance_brute["solver"].append("brute")
-    performance_brute["time"].append(float(end-start))
-    performance_brute["items"]= [[solution[measure] for solution in outcome]]
-    performance_brute["best"].append(outcome[-1][measure])
+        performance_brute = defaultdict(list)
+        performance_brute["solver"].append("brute")
+        performance_brute["time"].append(float(end-start))
+        performance_brute["items"]= [[solution[measure] for solution in outcome]]
+        performance_brute["best"].append(outcome[-1][measure])
 
 
-    with open("results/brute_results_paper.json", "w") as f:
-        json.dump(performance_brute, f)
+        with open("results/brute_results_paper.json", "w") as f:
+            json.dump(performance_brute, f)
+    print("done")
 
 if __name__ == "__main__":
     process = "tests/test_processes/offer_process_paper.xml"
@@ -99,7 +135,7 @@ if __name__ == "__main__":
     # short process:
     #process = "resource_config/offer_resources_cascade_del.xml"
     #resource = "tests/test_processes/offer_process_short.xml"
-    run(process, resource)
+    run(process, resource, brute=False)
 
     i = None
     if i:

@@ -17,37 +17,38 @@ for file in os.listdir(dir_path):
             combined_data.append(json.loads(f.read()))
 
 # Extracting data for plotting
-solvers = [[item["solver"][0]] for item in combined_data]
+solvers = [item["solver"][0] for item in combined_data]
 times = [item["time"][0] for item in combined_data]
 items = [item["items"][0] for item in combined_data]
 best_values = [item["best"][0] for item in combined_data]
 
 # Extracting Gen Data:
-solvers_g = [[item["solver"][0]] for item in  gen_data]
+solvers_g = [item["solver"][0] for item in  gen_data]
 times_g = [sum(item["times"])/len(item["times"]) for item in gen_data]
-items_g = [item["min_fits"] for item in  gen_data]
-best_values_g = [item["bests"] for item in  gen_data]
+items_g = [min([v for k,v in item.items() if k[:5] == "items"]) for item in gen_data]
+best_values_g = [min(item["bests"]) for item in gen_data]
 
-items += best_values_g
+for i in range(len(items_g)):
+    items.append(items_g[i][0])
 times += times_g
-lables =list( solvers + solvers_g)
+lables =solvers + solvers_g
 
-best_values.append(min(best_values_g))
+best_values += (best_values_g)
 # Plotting the data
 fig, ax = plt.subplots(figsize=(10, 6))
-box = ax.boxplot(items, labels=solvers, vert=True, patch_artist=True)
+box = ax.boxplot(items, labels=lables, vert=True, patch_artist=True)
 
 # Highlight the best values with a red line
 #ax.plot(solvers, best_values, color='red', marker='o', linestyle='None', label='Best')
 
 # Adjust x-values for aligning with the boxplot positions
-x_values_best = [i + 1 for i in range(len(solvers))]
+x_values_best = [i + 1 for i in range(len(lables))]
 
 # Highlight the best values with a red line
 ax.plot(x_values_best, best_values, color='red', marker='o', linestyle='None', label='Best')
 
 # Annotate the time on top of each whisker
-for i, (solver, time) in enumerate(zip(solvers, times)):
+for i, (solver, time) in enumerate(zip(lables, times)):
     ax.text(i + 1, max(items[i]), f'Time: {time:.2f}', ha='center', va='bottom', color='blue')
 
 # Adding labels and title

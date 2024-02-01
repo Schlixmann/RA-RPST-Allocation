@@ -8,7 +8,7 @@ import time
 import json
 import sys
 
-def run(process_file_path, resource_file_path, tries=25, brute:bool =False):
+def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
     with open(process_file_path) as f: 
         task_xml = f.read()
     with open(resource_file_path) as f:
@@ -130,7 +130,7 @@ def run(process_file_path, resource_file_path, tries=25, brute:bool =False):
 
 if __name__ == "__main__":
     process = "tests/test_processes/offer_process_paper.xml"
-    resource = "resource_config/offer_resources_heterogen.xml"
+    resource = "resource_config/offer_resources_vary_test.xml"
 
     # short process:
     #process = "resource_config/offer_resources_cascade_del.xml"

@@ -50,25 +50,34 @@ class Branch():
                 resource_info = poop.xpath("cpee1:resprofile", namespaces=ns)[0].remove(to_del)
             resource_info = poop
             with open("res_xml.xml", "wb") as f:
-                f.write(etree.tostring(poop))
+                f.write(etree.tostring(process))
 
             dummy.add_res_allocation(task, resource_info)
 
+        x = 0
+        #
+        core_task = copy.deepcopy(self.node)
+        if tasks:
+            core_task = copy.deepcopy(tasks[0].xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=ns)[0])
         for task in tasks:
             try:
-                core_task = copy.deepcopy(task.xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=ns)[0])
-                i = 0
-                if i == 1:
-                    with open("xml_out.xml", "wb") as f:
-                        f.write(etree.tostring(process))
-
-                process = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
-                resource_info = copy.deepcopy(core_task.xpath("cpee1:children/*", namespaces=ns)[0])
+                
+                if task.attrib["type"] == "replace":
+                    print("a")
                 with open("branch.xml", "wb") as f:
                     f.write(etree.tostring(self.node))
+                process = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
+
+                resource_info = copy.deepcopy(core_task.xpath("cpee1:children/*", namespaces=ns)[0])
+
+                if task.attrib["type"] == "replace":
+                    core_task = task
+                    
                 #graphix.TreeGraph().show(etree.tostring(self.node), filename=f"branch") 
 
             except cpee_change_operations.ChangeOperationError as inst:
+                if task.attrib["type"] == "replace":
+                    core_task = task
                 solution.invalid_branches = True
                 #print(inst.__str__())
                 #print("Solution invalid_branches = True")

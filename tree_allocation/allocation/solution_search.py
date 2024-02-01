@@ -80,7 +80,9 @@ class Genetic(SolutionSearch):
 
             branch_no = individual["branches"].get(task)    # get choosen number of branch
             branch = allocation.branches[branch_no] # get actual branch as R-RPST
-
+            with open("xml_outx3.xml", "wb") as f:
+                f.write(etree.tostring(new_solution.process))
+                print("done")
             new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
             
             task = get_next_task(tasks_iter, new_solution)

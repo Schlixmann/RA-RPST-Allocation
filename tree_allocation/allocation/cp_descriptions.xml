@@ -18,7 +18,6 @@
   <description xmlns="http://cpee.org/ns/description/1.0">
     <manipulate id="r1" label="dummy">
       <resources allocated_to="not_allocated">
-        <resource>level2</resource>
       </resources>
     </manipulate>
   </description>
@@ -28,9 +27,9 @@
   <description xmlns="http://cpee.org/ns/description/1.0">
     <manipulate id="r5" label="dummy">
       <resources allocated_to="not_allocated">
-        <resource>level3</resource>
       </resources>
     </manipulate>
   </description>
 </changepattern>    
 </description>
+

@@ -10,6 +10,7 @@ from tree_allocation.allocation.solution_search import Genetic,Brute
 from tree_allocation.allocation import cpee_allocation
 from tree_allocation.tree import parser, task_node as tn, gtw_node as gtw
 from tree_allocation.allocation import gen_deap
+from tree_allocation.tree import graphix
 
 class TestGenetic(unittest.TestCase):
     
@@ -158,3 +159,26 @@ class TestGenetic(unittest.TestCase):
         #print(population)
         with open("tests/solutions/gen_solution.xml", "wb") as f:
             f.write(etree.tostring(population[0]["solution"].process))
+
+    def test_random(self):
+        # TODO change resources to a change pattern with multiple inserted tasks
+        with open("resource_config/offer_resources_vary_test.xml") as f: 
+            resource_et = etree.fromstring(f.read())
+        with open("tests/test_processes/offer_process_paper copy.xml") as f:
+            task_xml = f.read()
+        
+        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)    
+        trees = ProcessAllocation.allocate_process()
+
+        show = True
+        for i, tree in enumerate(list(trees.values())):    
+            if i > 0:
+                show = False
+            graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), filename=f"blabla_{i}", view=show) 
+
+        start = time.time()
+        genetic_solutions = Genetic(ProcessAllocation, pop_size=25, generations=50, k_mut=0.2, early_abandon=True)
+        population, data = genetic_solutions.find_solutions("elitist", "cost")
+        end = time.time()
+        with open("z_out.xml", "wb") as f:
+            f.write(etree.tostring(population[-1]["solution"].process))

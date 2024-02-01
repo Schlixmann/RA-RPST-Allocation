@@ -222,10 +222,12 @@ class TaskAllocation(ProcessAllocation):
             print("New created root: ", root)
             self.ns = {"cpee1" : list(root.nsmap.values())[0]}
             root.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
-            self.intermediate_trees.append(copy.deepcopy(self.allocate_task(root, resource_url=resource_url)))
+            self.intermediate_trees.append(copy.deepcopy(self.allocate_task(root, resource_url=resource_url, excluded=[])))
             return self.intermediate_trees[0]
         else:
             root.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
+            if root.attrib["id"] == "a9":
+                print("a")
             print("Task to allocate: ", R_RPST.get_label(etree.tostring(root)))
 
         res_xml = copy.deepcopy(resource_url)
@@ -261,20 +263,23 @@ class TaskAllocation(ProcessAllocation):
                 raise(ResourceError(task_parent))
             
             return root
-        
+        excluded_ini = copy.copy(excluded)
         # Add next tasks to the tree
         for profile in root.xpath("cpee1:children/resource/resprofile", namespaces=self.ns):
-            ex_branch = excluded
-            
+            if profile.attrib["id"] == "rp_12":
+                print("a")
+            ex_branch = excluded_ini
+
             for change_pattern in profile.xpath("changepattern"):
                 cp_tasks = [element for element in change_pattern.xpath(".//*") if element.tag in task_elements]
-                cp_task_labels = [R_RPST.get_label(etree.tostring(task)) for task in cp_tasks]
+                cp_task_labels = [R_RPST.get_label(etree.tostring(task)).lower() for task in cp_tasks]
+                ex_tasks =  [R_RPST.get_label(etree.tostring(task)).lower() for task in ex_branch]
                 
                 #TODO excluded tasks
-                if any(x['label'].lower() in map(lambda d: d["label"].lower(), cp_task_labels) for x in ex_branch): 
-                    print(f"Break reached, task {cp_task_labels} in excluded")
-                    root.xpath("cpee1:children/resource/resprofile").remove(profile)
-                    break
+                if any(x in ex_tasks or x == R_RPST.get_label(etree.tostring(root)) for x in cp_task_labels): 
+                    print(f"Break reached, task {[x for x in cp_task_labels if x in ex_tasks]} in excluded")
+                    root.xpath("cpee1:children/resource/resprofile", namespaces=self.ns).remove(profile)
+                    continue
 
                 for task in cp_tasks:
 
@@ -284,6 +289,7 @@ class TaskAllocation(ProcessAllocation):
                     if change_pattern.xpath("@type")[0].lower() in ["insert", "replace"]:                           
                         path = etree.ElementTree(task.xpath("/*")[0]).getpath(task) # generate path to current task
                         task = copy.deepcopy(task.xpath("/*")[0]).xpath(path)[0]    # Deepcopy whole tree and re-locate current task
+                        ex_branch.append(task)
                         profile.xpath("cpee1:children", namespaces=self.ns)[0].append(self.allocate_task(task, resource_url, excluded=ex_branch))
                         
                     elif change_pattern.xpath("@type")[0].lower() == "delete":

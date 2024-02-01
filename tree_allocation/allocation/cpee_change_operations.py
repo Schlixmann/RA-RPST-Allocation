@@ -4,13 +4,16 @@ import copy
 
 class ChangeOperation():
     def get_proc_task(self, process, core_task):
+        with open("xml_out2.xml", "wb") as f:
+            f.write(etree.tostring(process))
         ns = {"cpee1" : list(process.nsmap.values())[0]}
-        proc_tasks = process.xpath(f"//*[@id='{core_task.attrib['id']}'][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ns)
+        proc_tasks = process.xpath(f"//*[@id='{core_task.attrib['id']}'][not(ancestor::changepattern)]", namespaces=ns)
         if len(proc_tasks) != 1:
             proc_tasks = list(filter(lambda x: R_RPST.get_label(etree.tostring(core_task))== R_RPST.get_label(etree.tostring(x)), proc_tasks))
-            if len(proc_tasks) != 1:
+            if len(proc_tasks) > 1:
                 raise ProcessError(f"Task identifier + label is not unique for task {R_RPST.get_label(etree.tostring(core_task)), core_task.attrib}")
-
+            elif len(proc_tasks) == 0:
+                raise ProcessError(f"Task identifier + label do not exist {R_RPST.get_label(etree.tostring(core_task)), core_task.attrib}")
         return proc_tasks[0]
 
     def add_res_allocation(self, task, output):
@@ -58,6 +61,8 @@ class Delete(ChangeOperation):
 
     def apply(self, process:etree.Element, core_task:etree.Element, task:etree.Element):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
+        with open("xml_out3.xml", "wb") as f:
+            f.write(etree.tostring(process))
         proc_task= self.get_proc_task(process, core_task)
 
         match task.attrib["direction"]:
@@ -87,7 +92,7 @@ class Delete(ChangeOperation):
                 # TODO: 
                 # Check if Task is in process
                 # Delete Task from Process Tree
-                proc = process.xpath(f"//*[not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ns)
+                proc = process.xpath(f"//*[not(ancestor::changepattern) and not(ancestor::cpee1:allocation) and not(ancestor::cpee1:children)]", namespaces=ns)
                 labels = []
 
                 try:
@@ -107,6 +112,8 @@ class Delete(ChangeOperation):
                         pass
                 if pos_deletes:
                     to_del_id = pos_deletes[0]
+                    with open("xml_out", "wb") as f:
+                        f.write(etree.tostring(proc[0]))
                 else:
                     raise ChangeOperationError("No matching task to delete found in Process Model")
 
@@ -123,9 +130,9 @@ class Delete(ChangeOperation):
 
 
                 # Delete Cascade:
-                for to_del in to_del.xpath("cpee1:allocation/resource/resprofile/cpee1:children/*", namespaces=ns):
-                    to_del.attrib["type"], to_del.attrib["direction"] = task.attrib["type"], task.attrib["direction"]
-                    process = Delete().apply(process, core_task, to_del)
+                for to_del2 in to_del.xpath("cpee1:allocation/resource/resprofile/cpee1:children/*", namespaces=ns):
+                    to_del2.attrib["type"], to_del2.attrib["direction"] = task.attrib["type"], task.attrib["direction"]
+                    process = Delete().apply(process, core_task, to_del2)
 
         return process
 
@@ -136,8 +143,17 @@ def print_node_structure(ns, node, level=0):
     
 class Replace(ChangeOperation):
     def apply(self, process, core_task, task):
+        # TODO Fix Replace & Insert:
+        # Currently its always based on the core not on the previous task
+        raise KeyError("Fix This Shit!!")
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         proc_task= self.get_proc_task(process, core_task)
+        with open("xml_out.xml", "wb") as f:
+            f.write(etree.tostring(task))
+        with open("xml_out.xml", "wb") as f:
+            f.write(etree.tostring(task))
+        to_replace = task.xpath("parent::*")[0]
+        #proc_task = self.get_proc_task(process, to_replace)
         proc_task.xpath("parent::*")[0].replace(proc_task, task)
 
         if task.xpath("cpee1:children/*", namespaces=ns):

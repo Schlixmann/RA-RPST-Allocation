@@ -60,6 +60,7 @@ def vary_resource_changepatterns(proc_file, res_file, output_file=None, cp_ratio
 
     pattern = re.compile(r'rp|r_|a')
     curr_t_id = max([int(re.split("\D", id)[-1]) for id in test_strings if not pattern.search(id)])
+    #curr_t_id = "r0"
     #pattern = re.compile(r'rp')
     #curr_rp_id = max([int(re.split("\D", id)[-1]) for id in test_strings if pattern.search(id)])
     
@@ -67,7 +68,7 @@ def vary_resource_changepatterns(proc_file, res_file, output_file=None, cp_ratio
         changes = random.sample(to_change, k=round((len(to_change)-1) * in_de_re_ratios[i]))
         for profile in changes:
             roles = random.choices(allowed_roles, k=random.randint(1, len(allowed_roles)))
-            curr_t_id += 1
+            curr_t_id =0
             match i:
                 case 0: # insert
                     cp = copy.deepcopy(cp_tree.xpath("//changepattern[@type = 'insert']")[0])

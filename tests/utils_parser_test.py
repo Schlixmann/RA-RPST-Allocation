@@ -48,7 +48,7 @@ class TestEvent(unittest.TestCase):
     def test_multi_it(self):
         process = "tests/test_processes/offer_process_paper.xml"
         res_org = "resource_config/offer_resources_vary.xml"
-        dest = res_org[:-4] + "_test.xml"
+        dest = res_org[:-4] + "2_test.xml"
         shutil.copyfile(res_org, dest)
         res = dest
         out = "testy.xml"

@@ -33,13 +33,13 @@ class Branch():
         -> apply change operations
         """
         ns = {"cpee1" : list(process.nsmap.values())[0]}
+        with open("branch_raw.xml", "wb") as f:
+            f.write(etree.tostring(self.node))
         #TODO Set allocated Resource!
 
         tasks = copy.deepcopy(self.node).xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ns)[1:]
         #TODO This does it work for branches with more than 2 levels?
 
-        #with open("branch.xml", "wb") as f:
-        #    f.write(etree.tostring(self.node))
 
         dummy = cpee_change_operations.ChangeOperation()
         task = dummy.get_proc_task(process, copy.deepcopy(self.node))
@@ -49,35 +49,17 @@ class Branch():
             if to_del:
                 resource_info = poop.xpath("cpee1:resprofile", namespaces=ns)[0].remove(to_del)
             resource_info = poop
-            with open("res_xml.xml", "wb") as f:
-                f.write(etree.tostring(process))
-
             dummy.add_res_allocation(task, resource_info)
 
-        x = 0
-        #
-        core_task = copy.deepcopy(self.node)
-        if tasks:
-            core_task = copy.deepcopy(tasks[0].xpath("ancestor::*[self::cpee1:manipulate|self::cpee1:call]", namespaces=ns)[0])
         for task in tasks:
             try:
-                
-                if task.attrib["type"] == "replace":
-                    print("a")
-                with open("branch.xml", "wb") as f:
-                    f.write(etree.tostring(self.node))
-                process = cpee_change_operations.ChangeOperationFactory(process, core_task, task, cptype= task.attrib["type"])
-
-                resource_info = copy.deepcopy(core_task.xpath("cpee1:children/*", namespaces=ns)[0])
-
-                if task.attrib["type"] == "replace":
-                    core_task = task
+                anchor = task.xpath("ancestor::cpee1:manipulate | ancestor::cpee1:call", namespaces=ns)[-1]
+                process = cpee_change_operations.ChangeOperationFactory(process, anchor, task, cptype= task.attrib["type"])
+                #resource_info = copy.deepcopy(core_task.xpath("cpee1:children/*", namespaces=ns)[0])
                     
                 #graphix.TreeGraph().show(etree.tostring(self.node), filename=f"branch") 
 
             except cpee_change_operations.ChangeOperationError as inst:
-                if task.attrib["type"] == "replace":
-                    core_task = task
                 solution.invalid_branches = True
                 #print(inst.__str__())
                 #print("Solution invalid_branches = True")

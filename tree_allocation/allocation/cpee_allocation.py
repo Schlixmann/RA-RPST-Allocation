@@ -222,7 +222,7 @@ class TaskAllocation(ProcessAllocation):
             print("New created root: ", root)
             self.ns = {"cpee1" : list(root.nsmap.values())[0]}
             root.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
-            self.intermediate_trees.append(copy.deepcopy(self.allocate_task(root, resource_url=resource_url, excluded=[])))
+            self.intermediate_trees.append(copy.deepcopy(self.allocate_task(root, resource_url=resource_url, excluded=[root])))
             return self.intermediate_trees[0]
         else:
             root.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
@@ -290,6 +290,8 @@ class TaskAllocation(ProcessAllocation):
                         path = etree.ElementTree(task.xpath("/*")[0]).getpath(task) # generate path to current task
                         task = copy.deepcopy(task.xpath("/*")[0]).xpath(path)[0]    # Deepcopy whole tree and re-locate current task
                         ex_branch.append(task)
+                        if change_pattern.xpath("@type")[0].lower() in ["replace"]:   
+                            print("stop")
                         profile.xpath("cpee1:children", namespaces=self.ns)[0].append(self.allocate_task(task, resource_url, excluded=ex_branch))
                         
                     elif change_pattern.xpath("@type")[0].lower() == "delete":

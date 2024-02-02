@@ -1,6 +1,7 @@
 from lxml import etree
 from tree_allocation.tree import R_RPST
 import copy
+import re
 
 class ChangeOperation():
     def get_proc_task(self, process, core_task):
@@ -23,8 +24,18 @@ class ChangeOperation():
         #task.xpath("cpee1:allocation", namespaces=ns)[0].append(etree.Element(f"{{{ns['cpee1']}}}res_allocation"))
         #with open("res2_xml.xml", "wb") as f:
         #    f.write(etree.tostring(output))
-        task.xpath("cpee1:resources", namespaces=ns)[0].set("allocated_to", output.xpath("@name")[0])
+        set_allocation = output.xpath("@name")[0] + "role: " + output.xpath("*/@role")[0]    
+        task.xpath("cpee1:resources", namespaces=ns)[0].set("allocated_to", set_allocation)
         task.xpath("cpee1:allocation", namespaces=ns)[0].append(output)
+    
+    def get_next_task_id(self, process):
+        # create unique task_id
+        rt_ids = process.xpath("//@id")
+        pattern = re.compile(r'rp|r_|a')
+        curr_rp_id = max([int(re.split("\D", id)[-1]) for id in rt_ids if not pattern.search(id)])
+        #print("Curr Id:", curr_rp_id)
+        return str(curr_rp_id + 1)
+        
 
 class Insert(ChangeOperation):
     def apply(self, process:etree.Element, core_task:etree.Element, task:etree.Element):
@@ -33,7 +44,12 @@ class Insert(ChangeOperation):
         #core_task = task.xpath("/*")[0]
         proc_task= self.get_proc_task(process, core_task)
 
+
+
+        # create next id for task to insert (changed in branch as well!)
+        task.attrib["id"] = "r"+self.get_next_task_id(process)
         task = copy.deepcopy(task)
+
         if task.xpath("cpee1:children/*", namespaces=ns):
             resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
             self.add_res_allocation(task, resource_info)
@@ -63,8 +79,8 @@ class Delete(ChangeOperation):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         with open("xml_out3.xml", "wb") as f:
             f.write(etree.tostring(process))
-        proc_task= self.get_proc_task(process, core_task)
-
+        #proc_task= self.get_proc_task(process, core_task)
+        proc_task = 1
         match task.attrib["direction"]:
             case "before":
                 # TODO: 
@@ -121,10 +137,6 @@ class Delete(ChangeOperation):
 
                 #TODO Delete Cascade: if to_del has change patterns in allocation, they need to be deleted as well. 
                 to_del = to_dels[0]
-
-                with open("xml_out.xml", "wb") as f:
-                    f.write(etree.tostring(process))
-                #print_node_structure(ns, process)
                 to_del_parent = to_del.xpath("parent::*")[0]
                 to_del_parent.remove(to_del)
 
@@ -143,16 +155,11 @@ def print_node_structure(ns, node, level=0):
     
 class Replace(ChangeOperation):
     def apply(self, process, core_task, task):
-        # TODO Fix Replace & Insert:
-        # Currently its always based on the core not on the previous task
-        raise KeyError("Fix This Shit!!")
+
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         proc_task= self.get_proc_task(process, core_task)
-        with open("xml_out.xml", "wb") as f:
-            f.write(etree.tostring(task))
-        with open("xml_out.xml", "wb") as f:
-            f.write(etree.tostring(task))
-        to_replace = task.xpath("parent::*")[0]
+        task.attrib["id"] = "r" + self.get_next_task_id(process)
+
         #proc_task = self.get_proc_task(process, to_replace)
         proc_task.xpath("parent::*")[0].replace(proc_task, task)
 

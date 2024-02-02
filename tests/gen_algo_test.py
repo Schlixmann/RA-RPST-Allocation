@@ -162,7 +162,7 @@ class TestGenetic(unittest.TestCase):
 
     def test_random(self):
         # TODO change resources to a change pattern with multiple inserted tasks
-        with open("resource_config/offer_resources_vary_test.xml") as f: 
+        with open("resource_config/offer_resources_vary2_test.xml") as f: 
             resource_et = etree.fromstring(f.read())
         with open("tests/test_processes/offer_process_paper copy.xml") as f:
             task_xml = f.read()
@@ -182,3 +182,4 @@ class TestGenetic(unittest.TestCase):
         end = time.time()
         with open("z_out.xml", "wb") as f:
             f.write(etree.tostring(population[-1]["solution"].process))
+            print(population[-1]["solution"].invalid_branches)

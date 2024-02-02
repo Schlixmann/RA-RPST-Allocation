@@ -36,8 +36,13 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
 
     with open("results/heur_results_paper.json", "w") as f:
         json.dump(performance_heuristic, f)
+    with open("best_out0", "wb") as f:
+        f.write(etree.tostring(outcome[-1]["solution"].process))
 
     print(outcome)
+    print(f"Time: {end-start}")
+    
+    print("Invalid Branches? ", [ind["solution"].invalid_branches for ind in outcome])
 
 
     # TOP 10 Outcome: 
@@ -65,11 +70,15 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
         performance_genetic[f"min_fits"].append(data["min_fit"])
         performance_genetic[f"max_fits"].append(data["max_fit"])
         performance_genetic[f"items_{i}"] = [[solution[heuristic_config["measure"]] for solution in outcome][-10:]]
-
+        print(f"Time: {end-start}")
 
     print(outcome) 
+
     with open("results/gen_plain_results_paper.json", "w") as f:
         json.dump(performance_genetic, f)
+    with open("best_out2", "wb") as f:
+        f.write(etree.tostring(outcome[-1]["solution"].process))
+    print("Invalid Branches? ", [ind["solution"].invalid_branches for ind in outcome])
     # TOP 10 Outcome: 
     # List with 10 best processes
 
@@ -95,11 +104,15 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
         performance_genetic[f"min_fits"].append(data["min_fit"])
         performance_genetic[f"max_fits"].append(data["max_fit"])
         performance_genetic[f"items_{i}"] = [[solution[heuristic_config["measure"]] for solution in outcome][-10:]]
+        print(f"Time: {end-start}")
 
+    print(outcome)
 
-    print(outcome) 
     with open("results/gen_results_paper.json", "w") as f:
         json.dump(performance_genetic, f)
+    with open("best_out3", "wb") as f:
+        f.write(etree.tostring(outcome[-1]["solution"].process))
+    print("Invalid Branches? ", [ind["solution"].invalid_branches for ind in outcome])
 
 
     # Top 10 Outcomes with Brute Force
@@ -126,16 +139,22 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
 
         with open("results/brute_results_paper.json", "w") as f:
             json.dump(performance_brute, f)
+        with open("best_out4", "wb") as f:
+            f.write(etree.tostring(outcome[-1]["solution"].process))
+
+        print(f"Time: {end-start}")
+        print("Invalid Branches? ", [ind["solution"].invalid_branches for ind in outcome])
+
     print("done")
 
 if __name__ == "__main__":
     process = "tests/test_processes/offer_process_paper.xml"
-    resource = "resource_config/offer_resources_vary_test.xml"
+    resource = "resource_config/offer_resources_vary2_test.xml"
 
     # short process:
     #process = "resource_config/offer_resources_cascade_del.xml"
     #resource = "tests/test_processes/offer_process_short.xml"
-    run(process, resource, brute=False)
+    run(process, resource, brute=True)
 
     i = None
     if i:

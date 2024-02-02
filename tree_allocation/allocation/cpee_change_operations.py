@@ -24,7 +24,7 @@ class ChangeOperation():
         #task.xpath("cpee1:allocation", namespaces=ns)[0].append(etree.Element(f"{{{ns['cpee1']}}}res_allocation"))
         #with open("res2_xml.xml", "wb") as f:
         #    f.write(etree.tostring(output))
-        set_allocation = output.xpath("@name")[0] + "role: " + output.xpath("*/@role")[0]    
+        set_allocation = output.xpath("@name")[0] + " role: " + output.xpath("*/@role")[0]    
         task.xpath("cpee1:resources", namespaces=ns)[0].set("allocated_to", set_allocation)
         task.xpath("cpee1:allocation", namespaces=ns)[0].append(output)
     

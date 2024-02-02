@@ -179,6 +179,7 @@ class TestGenetic(unittest.TestCase):
         start = time.time()
         genetic_solutions = Genetic(ProcessAllocation, pop_size=25, generations=50, k_mut=0.2, early_abandon=True)
         population, data = genetic_solutions.find_solutions("elitist", "cost")
+        print(population)
         end = time.time()
         with open("z_out.xml", "wb") as f:
             f.write(etree.tostring(population[-1]["solution"].process))

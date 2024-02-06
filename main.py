@@ -17,6 +17,12 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
     process_allocation = ProcessAllocation(task_xml, resource_url=resource_et)
     process_allocation.allocate_process()
 
+    # Overall Solutions:
+    brute_solutions = Brute(process_allocation)
+    solutions, tasklist = brute_solutions.get_all_opts()
+    solutions = [list(o.values())[0] for o in solutions]
+    num_brute_solutions = brute_solutions.iter_product(solutions)
+
     # heuristic_approach
     # heuristic config:
     heuristic_config = {"top_n":2, "include_invalid":False, "measure":"cost"}
@@ -36,7 +42,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
 
     with open("results/heur_results_paper.json", "w") as f:
         json.dump(performance_heuristic, f)
-    with open("best_out0", "wb") as f:
+    with open("best_out0.xml", "wb") as f:
         f.write(etree.tostring(outcome[-1]["solution"].process))
 
     print(outcome)
@@ -118,6 +124,8 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
     # Top 10 Outcomes with Brute Force
     # List with top 10 outcome
 
+
+    print("Solution space size: ", num_brute_solutions)
     if brute:
         measure = "cost"
         start = time.time()
@@ -145,6 +153,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
         print(f"Time: {end-start}")
         print("Invalid Branches? ", [ind["solution"].invalid_branches for ind in outcome])
 
+
     print("done")
 
 if __name__ == "__main__":
@@ -154,7 +163,7 @@ if __name__ == "__main__":
     # short process:
     #process = "resource_config/offer_resources_cascade_del.xml"
     #resource = "tests/test_processes/offer_process_short.xml"
-    run(process, resource, brute=True)
+    run(process, resource, tries=3, brute=False)
 
     i = None
     if i:

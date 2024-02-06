@@ -42,11 +42,10 @@ class Genetic(SolutionSearch):
         
     def init_population(self): #, genome_size): initialize the population of bit vectors
         # create random solutions for number of pop_size
-
         population = []
         self.tasklist = self.process_allocation.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)
         for pop in range(self.pop_size): 
-            population.append({"branches" : self.build_individual()})
+            population.append({"branches":self.build_individual()})
         return population
 
     def build_individual(self):
@@ -238,6 +237,7 @@ class Genetic(SolutionSearch):
         start = time.time()     # Start of evolution
         for gen in range(self.generations):
             
+            #TODO solve this with multiprocessing
             [unique_solutions.append(list(individual["branches"].values())) for individual in population if list(individual["branches"].values()) not in unique_solutions]
             fitnesses = [self.fitness(individual, measure) for individual in population]
             population = self.evolve(ev_type, population, fitnesses, gen) # Next Evolution Step

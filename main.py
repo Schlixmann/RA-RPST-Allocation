@@ -8,14 +8,20 @@ import time
 import json
 import sys
 
-def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
+def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_folder="results/experiments"):
     with open(process_file_path) as f: 
         task_xml = f.read()
     with open(resource_file_path) as f:
         resource_et = etree.fromstring(f.read())
     
     process_allocation = ProcessAllocation(task_xml, resource_url=resource_et)
-    process_allocation.allocate_process()
+    trees = process_allocation.allocate_process()
+
+    show = True
+    for i, tree in enumerate(list(trees.values())):    
+        if i > 0:
+            show = False
+        graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), filename=f"blabla_{i}", view=show) 
 
     # Overall Solutions:
     brute_solutions = Brute(process_allocation)
@@ -25,10 +31,10 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
 
     # heuristic_approach
     # heuristic config:
-    heuristic_config = {"top_n":2, "include_invalid":False, "measure":"cost"}
+    heuristic_config = {"top_n":2, "include_invalid":True, "measure":"cost"}
     start = time.time()
     brute_solutions = Brute(process_allocation)
-    brute_solutions.find_solutions_with_heuristic(top_n=2)
+    brute_solutions.find_solutions_with_heuristic(top_n=2, force_valid=False)
     ProcessAllocation.solutions = brute_solutions.solutions
     outcome = brute_solutions.get_best_solutions(heuristic_config["measure"], 
                                                  include_invalid=heuristic_config["include_invalid"], top_n=10)
@@ -40,9 +46,10 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
     performance_heuristic["items"]= [[solution[heuristic_config["measure"]] for solution in outcome]]
     performance_heuristic["best"].append(outcome[-1][heuristic_config["measure"]])
 
-    with open("results/heur_results_paper.json", "w") as f:
+    with open(out_folder + "/heur_results_paper.json", "w") as f:
         json.dump(performance_heuristic, f)
-    with open("best_out0.xml", "wb") as f:
+    
+    with open(out_folder + "/proc/heuristic.xml", "wb") as f:
         f.write(etree.tostring(outcome[-1]["solution"].process))
 
     print(outcome)
@@ -80,9 +87,9 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
 
     print(outcome) 
 
-    with open("results/gen_plain_results_paper.json", "w") as f:
+    with open(out_folder + "/gen_plain_results_paper.json", "w") as f:
         json.dump(performance_genetic, f)
-    with open("best_out2", "wb") as f:
+    with open(out_folder + "/proc/gen_plain.xml", "wb") as f:
         f.write(etree.tostring(outcome[-1]["solution"].process))
     print("Invalid Branches? ", [ind["solution"].invalid_branches for ind in outcome])
     # TOP 10 Outcome: 
@@ -114,9 +121,9 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
 
     print(outcome)
 
-    with open("results/gen_results_paper.json", "w") as f:
+    with open(out_folder + "/gen_elite_results_paper.json", "w") as f:
         json.dump(performance_genetic, f)
-    with open("best_out3", "wb") as f:
+    with open(out_folder + "/proc/elite.xml", "wb") as f:
         f.write(etree.tostring(outcome[-1]["solution"].process))
     print("Invalid Branches? ", [ind["solution"].invalid_branches for ind in outcome])
 
@@ -125,7 +132,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
     # List with top 10 outcome
 
 
-    print("Solution space size: ", num_brute_solutions)
+    #print("Solution space size: ", num_brute_solutions)
     if brute:
         measure = "cost"
         start = time.time()
@@ -145,25 +152,26 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False):
         performance_brute["best"].append(outcome[-1][measure])
 
 
-        with open("results/brute_results_paper.json", "w") as f:
+        with open(out_folder + "/brute_results_paper.json", "w") as f:
             json.dump(performance_brute, f)
-        with open("best_out4", "wb") as f:
-            f.write(etree.tostring(outcome[-1]["solution"].process))
+        with open(out_folder + "/proc/brute.xml", "wb") as f:
+            f.write(outcome[-1]["solution"].process)
 
         print(f"Time: {end-start}")
         print("Invalid Branches? ", [ind["solution"].invalid_branches for ind in outcome])
 
 
-    print("done")
+    print(f"done with : {resource_file_path}")
 
 if __name__ == "__main__":
     process = "tests/test_processes/offer_process_paper.xml"
-    resource = "resource_config/offer_resources_vary2_test.xml"
+    resource = "/home/felixs/Programming_Projects/RDPM_private/resource_config/offer_resources_heterogen.xml" # can we do it without valids?
+    out_folder = "results/experiments/heterogen"
 
     # short process:
     #process = "resource_config/offer_resources_cascade_del.xml"
     #resource = "tests/test_processes/offer_process_short.xml"
-    run(process, resource, tries=3, brute=False)
+    run(process, resource, tries=10, brute=True, out_folder=out_folder)
 
     i = None
     if i:

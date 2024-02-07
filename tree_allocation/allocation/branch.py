@@ -54,7 +54,7 @@ class Branch():
         for task in tasks:
             try:
                 anchor = task.xpath("ancestor::cpee1:manipulate | ancestor::cpee1:call", namespaces=ns)[-1]
-                process = cpee_change_operations.ChangeOperationFactory(process, anchor, task, cptype= task.attrib["type"])
+                process, solution.invalid_branches = cpee_change_operations.ChangeOperationFactory(process, anchor, task, cptype= task.attrib["type"])
                 #resource_info = copy.deepcopy(core_task.xpath("cpee1:children/*", namespaces=ns)[0])
                     
                 #graphix.TreeGraph().show(etree.tostring(self.node), filename=f"branch") 

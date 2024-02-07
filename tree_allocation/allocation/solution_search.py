@@ -98,11 +98,19 @@ class Genetic(SolutionSearch):
     
     # tournament selection
     def selection(self, population, fitnesses, gen):
+        #TODO improve dealing with invalid solutions
         
         xo = False # init xo flag
+        #for n in range(3):
         tournament = random.sample(range(len(population)-1), self.k_sel)
         tournament_fitnesses = [fitnesses[i] for i in tournament]
-        winner_index = tournament[np.argmin(tournament_fitnesses)]
+            #if not np.isnan(tournament_fitnesses).all():
+            #    winner_index = tournament[np.nanargmin(tournament_fitnesses)]
+            #    break
+        try:
+            winner_index = tournament[np.nanargmin(tournament_fitnesses)]
+        except ValueError:
+            winner_index = tournament[np.argmin(tournament_fitnesses)]
  
         if fitnesses[winner_index] <= self.best_tournament[-1]:
 
@@ -325,7 +333,7 @@ class Brute(SolutionSearch):
             solution.process = branch.apply_to_process(solution.process, solution, task)
             self.find_solutions(copy.deepcopy(tasks_iter), solution)
     
-    def find_solutions_with_heuristic(self, tasks_iter=None, solution=None, measure="cost", top_n=1):
+    def find_solutions_with_heuristic(self, tasks_iter=None, solution=None, measure="cost", top_n=1, force_valid=True):
         #TODO should be callable with different options (Direct, Genetic, Heuristic, SemiHeuristic)
         """
         -> Add all Branches as new solutions
@@ -348,7 +356,10 @@ class Brute(SolutionSearch):
         allocation = self.process_allocation.allocations[task.attrib['id']]
 
         # select top n branches
-        indices = np.argsort([branch.get_measure(measure, operator=sum) for branch in allocation.branches])[:top_n]
+        possible_branches = allocation.branches 
+        if force_valid:
+            possible_branches = [branch for branch in allocation.branches if branch.valid]
+        indices = np.argsort([branch.get_measure(measure, operator=sum) for branch in possible_branches])[:top_n]
         used_branches = [allocation.branches[i] for i in indices]
         #print(f"used_branches: {used_branches}")
 
@@ -359,7 +370,6 @@ class Brute(SolutionSearch):
             else: 
                 solution_index=len(self.solutions)-1
 
-        #TODO if less branches should be used: lower the amount of allocation.branches here
         for i, branch in enumerate(used_branches):
             #TODO Delete Solution if error in Change Operation
             if i > 0:
@@ -429,10 +439,10 @@ class Brute(SolutionSearch):
             else:
                 value = copy.deepcopy(new_solution.get_measure(measure))   # calc. fitness of solution
                 value = float(copy.deepcopy(value))
-            if value != np.nan:
+            if not np.isnan(value):
                 if not best_solutions:
                     best_solutions.append({"cost": value})             
-                elif (value < best_solutions[-1].get("cost") or not best_solutions) and value != np.nan:
+                elif (value < best_solutions[-1].get("cost") or not best_solutions) and not np.isnan(value):
                     best_solutions.append({"cost": value})
             print(f"Done : {i}/{len(solutions)}")
 
@@ -456,7 +466,7 @@ class Brute(SolutionSearch):
 
     def get_best_solutions(self, measure, operator=min, include_invalid=True, top_n=1):
         #TODO get_best_solutions in parent class
-        solutions_to_evaluate = filter(self.solutions) if include_invalid else filter(lambda x: x.invalid_branches == False, self.solutions)
+        solutions_to_evaluate = self.solutions if include_invalid else filter(lambda x: (x.invalid_branches == False), self.solutions)
         a = list(solutions_to_evaluate)
         solution_measure = {solution: solution.get_measure(measure) for solution in a}
 
@@ -475,7 +485,7 @@ class Brute(SolutionSearch):
     def find_solutions_ab(self, solutions, measure):
 
         pool = mp.Pool()
-        results = []
+        results = {1:[]}
         num_parts = mp.cpu_count()
         #num_parts = 1
         part_size = len(solutions) // num_parts
@@ -497,12 +507,12 @@ class Brute(SolutionSearch):
         list_parts = [solutions[part_size * i : part_size * (i + 1)] for i in range(num_parts)]
 
         # Use starmap instead of map
-        results = pool.map(find_best_solution_bb, [(part, measure, i) for i, part in enumerate(list_parts)])
+        results[1] = pool.map(find_best_solution_bb, [(part, measure, i) for i, part in enumerate(list_parts)])
         #results.wait()
         #output = results.get
         pool.close()
         pool.join()
-        
+        print(results [1])
         best_solutions = []
 
 def solution_search_factory():
@@ -528,7 +538,7 @@ def find_best_solution_bb(solutions): # ,measure, n):
         ns = {"cpee1" : list(new_solution.process.nsmap.values())[0]}
         tasklist = new_solution.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)
         individual = {tasklist[i]: list(solution)[i] for i in range(len(solution))}
-        tasks_iter = iter(tasklist) # iterator
+        tasks_iter = copy.copy(iter(tasklist)) # iterator
         task = get_next_task(tasks_iter, new_solution) # gets next tasks and checks for deletes
 
         while True:
@@ -547,10 +557,10 @@ def find_best_solution_bb(solutions): # ,measure, n):
         else:
             value = copy.deepcopy(new_solution.get_measure(measure, flag=True))   # calc. fitness of solution
             value = float(copy.deepcopy(value))
-        if value != np.nan:
+        if not np.isnan(value) :
             if not best_solutions:
                 best_solutions.append({"solution": new_solution, "cost": value})             
-            elif (value < best_solutions[-1].get("cost") or not best_solutions) and value != np.nan:
+            elif (value < best_solutions[-1].get("cost") or np.isnan(best_solutions[0].get("cost"))) and not np.isnan(value):
                 best_solutions.append({"solution": new_solution, "cost": value})
                 if len(best_solutions) > 10:
                     best_solutions.pop(0)
@@ -571,7 +581,7 @@ def dump_to_pickle(solution, i):
     with open(f"tmp/results/results_{i}.pkl", "wb") as f:
         pickle.dump(solution, f)
 
-def combine_pickles(folder_path="tmp/results"):
+def combine_pickles(folder_path="tmp/results", measure="cost"):
     print("combine_pickles")
     
     files = os.listdir(folder_path)
@@ -581,13 +591,16 @@ def combine_pickles(folder_path="tmp/results"):
         if os.path.isdir(file_path):
             continue
         
-        with open(file_path, "rb") as f:
+        with open(file_path, "rb") as f:        
             dd = pickle.load(f)
+            print(len(dd))
         for d in dd:
             if best_solutions:
-                if d.get("cost") < best_solutions[0].get("cost"): best_solutions.append(d) 
-                best_solutions = sorted(best_solutions, key=lambda d: d['cost'], reverse=True) 
-                if len(best_solutions) > 10: best_solutions.pop(0)
+                if d.get("cost") < best_solutions[0].get(measure) or np.isnan(best_solutions[0].get(measure)): 
+                    best_solutions.append(d) 
+                best_solutions = sorted(best_solutions, key=lambda d: d[measure], reverse=True) 
+                if len(best_solutions) > 10: 
+                    best_solutions.pop(0)
             else:
                 best_solutions.append(d)
     return best_solutions

@@ -263,12 +263,12 @@ class TaskAllocation(ProcessAllocation):
                 raise(ResourceError(task_parent))
             
             return root
-        excluded_ini = copy.copy(excluded)
+        #excluded_ini = copy.copy(excluded)
         # Add next tasks to the tree
         for profile in root.xpath("cpee1:children/resource/resprofile", namespaces=self.ns):
-            if profile.attrib["id"] == "rp_12":
+            if profile.attrib["id"] in [ "rp_10", "rp_17"]:
                 print("a")
-            ex_branch = excluded_ini
+            ex_branch = copy.copy(excluded)
 
             for change_pattern in profile.xpath("changepattern"):
                 cp_tasks = [element for element in change_pattern.xpath(".//*") if element.tag in task_elements]

@@ -7,6 +7,7 @@ class Solution():
         self.ns = {"cpee1" : list(process.nsmap.values())[0]}
 
     def get_measure(self, measure, operator=sum, flag=False):
+        """Returns 0 if Flag is set wrong or no values are given, does not check if allocation is valid"""
         if flag:
             values = self.process.xpath(f".//cpee1:allocation/cpee1:resource/cpee1:resprofile/cpee1:measures/cpee1:{measure}", namespaces=self.ns)
         else:

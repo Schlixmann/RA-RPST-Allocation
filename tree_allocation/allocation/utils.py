@@ -59,7 +59,7 @@ def vary_resource_changepatterns(proc_file, res_file, output_file=None, cp_ratio
     test_strings = res_tree.xpath("//@id") + process.xpath("//@id")
 
     pattern = re.compile(r'rp|r_|a')
-    curr_t_id = max([int(re.split("\D", id)[-1]) for id in test_strings if not pattern.search(id)])
+    curr_t_id = max([int(re.split("\\D", id)[-1]) for id in test_strings if not pattern.search(id)])
     #curr_t_id = "r0"
     #pattern = re.compile(r'rp')
     #curr_rp_id = max([int(re.split("\D", id)[-1]) for id in test_strings if pattern.search(id)])
@@ -127,7 +127,7 @@ def add_resources_for_inserts(res_file, tasks:list, allowed_roles, output_file=N
 
     rp_ids = res_tree.xpath("//@id")
     pattern = re.compile(r'rp')
-    curr_rp_id = max([int(re.split("\D", id)[-1]) for id in rp_ids if pattern.search(id)])
+    curr_rp_id = max([int(re.split("\\D", id)[-1]) for id in rp_ids if pattern.search(id)])
 
     for resprofile in to_add:
         profile = copy.deepcopy(res_tree.xpath("//resprofile")[0])

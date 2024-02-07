@@ -24,7 +24,7 @@ class ChangeOperation():
         #task.xpath("cpee1:allocation", namespaces=ns)[0].append(etree.Element(f"{{{ns['cpee1']}}}res_allocation"))
         #with open("res2_xml.xml", "wb") as f:
         #    f.write(etree.tostring(output))
-        set_allocation = output.xpath("@name")[0] + " role: " + output.xpath("*/@role")[0]    
+        set_allocation = output.xpath("@name")[0] + " role: " + output.xpath("*/@role")[0]  + output.xpath("*/@id")[0]  # add ID
         task.xpath("cpee1:resources", namespaces=ns)[0].set("allocated_to", set_allocation)
         task.xpath("cpee1:allocation", namespaces=ns)[0].append(output)
     
@@ -40,6 +40,7 @@ class ChangeOperation():
 class Insert(ChangeOperation):
     def apply(self, process:etree.Element, core_task:etree.Element, task:etree.Element):
         ns = {"cpee1" : list(process.nsmap.values())[0]}
+        invalid = False
         process = copy.deepcopy(process)
         #core_task = task.xpath("/*")[0]
         proc_task= self.get_proc_task(process, core_task)
@@ -49,12 +50,15 @@ class Insert(ChangeOperation):
         # create next id for task to insert (changed in branch as well!)
         task.attrib["id"] = "r"+self.get_next_task_id(process)
         task = copy.deepcopy(task)
-
-        if task.xpath("cpee1:children/*", namespaces=ns):
-            resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
-            self.add_res_allocation(task, resource_info)
-        else: 
-            raise ChangeOperationError("No Resource available. Invalid Allocation")
+        try:
+            if task.xpath("cpee1:children/*", namespaces=ns):
+                resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
+                self.add_res_allocation(task, resource_info)
+            else: 
+                raise ChangeOperationError("No Resource available. Invalid Allocation")
+        except ChangeOperationError as inst:
+            #print(inst.__str__())
+            invalid = True
 
         match task.attrib["direction"]:
             case "before":
@@ -69,13 +73,14 @@ class Insert(ChangeOperation):
                 proc_task.addnext(new_parent)
                 proc_task_parent.remove(proc_task)
 
-        return process
+        return process, invalid
     
 class Delete(ChangeOperation):
     # TODO Cascade delete of allocations
     # TODO if DELETE is only task in a parallel/ choose branch, full parallel must be deleted
 
     def apply(self, process:etree.Element, core_task:etree.Element, task:etree.Element):
+        invalid = False
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         with open("xml_out3.xml", "wb") as f:
             f.write(etree.tostring(process))
@@ -126,12 +131,18 @@ class Delete(ChangeOperation):
                     except TypeError as inst:
                         #print(inst.__str__())
                         pass
-                if pos_deletes:
-                    to_del_id = pos_deletes[0]
-                    with open("xml_out", "wb") as f:
-                        f.write(etree.tostring(proc[0]))
-                else:
-                    raise ChangeOperationError("No matching task to delete found in Process Model")
+                try:
+                    if pos_deletes:
+                        to_del_id = pos_deletes[0]
+                        with open("xml_out", "wb") as f:
+                            f.write(etree.tostring(proc[0]))
+                    else:
+                        raise ChangeOperationError("No matching task to delete found in Process Model")
+                
+                except ChangeOperationError as inst:
+                    #print(inst.__str__())
+                    invalid = True
+                    return process, invalid 
 
                 to_dels = process.xpath(f"//*[@id='{to_del_id}'][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)and not(ancestor::cpee1:children)]", namespaces=ns)
 
@@ -144,9 +155,9 @@ class Delete(ChangeOperation):
                 # Delete Cascade:
                 for to_del2 in to_del.xpath("cpee1:allocation/resource/resprofile/cpee1:children/*", namespaces=ns):
                     to_del2.attrib["type"], to_del2.attrib["direction"] = task.attrib["type"], task.attrib["direction"]
-                    process = Delete().apply(process, core_task, to_del2)
+                    process, invalid = Delete().apply(process, core_task, to_del2)
 
-        return process
+        return process, invalid
 
 def print_node_structure(ns, node, level=0):
     if node.tag==f"{{{ns['cpee1']}}}manipulate": print('  ' * level + node.tag + ' ' + str(node.attrib), node )
@@ -155,7 +166,7 @@ def print_node_structure(ns, node, level=0):
     
 class Replace(ChangeOperation):
     def apply(self, process, core_task, task):
-
+        invalid = False
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         proc_task= self.get_proc_task(process, core_task)
         task.attrib["id"] = "r" + self.get_next_task_id(process)
@@ -163,13 +174,18 @@ class Replace(ChangeOperation):
         #proc_task = self.get_proc_task(process, to_replace)
         proc_task.xpath("parent::*")[0].replace(proc_task, task)
 
-        if task.xpath("cpee1:children/*", namespaces=ns):
-            resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
-            self.add_res_allocation(task, resource_info)
-        else: 
-            raise ChangeOperationError("No Resource available. Invalid Allocation")
+        try:
+            if task.xpath("cpee1:children/*", namespaces=ns):
+                resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
+                self.add_res_allocation(task, resource_info)
+            else: 
+                raise ChangeOperationError("No Resource available for replace. Invalid Allocation")
+        
+        except ChangeOperationError as inst:
+            print(inst.__str__())
+            invalid = True
 
-        return process
+        return process, invalid
 
 class ChangeOperationError(Exception):
     "Raised when an Error Occurs during application of a change operation"

@@ -636,4 +636,7 @@ class TestCpeeAllocation(unittest.TestCase):
         best1 = best[-1]
         best1["solution"].process = etree.fromstring(best1["solution"].process)
         print(best1["solution"].get_measure("cost", flag=True))
+
+    def test_combine_pickles(self):
+        combine_pickles()
             

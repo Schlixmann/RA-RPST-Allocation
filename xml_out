@@ -1,8 +1,8 @@
 <description xmlns="http://cpee.org/ns/description/1.0">
-  <manipulate id="a1" label="start_process">level1level2level3<resources allocated_to="level3 role: level3rp_13"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_3" name="level3">
-        <resprofile id="rp_13" name="start_process" role="level3" task="start_process">
+  <manipulate id="a1" label="start_process">level1level2level3<resources allocated_to="level2 role: level2rp_6"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_2" name="level2">
+        <resprofile id="rp_6" name="start_process" role="level2" task="start_process">
             <measures>
-                <cost>52</cost>
+                <cost>105</cost>
             </measures>
         <children/></resprofile>
         </resource>
@@ -16,17 +16,17 @@
                         <resources allocated_to="level2 role: level2rp_20">
                             <resource>level2</resource>
                         </resources>
-                    <children><resource id="r_4" name="level2">
+                    <children><resource id="r_2" name="level2">
         <resprofile id="rp_20" name="data_support" role="level2" task="data_support">
             <measures>
-                <cost>57</cost>
+                <cost>42</cost>
             </measures>
         <children/></resprofile>
         </resource>
-    </children><allocation><resource id="r_4" name="level2">
+    </children><allocation><resource id="r_2" name="level2">
         <resprofile id="rp_20" name="data_support" role="level2" task="data_support">
             <measures>
-                <cost>57</cost>
+                <cost>42</cost>
             </measures>
         <children/></resprofile>
         </resource>
@@ -52,10 +52,10 @@
                         <resources allocated_to="not_allocated">
                             <resource>level2</resource>
                         </resources>
-                    <children><resource id="r_4" name="level2">
+                    <children><resource id="r_2" name="level2">
         <resprofile id="rp_20" name="data_support" role="level2" task="data_support">
             <measures>
-                <cost>57</cost>
+                <cost>42</cost>
             </measures>
         <children/></resprofile>
         </resource>
@@ -139,6 +139,7 @@
                 </children></resprofile>
         </resource>
 </allocation></manipulate>
+  <manipulate id="a10" label="proposal_approval"><resources allocated_to="not_allocated"><resource>level3</resource></resources></manipulate>
   <choose xmlns="http://cpee.org/ns/description/1.0" mode="exclusive">
   <alternative condition=""> 
   <parallel wait="-1" cancel="last">
@@ -185,30 +186,12 @@
             <description/>
           </code>
         </documentation>
-        <resources allocated_to="level3 role: level3rp_9">
+        <resources allocated_to="not_allocated">
           <resource>level1</resource>
           <resource>level2</resource>
           <resource>level3</resource>
         </resources>
-      <allocation><resource id="r_5" name="level3">
-        <resprofile id="rp_9" name="design_offer" role="level3" task="design_offer">
-            <measures>
-                <cost>107</cost>
-            </measures>
-            <changepattern type="delete">
-                <parameters>
-                    <direction>any</direction>
-                </parameters>
-                <description>
-                    </description>
-            </changepattern>
-        <children><manipulate id="a8" label="send_offer" type="delete" direction="any">
-                        <resources allocated_to="not_allocated">
-                        </resources>
-                    </manipulate>
-                </children></resprofile>
-        </resource>
-</allocation></call>
+      </call>
     </parallel_branch>
     <parallel_branch pass="" local="">
       <call id="a8" endpoint="">

@@ -144,6 +144,8 @@ def add_resources_for_inserts(res_file, tasks:list, allowed_roles, output_file=N
     else:
         with open(res_file, "wb") as f:
             f.write(etree.tostring(res_tree))
+    
+
 
 
 

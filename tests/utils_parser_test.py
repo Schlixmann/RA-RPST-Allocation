@@ -57,6 +57,7 @@ class TestEvent(unittest.TestCase):
             vary_resource_changepatterns(process, res, cp_ratio=0.3, in_de_re_ratios=in_de_re_ratios, tasks= ["dummy1", "dummy2", "dummy3", "dummy4"])
             add_resources_for_inserts(res, ["dummy1", "dummy2", "dummy3"], ["level1", "level2", "level3"], ratio=0.8)
         vary_resource_costs(res, "cost")
+    
 
 
 

@@ -557,12 +557,15 @@ def find_best_solution_bb(solutions): # ,measure, n):
         else:
             value = copy.deepcopy(new_solution.get_measure(measure, flag=True))   # calc. fitness of solution
             value = float(copy.deepcopy(value))
+            if value < 500:
+                print(f"Value is < 500: {value}")
         if not np.isnan(value) :
             if not best_solutions:
                 best_solutions.append({"solution": new_solution, "cost": value})             
-            elif (value < best_solutions[-1].get("cost") or np.isnan(best_solutions[0].get("cost"))) and not np.isnan(value):
+            elif (value < best_solutions[0].get("cost") or np.isnan(best_solutions[0].get("cost"))) and not np.isnan(value):
                 best_solutions.append({"solution": new_solution, "cost": value})
-                if len(best_solutions) > 10:
+                best_solutions = sorted(best_solutions, key=lambda d: d[measure], reverse=True) 
+                if len(best_solutions) > 25:
                     best_solutions.pop(0)
      
         if i%1000 == 0:

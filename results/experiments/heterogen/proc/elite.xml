@@ -1,8 +1,8 @@
 <description xmlns="http://cpee.org/ns/description/1.0">
-  <manipulate id="a1" label="start_process">level1level2level3<resources allocated_to="level1 role: level1rp_1"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_1" name="level1">
-        <resprofile id="rp_1" name="start_process" role="level1" task="start_process">
+  <manipulate id="a1" label="start_process">level1level2level3<resources allocated_to="level3 role: level3rp_13"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_3" name="level3">
+        <resprofile id="rp_13" name="start_process" role="level3" task="start_process">
             <measures>
-                <cost>47</cost>
+                <cost>52</cost>
             </measures>
         <children/></resprofile>
         </resource>
@@ -15,14 +15,57 @@
         <children/></resprofile>
         </resource>
     </allocation></manipulate>
-  <manipulate id="a3" label="evaluate_risk">Must be checked by level3 if executed by 1 or 2<resources allocated_to="level3 role: level3rp_14"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_5" name="level3">
-        <resprofile id="rp_14" name="evaluate_risk" role="level3" task="evaluate_risk">
+  <manipulate id="r3" label="head_confirmation" type="insert" direction="before">
+                        <resources allocated_to="level3 role: level3rp_23">
+                            <resource>level3</resource>
+                        </resources>
+                    <children><resource id="r_5" name="level3">
+        <resprofile id="rp_23" name="head_confirmation" role="level3" task="head_confirmation">
             <measures>
-                <cost>100</cost>
+                <cost>76</cost>
+            </measures>
+        <children/></resprofile>
+        </resource>
+</children><allocation><resource id="r_5" name="level3">
+        <resprofile id="rp_23" name="head_confirmation" role="level3" task="head_confirmation">
+            <measures>
+                <cost>76</cost>
             </measures>
         <children/></resprofile>
         </resource>
 </allocation></manipulate>
+                <manipulate id="a3" label="evaluate_risk">Must be checked by level3 if executed by 1 or 2<resources allocated_to="level1 role: level1rp_3"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_1" name="level1">
+        <resprofile id="rp_3" name="evaluate_risk" role="level1" task="evaluate_risk">
+            <measures>
+                <cost>11</cost>
+            </measures>
+            <changepattern type="insert">
+                <parameters>
+                    <direction>before</direction>
+                </parameters>
+                <description>
+                    <manipulate id="r2" label="head_confirmation" type="insert" direction="before">
+                        <resources allocated_to="not_allocated">
+                            <resource>level3</resource>
+                        </resources>
+                    </manipulate>
+                </description>
+            </changepattern>
+        <children><manipulate id="r2" label="head_confirmation" type="insert" direction="before">
+                        <resources allocated_to="not_allocated">
+                            <resource>level3</resource>
+                        </resources>
+                    <children><resource id="r_5" name="level3">
+        <resprofile id="rp_23" name="head_confirmation" role="level3" task="head_confirmation">
+            <measures>
+                <cost>76</cost>
+            </measures>
+        <children/></resprofile>
+        </resource>
+</children></manipulate>
+                </children></resprofile>
+        </resource>
+    </allocation></manipulate>
   <manipulate id="a4" label="create_proposal">level3<resources allocated_to="level3 role: level3rp_15"><resource>level3</resource><resource>level2</resource></resources><allocation><resource id="r_3" name="level3">
         <resprofile id="rp_15" name="create_proposal" role="level3" task="create_proposal">
             <measures>

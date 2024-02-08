@@ -16,13 +16,14 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
     
     process_allocation = ProcessAllocation(task_xml, resource_url=resource_et)
     trees = process_allocation.allocate_process()
-
+    
     show = True
     for i, tree in enumerate(list(trees.values())):    
         if i > 0:
             show = False
-        graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), filename=f"blabla_{i}", view=show) 
-
+        graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), format="svg", filename=f"alloc_tree_{i}", view=show) 
+    
+    """
     # Overall Solutions:
     brute_solutions = Brute(process_allocation)
     solutions, tasklist = brute_solutions.get_all_opts()
@@ -126,12 +127,12 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
     with open(out_folder + "/proc/elite.xml", "wb") as f:
         f.write(etree.tostring(outcome[-1]["solution"].process))
     print("Invalid Branches? ", [ind["solution"].invalid_branches for ind in outcome])
-
+    
 
     # Top 10 Outcomes with Brute Force
     # List with top 10 outcome
 
-
+    """
     #print("Solution space size: ", num_brute_solutions)
     if brute:
         measure = "cost"

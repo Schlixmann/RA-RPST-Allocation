@@ -14,8 +14,11 @@ class TreeGraph():
     def add_visualization_res(self, element):
         self.dot_content += f'\t"{element.attrib["unid"]}" [label = "{element.attrib["id"]}: {element.attrib["name"]}"]\t; \n'
 
-    def add_visualization_resprofile(self, element):
-        self.dot_content += f'\t"{element.attrib["unid"]}" [label = "{element.attrib["id"]}: {element.attrib["role"]} \n {element.attrib["name"]}" shape=polygon sides=6]\t; \n'
+    def add_visualization_resprofile(self, element, measure="cost"):
+        value = element.xpath(f"cpee1:measures/cpee1:{measure}", namespaces=self.ns) 
+        if value:
+            value = value[0].text
+        self.dot_content += f'\t"{element.attrib["unid"]}" [label = "{element.attrib["id"]}: {element.attrib["role"]} \n {element.attrib["name"]} \n {measure} : {value}" shape=polygon sides=6]\t; \n'
             
     def add_visualization_task(self, element):
         name = get_label(etree.tostring(element))
@@ -96,7 +99,7 @@ class TreeGraph():
         
         output_file = f"{filename}.{format}"
         
-        source = Source(self.dot_content, filename=f'{filename}.dot', format='png')
+        source = Source(self.dot_content, filename=f'{filename}.dot', format=format)
         source.render(filename=f'{filename}', directory=directory, cleanup=True, view=view)
 
 

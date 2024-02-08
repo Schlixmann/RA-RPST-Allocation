@@ -37,7 +37,7 @@ class Branch():
             f.write(etree.tostring(self.node))
         #TODO Set allocated Resource!
 
-        tasks = copy.deepcopy(self.node).xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:allocation)]", namespaces=ns)[1:]
+        tasks = copy.deepcopy(self.node).xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:changepattern)and not(ancestor::cpee1:allocation)]", namespaces=ns)[1:]
         #TODO This does it work for branches with more than 2 levels?
 
 
@@ -64,5 +64,4 @@ class Branch():
                 #print(inst.__str__())
                 #print("Solution invalid_branches = True")
 
-        #open("xml_out2.xml", "wb").write(etree.tostring(process))
         return process

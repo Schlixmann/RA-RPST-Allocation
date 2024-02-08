@@ -533,6 +533,9 @@ def find_best_solution_bb(solutions): # ,measure, n):
     best_solutions = [] 
     start = time.time()
     for i, solution in enumerate(solutions):
+        flag = False
+        if solution in [(0,1,0,2,0,1,0,0,0,3), (0,1,0,2,1,1,0,0,0,3)]:
+            flag = True
         
         new_solution = Solution(copy.deepcopy(process)) # create solution
         ns = {"cpee1" : list(new_solution.process.nsmap.values())[0]}
@@ -543,14 +546,23 @@ def find_best_solution_bb(solutions): # ,measure, n):
 
         while True:
 
-            allocation = allocations[task.attrib['id']] # get allocatin
+            allocation = allocations[task.attrib['id']] # get allocation
             branch_no = individual.get(task)    # get choosen number of branch
             branch = allocation.branches[branch_no] # get actual branch as R-RPST
+            if flag:
+                with open("xml_outx2.xml", "wb") as f:
+                    f.write(etree.tostring(new_solution.process))            
             new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
+            if flag:
+                with open("xml_outx3.xml", "wb") as f:
+                    f.write(etree.tostring(new_solution.process))
             task = get_next_task(tasks_iter, new_solution)
             if task == "end":
                 break
-
+                
+         
+        with open("xml_full.xml", "wb") as f:
+            f.write(etree.tostring(new_solution.process))
         new_solution.check_validity()
         if new_solution.invalid_branches:
             value = np.nan        

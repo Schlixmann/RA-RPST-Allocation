@@ -639,4 +639,33 @@ class TestCpeeAllocation(unittest.TestCase):
 
     def test_combine_pickles(self):
         combine_pickles()
+
+    def test_insert_from_pickle(self):
+        with open("tests/test_processes/offer_process_paper.xml") as f: 
+            task_xml = f.read()
+        with open("/home/felixs/Programming_Projects/RDPM_private/resource_config/offer_resources_heterogen.xml") as f:
+            resource_et = etree.fromstring(f.read())
+        
+        process_allocation = ProcessAllocation(task_xml, resource_url=resource_et)
+        trees = process_allocation.allocate_process()
+
+        test = (0,1,0,2,0,1,0,0,0,3)
+
+        measure = "cost"
+        start = time.time()
+        brute_solutions = Brute(process_allocation)
+        solutions, tasklist = brute_solutions.get_all_opts()
+        single_solution = {}
+        for i, d in enumerate(solutions):
+            print(d.items())
+            k,v = list(d.items())[0]
+            single_solution[k] = [test[i]]
+        solutions = [{k: [v[0], 0]} for k, v in single_solution.items()]
+        solutions = [list(o.values())[0] for o in solutions]
+        b = brute_solutions.iter_product(solutions)
+        results = brute_solutions.find_solutions_ab(b, measure)
+        outcome = combine_pickles()
+        end = time.time()
+        print(outcome)
+            
             

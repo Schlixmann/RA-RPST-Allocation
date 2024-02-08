@@ -1,53 +1,61 @@
 digraph CallTree {
-	"81b09602-c606-11ee-aa25-04cf4b795879" [label = "a9: close_project 
+	"e0b6a368-c687-11ee-890b-ac1a3ddd05c7" [label = "a9: close_project 
  Type: Core 
  Direction: Core" shape=rectangle]	; 
-	"81b09e5e-c606-11ee-aa25-04cf4b795879" [label = "r_2: level2"]	; 
-	"81b09602-c606-11ee-aa25-04cf4b795879" -> "81b09e5e-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0a034-c606-11ee-aa25-04cf4b795879" [label = "rp_12: level2 
- close_project" shape=polygon sides=6]	; 
-	"81b09e5e-c606-11ee-aa25-04cf4b795879" -> "81b0a034-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0a12e-c606-11ee-aa25-04cf4b795879" [label = "r4: inform_head 
+	"e0b6ac6e-c687-11ee-890b-ac1a3ddd05c7" [label = "r_2: level2"]	; 
+	"e0b6a368-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6ac6e-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6ae6c-c687-11ee-890b-ac1a3ddd05c7" [label = "rp_12: level2 
+ close_project 
+ cost : 40" shape=polygon sides=6]	; 
+	"e0b6ac6e-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6ae6c-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6b006-c687-11ee-890b-ac1a3ddd05c7" [label = "r4: inform_head 
  Type: insert 
  Direction: after" shape=rectangle]	; 
-	"81b0a034-c606-11ee-aa25-04cf4b795879" -> "81b0a12e-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0a368-c606-11ee-aa25-04cf4b795879" [label = "r_2: level2"]	; 
-	"81b0a12e-c606-11ee-aa25-04cf4b795879" -> "81b0a368-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0a502-c606-11ee-aa25-04cf4b795879" [label = "rp_22: level2 
- inform_head" shape=polygon sides=6]	; 
-	"81b0a368-c606-11ee-aa25-04cf4b795879" -> "81b0a502-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0a5de-c606-11ee-aa25-04cf4b795879" [label = "r_4: level2"]	; 
-	"81b0a12e-c606-11ee-aa25-04cf4b795879" -> "81b0a5de-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0a76e-c606-11ee-aa25-04cf4b795879" [label = "rp_22: level2 
- inform_head" shape=polygon sides=6]	; 
-	"81b0a5de-c606-11ee-aa25-04cf4b795879" -> "81b0a76e-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0a854-c606-11ee-aa25-04cf4b795879" [label = "r_4: level2"]	; 
-	"81b09602-c606-11ee-aa25-04cf4b795879" -> "81b0a854-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0a9d0-c606-11ee-aa25-04cf4b795879" [label = "rp_12: level2 
- close_project" shape=polygon sides=6]	; 
-	"81b0a854-c606-11ee-aa25-04cf4b795879" -> "81b0a9d0-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0aaa2-c606-11ee-aa25-04cf4b795879" [label = "r7: inform_head 
+	"e0b6ae6c-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6b006-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6b286-c687-11ee-890b-ac1a3ddd05c7" [label = "r_2: level2"]	; 
+	"e0b6b006-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6b286-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6b434-c687-11ee-890b-ac1a3ddd05c7" [label = "rp_22: level2 
+ inform_head 
+ cost : 125" shape=polygon sides=6]	; 
+	"e0b6b286-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6b434-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6b5d8-c687-11ee-890b-ac1a3ddd05c7" [label = "r_4: level2"]	; 
+	"e0b6b006-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6b5d8-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6b768-c687-11ee-890b-ac1a3ddd05c7" [label = "rp_22: level2 
+ inform_head 
+ cost : 31" shape=polygon sides=6]	; 
+	"e0b6b5d8-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6b768-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6b8da-c687-11ee-890b-ac1a3ddd05c7" [label = "r_4: level2"]	; 
+	"e0b6a368-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6b8da-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6ba6a-c687-11ee-890b-ac1a3ddd05c7" [label = "rp_12: level2 
+ close_project 
+ cost : 77" shape=polygon sides=6]	; 
+	"e0b6b8da-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6ba6a-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6bbfa-c687-11ee-890b-ac1a3ddd05c7" [label = "r7: inform_head 
  Type: insert 
  Direction: after" shape=rectangle]	; 
-	"81b0a9d0-c606-11ee-aa25-04cf4b795879" -> "81b0aaa2-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0ac82-c606-11ee-aa25-04cf4b795879" [label = "r_2: level2"]	; 
-	"81b0aaa2-c606-11ee-aa25-04cf4b795879" -> "81b0ac82-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0ae12-c606-11ee-aa25-04cf4b795879" [label = "rp_22: level2 
- inform_head" shape=polygon sides=6]	; 
-	"81b0ac82-c606-11ee-aa25-04cf4b795879" -> "81b0ae12-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0aee4-c606-11ee-aa25-04cf4b795879" [label = "r_4: level2"]	; 
-	"81b0aaa2-c606-11ee-aa25-04cf4b795879" -> "81b0aee4-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0b04c-c606-11ee-aa25-04cf4b795879" [label = "rp_22: level2 
- inform_head" shape=polygon sides=6]	; 
-	"81b0aee4-c606-11ee-aa25-04cf4b795879" -> "81b0b04c-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0b11e-c606-11ee-aa25-04cf4b795879" [label = "r_3: level3"]	; 
-	"81b09602-c606-11ee-aa25-04cf4b795879" -> "81b0b11e-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0b29a-c606-11ee-aa25-04cf4b795879" [label = "rp_19: level3 
- close_project" shape=polygon sides=6]	; 
-	"81b0b11e-c606-11ee-aa25-04cf4b795879" -> "81b0b29a-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0b362-c606-11ee-aa25-04cf4b795879" [label = "r_5: level3"]	; 
-	"81b09602-c606-11ee-aa25-04cf4b795879" -> "81b0b362-c606-11ee-aa25-04cf4b795879"	 ;
-	"81b0b4de-c606-11ee-aa25-04cf4b795879" [label = "rp_19: level3 
- close_project" shape=polygon sides=6]	; 
-	"81b0b362-c606-11ee-aa25-04cf4b795879" -> "81b0b4de-c606-11ee-aa25-04cf4b795879"	 ;
+	"e0b6ba6a-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6bbfa-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6be34-c687-11ee-890b-ac1a3ddd05c7" [label = "r_2: level2"]	; 
+	"e0b6bbfa-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6be34-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6bfc4-c687-11ee-890b-ac1a3ddd05c7" [label = "rp_22: level2 
+ inform_head 
+ cost : 125" shape=polygon sides=6]	; 
+	"e0b6be34-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6bfc4-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6c122-c687-11ee-890b-ac1a3ddd05c7" [label = "r_4: level2"]	; 
+	"e0b6bbfa-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6c122-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6c29e-c687-11ee-890b-ac1a3ddd05c7" [label = "rp_22: level2 
+ inform_head 
+ cost : 31" shape=polygon sides=6]	; 
+	"e0b6c122-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6c29e-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6c406-c687-11ee-890b-ac1a3ddd05c7" [label = "r_3: level3"]	; 
+	"e0b6a368-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6c406-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6c582-c687-11ee-890b-ac1a3ddd05c7" [label = "rp_19: level3 
+ close_project 
+ cost : 122" shape=polygon sides=6]	; 
+	"e0b6c406-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6c582-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6c6e0-c687-11ee-890b-ac1a3ddd05c7" [label = "r_5: level3"]	; 
+	"e0b6a368-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6c6e0-c687-11ee-890b-ac1a3ddd05c7"	 ;
+	"e0b6c866-c687-11ee-890b-ac1a3ddd05c7" [label = "rp_19: level3 
+ close_project 
+ cost : 2" shape=polygon sides=6]	; 
+	"e0b6c6e0-c687-11ee-890b-ac1a3ddd05c7" -> "e0b6c866-c687-11ee-890b-ac1a3ddd05c7"	 ;
 }

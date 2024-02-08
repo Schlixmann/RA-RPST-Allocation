@@ -12,7 +12,7 @@ class TreeGraph():
         return f'\t"{parent_id.attrib["unid"]}" -> "{element.attrib["unid"]}"\t ;\n'
 
     def add_visualization_res(self, element):
-        self.dot_content += f'\t"{element.attrib["unid"]}" [label = "{element.attrib["id"]}: {element.attrib["name"]}"]\t; \n'
+        self.dot_content += f'\t"{element.attrib["unid"]}" [label = "{element.attrib["id"]}: {element.attrib["name"]}"]\t; \n '
 
     def add_visualization_resprofile(self, element, measure="cost"):
         value = element.xpath(f"cpee1:measures/cpee1:{measure}", namespaces=self.ns) 

@@ -1,27 +1,27 @@
 <description xmlns="http://cpee.org/ns/description/1.0">
-  <manipulate id="a1" label="start_process">level1level2level3<resources allocated_to="level1 role: level1rp_1"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_1" name="level1">
-        <resprofile id="rp_1" name="start_process" role="level1" task="start_process">
+  <manipulate id="a1" label="start_process">level1level2level3<resources allocated_to="level3 role: level3rp_13"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_5" name="level3">
+        <resprofile id="rp_13" name="start_process" role="level3" task="start_process">
             <measures>
                 <cost>10</cost>
             </measures>
         <children/></resprofile>
         </resource>
-    </allocation></manipulate>
+</allocation></manipulate>
   <manipulate id="r2" label="data_support" type="insert" direction="before">
                         <resources allocated_to="level2 role: level2rp_20">
                             <resource>level2</resource>
                         </resources>
-                    <children><resource id="r_4" name="level2">
+                    <children><resource id="r_2" name="level2">
         <resprofile id="rp_20" name="data_support" role="level2" task="data_support">
             <measures>
-                <cost>8</cost>
+                <cost>9</cost>
             </measures>
         <children/></resprofile>
         </resource>
-    </children><allocation><resource id="r_4" name="level2">
+    </children><allocation><resource id="r_2" name="level2">
         <resprofile id="rp_20" name="data_support" role="level2" task="data_support">
             <measures>
-                <cost>8</cost>
+                <cost>9</cost>
             </measures>
         <children/></resprofile>
         </resource>
@@ -47,10 +47,10 @@
                         <resources allocated_to="not_allocated">
                             <resource>level2</resource>
                         </resources>
-                    <children><resource id="r_4" name="level2">
+                    <children><resource id="r_2" name="level2">
         <resprofile id="rp_20" name="data_support" role="level2" task="data_support">
             <measures>
-                <cost>8</cost>
+                <cost>9</cost>
             </measures>
         <children/></resprofile>
         </resource>
@@ -88,10 +88,10 @@
                 </children></resprofile>
         </resource>
     </allocation></manipulate>
-  <manipulate id="a4" label="create_proposal">level3<resources allocated_to="level3 role: level3rp_15"><resource>level3</resource><resource>level2</resource></resources><allocation><resource id="r_5" name="level3">
+  <manipulate id="a4" label="create_proposal">level3<resources allocated_to="level3 role: level3rp_15"><resource>level3</resource><resource>level2</resource></resources><allocation><resource id="r_3" name="level3">
         <resprofile id="rp_15" name="create_proposal" role="level3" task="create_proposal">
             <measures>
-                <cost>30</cost>
+                <cost>29</cost>
             </measures>
             <changepattern type="delete">
                 <parameters>
@@ -106,7 +106,7 @@
                     </manipulate>
                 </children></resprofile>
         </resource>
-</allocation></manipulate>
+    </allocation></manipulate>
   <choose xmlns="http://cpee.org/ns/description/1.0" mode="exclusive">
   <alternative condition=""> 
   <parallel wait="-1" cancel="last">
@@ -215,14 +215,14 @@
         <resources allocated_to="level3 role: level3rp_16">
           <resource>level3</resource>
         </resources>
-      <allocation><resource id="r_5" name="level3">
+      <allocation><resource id="r_3" name="level3">
         <resprofile id="rp_16" name="contact_suppliers" role="level3" task="contact_suppliers">
             <measures>
                 <cost>15</cost>
             </measures>
         <children/></resprofile>
         </resource>
-</allocation></call>
+    </allocation></call>
     </parallel_branch>
   </parallel>
   <choose mode="exclusive">

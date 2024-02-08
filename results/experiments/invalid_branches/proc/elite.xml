@@ -26,7 +26,7 @@
         <children/></resprofile>
         </resource>
     </allocation></manipulate>
-                <manipulate id="a2" label="data_gathering">level1level2<resources allocated_to="level1 role: level1rp_2"><resource>level1</resource><resource>level2</resource></resources><allocation><resource id="r_1" name="level1">
+                <manipulate id="a2" label="data_gathering">level1level2<resources allocated_to="level1 role: level1rp_2"><resource>level1</resource><resource>level2</resource></resources><allocation><resource id="r_6" name="level1">
         <resprofile id="rp_2" name="data_gathering" role="level1" task="data_gathering">
             <measures>
                 <cost>10</cost>
@@ -58,29 +58,29 @@
                 </children></resprofile>
         </resource>
     </allocation></manipulate>
-  <manipulate id="r3" label="head_confirmation" type="insert" direction="before">
+  <manipulate id="r4" label="head_confirmation" type="insert" direction="before">
                         <resources allocated_to="not_allocated">
                             <resource>level3</resource>
                         </resources>
                     <children/></manipulate>
-                <manipulate id="a3" label="evaluate_risk">Must be checked by level3 if executed by 1 or 2<resources allocated_to="level1 role: level1rp_3"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_6" name="level1">
-        <resprofile id="rp_3" name="evaluate_risk" role="level1" task="evaluate_risk">
+                <manipulate id="a3" label="evaluate_risk">Must be checked by level3 if executed by 1 or 2<resources allocated_to="level2 role: level2rp_8"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_2" name="level2">
+        <resprofile id="rp_8" name="evaluate_risk" role="level2" task="evaluate_risk">
             <measures>
-                <cost>10</cost>
+                <cost>25</cost>
             </measures>
             <changepattern type="insert">
                 <parameters>
                     <direction>before</direction>
                 </parameters>
                 <description>
-                    <manipulate id="r2" label="head_confirmation" type="insert" direction="before">
+                    <manipulate id="r3" label="head_confirmation" type="insert" direction="before">
                         <resources allocated_to="not_allocated">
                             <resource>level3</resource>
                         </resources>
                     </manipulate>
                 </description>
             </changepattern>
-        <children><manipulate id="r2" label="head_confirmation" type="insert" direction="before">
+        <children><manipulate id="r3" label="head_confirmation" type="insert" direction="before">
                         <resources allocated_to="not_allocated">
                             <resource>level3</resource>
                         </resources>
@@ -215,14 +215,14 @@
         <resources allocated_to="level3 role: level3rp_16">
           <resource>level3</resource>
         </resources>
-      <allocation><resource id="r_5" name="level3">
+      <allocation><resource id="r_3" name="level3">
         <resprofile id="rp_16" name="contact_suppliers" role="level3" task="contact_suppliers">
             <measures>
                 <cost>15</cost>
             </measures>
         <children/></resprofile>
         </resource>
-</allocation></call>
+    </allocation></call>
     </parallel_branch>
   </parallel>
   <choose mode="exclusive">
@@ -278,7 +278,7 @@
           <resource>level2</resource>
           <resource>level3</resource>
         </resources>
-      <allocation><resource id="r_1" name="level1">
+      <allocation><resource id="r_6" name="level1">
         <resprofile id="rp_16" name="handover_to_engineering" role="level3" task="handover_to_engineering">
             <measures>
                 <cost>15</cost>

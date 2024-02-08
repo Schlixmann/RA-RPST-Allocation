@@ -23,7 +23,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
             show = False
         graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), format="svg", filename=f"alloc_tree_{i}", view=show) 
     
-    """
+
     # Overall Solutions:
     brute_solutions = Brute(process_allocation)
     solutions, tasklist = brute_solutions.get_all_opts()
@@ -32,10 +32,10 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
 
     # heuristic_approach
     # heuristic config:
-    heuristic_config = {"top_n":2, "include_invalid":True, "measure":"cost"}
+    heuristic_config = {"top_n":2, "include_invalid":False, "measure":"cost"}
     start = time.time()
     brute_solutions = Brute(process_allocation)
-    brute_solutions.find_solutions_with_heuristic(top_n=2, force_valid=False)
+    brute_solutions.find_solutions_with_heuristic(top_n=2, force_valid=True)
     ProcessAllocation.solutions = brute_solutions.solutions
     outcome = brute_solutions.get_best_solutions(heuristic_config["measure"], 
                                                  include_invalid=heuristic_config["include_invalid"], top_n=10)
@@ -132,7 +132,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
     # Top 10 Outcomes with Brute Force
     # List with top 10 outcome
 
-    """
+    
     #print("Solution space size: ", num_brute_solutions)
     if brute:
         measure = "cost"
@@ -166,8 +166,8 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
 
 if __name__ == "__main__":
     process = "tests/test_processes/offer_process_paper.xml"
-    resource = "/home/felixs/Programming_Projects/RDPM_private/resource_config/offer_resources_heterogen.xml" # can we do it without valids?
-    out_folder = "results/experiments/heterogen"
+    resource = "resource_config/offer_resources_close_maxima.xml" # can we do it without valids?
+    out_folder = "results/experiments/close_maxima"
 
     # short process:
     #process = "resource_config/offer_resources_cascade_del.xml"

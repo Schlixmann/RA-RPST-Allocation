@@ -533,9 +533,6 @@ def find_best_solution_bb(solutions): # ,measure, n):
     best_solutions = [] 
     start = time.time()
     for i, solution in enumerate(solutions):
-        flag = False
-        if solution in [(0,1,0,2,0,1,0,0,0,3), (0,1,0,2,1,1,0,0,0,3)]:
-            flag = True
         
         new_solution = Solution(copy.deepcopy(process)) # create solution
         ns = {"cpee1" : list(new_solution.process.nsmap.values())[0]}
@@ -548,29 +545,19 @@ def find_best_solution_bb(solutions): # ,measure, n):
 
             allocation = allocations[task.attrib['id']] # get allocation
             branch_no = individual.get(task)    # get choosen number of branch
-            branch = allocation.branches[branch_no] # get actual branch as R-RPST
-            if flag:
-                with open("xml_outx2.xml", "wb") as f:
-                    f.write(etree.tostring(new_solution.process))            
+            branch = allocation.branches[branch_no] # get actual branch as R-RPST           
             new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
-            if flag:
-                with open("xml_outx3.xml", "wb") as f:
-                    f.write(etree.tostring(new_solution.process))
             task = get_next_task(tasks_iter, new_solution)
             if task == "end":
                 break
                 
-         
-        with open("xml_full.xml", "wb") as f:
-            f.write(etree.tostring(new_solution.process))
         new_solution.check_validity()
         if new_solution.invalid_branches:
             value = np.nan        
         else:
             value = copy.deepcopy(new_solution.get_measure(measure, flag=True))   # calc. fitness of solution
             value = float(copy.deepcopy(value))
-            if value < 500:
-                print(f"Value is < 500: {value}")
+
         if not np.isnan(value) :
             if not best_solutions:
                 best_solutions.append({"solution": new_solution, "cost": value})             
@@ -608,7 +595,6 @@ def combine_pickles(folder_path="tmp/results", measure="cost"):
         
         with open(file_path, "rb") as f:        
             dd = pickle.load(f)
-            print(len(dd))
         for d in dd:
             if best_solutions:
                 if d.get("cost") < best_solutions[0].get(measure) or np.isnan(best_solutions[0].get(measure)): 

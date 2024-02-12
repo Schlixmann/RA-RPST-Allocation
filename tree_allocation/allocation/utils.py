@@ -59,7 +59,10 @@ def vary_resource_changepatterns(proc_file, res_file, output_file=None, cp_ratio
     test_strings = res_tree.xpath("//@id") + process.xpath("//@id")
 
     pattern = re.compile(r'rp|r_|a')
-    curr_t_id = max([int(re.split("\\D", id)[-1]) for id in test_strings if not pattern.search(id)])
+    try:
+        curr_t_id = max([int(re.split("\\D", id)[-1]) for id in test_strings if not pattern.search(id)])
+    except ValueError:
+        curr_t_id = 0
     #curr_t_id = "r0"
     #pattern = re.compile(r'rp')
     #curr_rp_id = max([int(re.split("\D", id)[-1]) for id in test_strings if pattern.search(id)])

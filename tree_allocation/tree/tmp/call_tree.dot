@@ -1,233 +1,61 @@
 digraph CallTree {
-	"7047330a-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "a9: close_project 
+	"4912c7f4-c8de-11ee-ab3a-04cf4b795879" [label = "a9: close_project 
  Type: Core 
  Direction: Core" shape=rectangle]	; 
-	"704752cc-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_2: level2"]	; 
- 	"7047330a-c69a-11ee-b4c3-ac1a3ddd05c7" -> "704752cc-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70475556-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_12: level2 
+	"4912eb44-c8de-11ee-ab3a-04cf4b795879" [label = "r_2: level2"]	; 
+ 	"4912c7f4-c8de-11ee-ab3a-04cf4b795879" -> "4912eb44-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"4912f300-c8de-11ee-ab3a-04cf4b795879" [label = "rp_12: level2 
  close_project 
- cost : 5" shape=polygon sides=6]	; 
-	"704752cc-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70475556-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"704757b8-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r4: inform_head 
+ cost : 10" shape=polygon sides=6]	; 
+	"4912eb44-c8de-11ee-ab3a-04cf4b795879" -> "4912f300-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"4912f95e-c8de-11ee-ab3a-04cf4b795879" [label = "r4: inform_head 
  Type: insert 
  Direction: after" shape=rectangle]	; 
-	"70475556-c69a-11ee-b4c3-ac1a3ddd05c7" -> "704757b8-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70475b8c-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_2: level2"]	; 
- 	"704757b8-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70475b8c-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70475dc6-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_22: level2 
+	"4912f300-c8de-11ee-ab3a-04cf4b795879" -> "4912f95e-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"491304d0-c8de-11ee-ab3a-04cf4b795879" [label = "r_2: level2"]	; 
+ 	"4912f95e-c8de-11ee-ab3a-04cf4b795879" -> "491304d0-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"49130cdc-c8de-11ee-ab3a-04cf4b795879" [label = "rp_22: level2 
  inform_head 
- cost : 96" shape=polygon sides=6]	; 
-	"70475b8c-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70475dc6-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70475f92-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_4: level2"]	; 
- 	"704757b8-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70475f92-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70476186-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_22: level2 
+ cost : 15" shape=polygon sides=6]	; 
+	"491304d0-c8de-11ee-ab3a-04cf4b795879" -> "49130cdc-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"491312f4-c8de-11ee-ab3a-04cf4b795879" [label = "r_4: level2"]	; 
+ 	"4912f95e-c8de-11ee-ab3a-04cf4b795879" -> "491312f4-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"491319ac-c8de-11ee-ab3a-04cf4b795879" [label = "rp_22: level2 
  inform_head 
- cost : 99" shape=polygon sides=6]	; 
-	"70475f92-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70476186-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70476348-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r0: dummy2 
- Type: insert 
- Direction: before" shape=rectangle]	; 
-	"70475556-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70476348-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"704772de-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_1: level1"]	; 
- 	"70476348-c69a-11ee-b4c3-ac1a3ddd05c7" -> "704772de-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70477554-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level3 
- dummy2 
- cost : 35" shape=polygon sides=6]	; 
-	"704772de-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70477554-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70477720-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r0: dummy3 
- Type: insert 
- Direction: before" shape=rectangle]	; 
-	"70477554-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70477720-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70477aea-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_3: level3"]	; 
- 	"70477720-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70477aea-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70477d10-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level2 
- dummy3 
- cost : 56" shape=polygon sides=6]	; 
-	"70477aea-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70477d10-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70477f22-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_5: level3"]	; 
- 	"70477720-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70477f22-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70478116-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level2 
- dummy3 
- cost : 39" shape=polygon sides=6]	; 
-	"70477f22-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70478116-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"704782b0-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r0: dummy4 
+ cost : 15" shape=polygon sides=6]	; 
+	"491312f4-c8de-11ee-ab3a-04cf4b795879" -> "491319ac-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"49131f6a-c8de-11ee-ab3a-04cf4b795879" [label = "r_4: level2"]	; 
+ 	"4912c7f4-c8de-11ee-ab3a-04cf4b795879" -> "49131f6a-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"4913269a-c8de-11ee-ab3a-04cf4b795879" [label = "rp_12: level2 
+ close_project 
+ cost : 15" shape=polygon sides=6]	; 
+	"49131f6a-c8de-11ee-ab3a-04cf4b795879" -> "4913269a-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"49132e4c-c8de-11ee-ab3a-04cf4b795879" [label = "r7: inform_head 
  Type: insert 
  Direction: after" shape=rectangle]	; 
-	"70477554-c69a-11ee-b4c3-ac1a3ddd05c7" -> "704782b0-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047851c-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_2: level2"]	; 
- 	"70476348-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047851c-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047872e-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level3 
- dummy2 
- cost : 33" shape=polygon sides=6]	; 
-	"7047851c-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047872e-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"704788d2-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r0: dummy3 
- Type: insert 
- Direction: before" shape=rectangle]	; 
-	"7047872e-c69a-11ee-b4c3-ac1a3ddd05c7" -> "704788d2-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70478c56-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_3: level3"]	; 
- 	"704788d2-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70478c56-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70478e4a-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level2 
- dummy3 
- cost : 56" shape=polygon sides=6]	; 
-	"70478c56-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70478e4a-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70478fda-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_5: level3"]	; 
- 	"704788d2-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70478fda-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"704791ce-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level2 
- dummy3 
- cost : 39" shape=polygon sides=6]	; 
-	"70478fda-c69a-11ee-b4c3-ac1a3ddd05c7" -> "704791ce-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70479368-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level3 
- dummy2 
- cost : 30" shape=polygon sides=6]	; 
-	"7047851c-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70479368-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"704794f8-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r0: dummy3 
- Type: insert 
- Direction: before" shape=rectangle]	; 
-	"70479368-c69a-11ee-b4c3-ac1a3ddd05c7" -> "704794f8-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70479868-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_3: level3"]	; 
- 	"704794f8-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70479868-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70479a5c-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level2 
- dummy3 
- cost : 56" shape=polygon sides=6]	; 
-	"70479868-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70479a5c-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70479bd8-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_5: level3"]	; 
- 	"704794f8-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70479bd8-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70479dd6-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level2 
- dummy3 
- cost : 39" shape=polygon sides=6]	; 
-	"70479bd8-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70479dd6-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"70479f66-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r0: dummy1 
- Type: insert 
- Direction: before" shape=rectangle]	; 
-	"70479368-c69a-11ee-b4c3-ac1a3ddd05c7" -> "70479f66-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047a22c-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_4: level2"]	; 
- 	"70479f66-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047a22c-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047a434-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level1 
- dummy1 
- cost : 1" shape=polygon sides=6]	; 
-	"7047a22c-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047a434-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047a600-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_5: level3"]	; 
- 	"70479f66-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047a600-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047a790-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level2 
- dummy1 
- cost : 89" shape=polygon sides=6]	; 
-	"7047a600-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047a790-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047a8f8-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_3: level3"]	; 
- 	"70476348-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047a8f8-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047aae2-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level2 
- dummy2 
- cost : 98" shape=polygon sides=6]	; 
-	"7047a8f8-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047aae2-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047ac7c-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r0: dummy3 
- Type: insert 
- Direction: before" shape=rectangle]	; 
-	"7047aae2-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047ac7c-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047afce-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_3: level3"]	; 
- 	"7047ac7c-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047afce-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047b1ae-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level2 
- dummy3 
- cost : 56" shape=polygon sides=6]	; 
-	"7047afce-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047b1ae-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047b320-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_5: level3"]	; 
- 	"7047ac7c-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047b320-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047b4f6-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level2 
- dummy3 
- cost : 39" shape=polygon sides=6]	; 
-	"7047b320-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047b4f6-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047b5f0-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r0: dummy1 
- Type: insert 
- Direction: parallel" shape=rectangle]	; 
-	"7047aae2-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047b5f0-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047b7f8-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_4: level2"]	; 
- 	"7047b5f0-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047b7f8-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047b956-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level1 
- dummy1 
- cost : 1" shape=polygon sides=6]	; 
-	"7047b7f8-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047b956-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047ba5a-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r0: data_gathering 
- Type: delete 
- Direction: any" shape=rectangle]	; 
-	"7047aae2-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047ba5a-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047bbd6-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r0: contact_suppliers 
- Type: delete 
- Direction: any" shape=rectangle]	; 
-	"70475556-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047bbd6-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047bd20-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_4: level2"]	; 
- 	"7047330a-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047bd20-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047beba-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_12: level2 
- close_project 
- cost : 8" shape=polygon sides=6]	; 
-	"7047bd20-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047beba-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047c040-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r7: inform_head 
- Type: insert 
- Direction: after" shape=rectangle]	; 
-	"7047beba-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047c040-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047c360-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_2: level2"]	; 
- 	"7047c040-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047c360-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047c5cc-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_22: level2 
+	"4913269a-c8de-11ee-ab3a-04cf4b795879" -> "49132e4c-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"49133928-c8de-11ee-ab3a-04cf4b795879" [label = "r_2: level2"]	; 
+ 	"49132e4c-c8de-11ee-ab3a-04cf4b795879" -> "49133928-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"4913418e-c8de-11ee-ab3a-04cf4b795879" [label = "rp_22: level2 
  inform_head 
- cost : 96" shape=polygon sides=6]	; 
-	"7047c360-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047c5cc-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047c7a2-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_4: level2"]	; 
- 	"7047c040-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047c7a2-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047c9aa-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_22: level2 
+ cost : 15" shape=polygon sides=6]	; 
+	"49133928-c8de-11ee-ab3a-04cf4b795879" -> "4913418e-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"4913477e-c8de-11ee-ab3a-04cf4b795879" [label = "r_4: level2"]	; 
+ 	"49132e4c-c8de-11ee-ab3a-04cf4b795879" -> "4913477e-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"49134f30-c8de-11ee-ab3a-04cf4b795879" [label = "rp_22: level2 
  inform_head 
- cost : 99" shape=polygon sides=6]	; 
-	"7047c7a2-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047c9aa-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047cb62-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_3: level3"]	; 
- 	"7047330a-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047cb62-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047cdb0-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_19: level3 
+ cost : 15" shape=polygon sides=6]	; 
+	"4913477e-c8de-11ee-ab3a-04cf4b795879" -> "49134f30-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"491355c0-c8de-11ee-ab3a-04cf4b795879" [label = "r_3: level3"]	; 
+ 	"4912c7f4-c8de-11ee-ab3a-04cf4b795879" -> "491355c0-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"49135cdc-c8de-11ee-ab3a-04cf4b795879" [label = "rp_19: level3 
  close_project 
- cost : 46" shape=polygon sides=6]	; 
-	"7047cb62-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047cdb0-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047cf5e-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_5: level3"]	; 
- 	"7047330a-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047cf5e-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047d166-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_19: level3 
+ cost : 20" shape=polygon sides=6]	; 
+	"491355c0-c8de-11ee-ab3a-04cf4b795879" -> "49135cdc-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"4913622c-c8de-11ee-ab3a-04cf4b795879" [label = "r_5: level3"]	; 
+ 	"4912c7f4-c8de-11ee-ab3a-04cf4b795879" -> "4913622c-c8de-11ee-ab3a-04cf4b795879"	 ;
+	"49136894-c8de-11ee-ab3a-04cf4b795879" [label = "rp_19: level3 
  close_project 
- cost : 44" shape=polygon sides=6]	; 
-	"7047cf5e-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047d166-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047d2f6-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r0: dummy3 
- Type: insert 
- Direction: before" shape=rectangle]	; 
-	"7047d166-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047d2f6-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047dab2-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_1: level1"]	; 
- 	"7047d2f6-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047dab2-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047dcd8-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level1 
- dummy3 
- cost : 31" shape=polygon sides=6]	; 
-	"7047dab2-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047dcd8-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047de7c-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r0: dummy1 
- Type: insert 
- Direction: before" shape=rectangle]	; 
-	"7047dcd8-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047de7c-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047e2aa-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_4: level2"]	; 
- 	"7047de7c-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047e2aa-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047e49e-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level1 
- dummy1 
- cost : 1" shape=polygon sides=6]	; 
-	"7047e2aa-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047e49e-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047e62e-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_5: level3"]	; 
- 	"7047de7c-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047e62e-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047e818-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level2 
- dummy1 
- cost : 89" shape=polygon sides=6]	; 
-	"7047e62e-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047e818-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047e9b2-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_6: level1"]	; 
- 	"7047d2f6-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047e9b2-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047eb9c-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level1 
- dummy3 
- cost : 83" shape=polygon sides=6]	; 
-	"7047e9b2-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047eb9c-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047ed22-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_2: level2"]	; 
- 	"7047d2f6-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047ed22-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047eef8-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level3 
- dummy3 
- cost : 72" shape=polygon sides=6]	; 
-	"7047ed22-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047eef8-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047f092-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "r_3: level3"]	; 
- 	"7047d2f6-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047f092-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
-	"7047f272-c69a-11ee-b4c3-ac1a3ddd05c7" [label = "rp_99: level1 
- dummy3 
- cost : 55" shape=polygon sides=6]	; 
-	"7047f092-c69a-11ee-b4c3-ac1a3ddd05c7" -> "7047f272-c69a-11ee-b4c3-ac1a3ddd05c7"	 ;
+ cost : 25" shape=polygon sides=6]	; 
+	"4913622c-c8de-11ee-ab3a-04cf4b795879" -> "49136894-c8de-11ee-ab3a-04cf4b795879"	 ;
 }

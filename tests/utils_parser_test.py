@@ -47,15 +47,15 @@ class TestEvent(unittest.TestCase):
     
     def test_multi_it(self):
         process = "tests/test_processes/offer_process_paper.xml"
-        res_org = "resource_config/offer_resources_vary.xml"
-        dest = res_org[:-4] + "2_test.xml"
+        res_org = "resource_config/offer_resources_plain.xml"
+        dest = res_org[:-4] + "_fully_synthetic_small.xml"
         shutil.copyfile(res_org, dest)
         res = dest
         out = "testy.xml"
         in_de_re_ratios=[0.6, 0.2, 0.1]
         for i in range(4):
-            vary_resource_changepatterns(process, res, cp_ratio=0.3, in_de_re_ratios=in_de_re_ratios, tasks= ["dummy1", "dummy2", "dummy3", "dummy4"])
-            add_resources_for_inserts(res, ["dummy1", "dummy2", "dummy3"], ["level1", "level2", "level3"], ratio=0.8)
+            vary_resource_changepatterns(process, res, cp_ratio=0.22, in_de_re_ratios=in_de_re_ratios, tasks= ["data_support", "head_confirmation", "four_eyes_principle", "inform_head", "create_proposal"])
+            add_resources_for_inserts(res, ["data_support", "head_confirmation", "four_eyes_principle", "inform_head", "create_proposal"], ["level1", "level2", "level3"], ratio=0.11)
         vary_resource_costs(res, "cost")
     
 

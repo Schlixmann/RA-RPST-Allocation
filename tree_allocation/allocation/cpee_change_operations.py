@@ -3,6 +3,7 @@ from tree_allocation.tree import R_RPST
 import copy
 import re
 
+
 class ChangeOperation():
     def get_proc_task(self, process, core_task):
         with open("xml_out2.xml", "wb") as f:
@@ -32,7 +33,11 @@ class ChangeOperation():
         # create unique task_id
         rt_ids = process.xpath("//@id")
         pattern = re.compile(r'rp|r_|a')
-        curr_rp_id = max([int(re.split("\D", id)[-1]) for id in rt_ids if not pattern.search(id)])
+        try:
+            curr_rp_id = max([int(re.split("\\D", id)[-1]) for id in rt_ids if not pattern.search(id)])
+        except ValueError:
+            #print("Curr_rp_id starting at 0")
+            curr_rp_id = 0
         #print("Curr Id:", curr_rp_id)
         return str(curr_rp_id + 1)
         
@@ -179,10 +184,10 @@ class Replace(ChangeOperation):
                 resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
                 self.add_res_allocation(task, resource_info)
             else: 
-                raise ChangeOperationError("No Resource available for replace. Invalid Allocation")
+                raise ChangeOperationError(f"No Resource available for replaced {R_RPST.get_label(etree.tostring(task))}. Invalid Allocation")
         
         except ChangeOperationError as inst:
-            print(inst.__str__())
+            #print(inst.__str__())
             invalid = True
 
         return process, invalid

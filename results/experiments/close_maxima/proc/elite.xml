@@ -26,7 +26,7 @@
         <children/></resprofile>
         </resource>
     </allocation></manipulate>
-                <manipulate id="a2" label="data_gathering">level1level2<resources allocated_to="level1 role: level1rp_2"><resource>level1</resource><resource>level2</resource></resources><allocation><resource id="r_6" name="level1">
+                <manipulate id="a2" label="data_gathering">level1level2<resources allocated_to="level1 role: level1rp_2"><resource>level1</resource><resource>level2</resource></resources><allocation><resource id="r_1" name="level1">
         <resprofile id="rp_2" name="data_gathering" role="level1" task="data_gathering">
             <measures>
                 <cost>10</cost>
@@ -179,7 +179,7 @@
           <resource>level2</resource>
           <resource>level3</resource>
         </resources>
-      <allocation><resource id="r_5" name="level3">
+      <allocation><resource id="r_3" name="level3">
         <resprofile id="rp_9" name="design_offer" role="level3" task="design_offer">
             <measures>
                 <cost>50</cost>
@@ -197,7 +197,7 @@
                     </manipulate>
                 </children></resprofile>
         </resource>
-</allocation></call>
+    </allocation></call>
     </parallel_branch>
     <parallel_branch pass="" local="">
       <call id="a8" endpoint="">
@@ -236,14 +236,14 @@
         <resources allocated_to="level3 role: level3rp_16">
           <resource>level3</resource>
         </resources>
-      <allocation><resource id="r_5" name="level3">
+      <allocation><resource id="r_3" name="level3">
         <resprofile id="rp_16" name="contact_suppliers" role="level3" task="contact_suppliers">
             <measures>
                 <cost>15</cost>
             </measures>
         <children/></resprofile>
         </resource>
-</allocation></call>
+    </allocation></call>
     </parallel_branch>
   </parallel>
   <choose mode="exclusive">
@@ -299,7 +299,7 @@
           <resource>level2</resource>
           <resource>level3</resource>
         </resources>
-      <allocation><resource id="r_6" name="level1">
+      <allocation><resource id="r_1" name="level1">
         <resprofile id="rp_16" name="handover_to_engineering" role="level3" task="handover_to_engineering">
             <measures>
                 <cost>15</cost>

@@ -23,25 +23,22 @@
         <children/></resprofile>
         </resource>
 </allocation></manipulate>
-  <manipulate id="a4" label="create_proposal">level3<resources allocated_to="level3 role: level3rp_15"><resource>level3</resource><resource>level2</resource></resources><allocation><resource id="r_3" name="level3">
+  <manipulate id="a4" label="create_proposal">level3<resources allocated_to="level2 role: level3rp_15"><resource>level3</resource><resource>level2</resource></resources><allocation><resource id="r_2" name="level2">
         <resprofile id="rp_15" name="create_proposal" role="level3" task="create_proposal">
             <measures>
-                <cost>93</cost>
+                <cost>35</cost>
             </measures>
-            <changepattern type="delete">
-                <parameters>
-                    <direction>any</direction>
-                </parameters>
-                <description>
-                    </description>
-            </changepattern>
-        <children><manipulate id="a15" label="proposal_approval" type="delete" direction="any">
-                        <resources allocated_to="not_allocated">
-                        </resources>
-                    </manipulate>
-                </children></resprofile>
+        <children/></resprofile>
         </resource>
     </allocation></manipulate>
+  <manipulate id="a10" label="proposal_approval"><resources allocated_to="level3 role: level3rp_25"><resource>level3</resource></resources><allocation><resource id="r_5" name="level3">
+        <resprofile id="rp_25" name="proposal_approval" role="level3" task="proposal_approval">
+            <measures>
+                <cost>59</cost>
+            </measures>
+        <children/></resprofile>
+    </resource>
+</allocation></manipulate>
   <choose xmlns="http://cpee.org/ns/description/1.0" mode="exclusive">
   <alternative condition=""> 
   <parallel wait="-1" cancel="last">

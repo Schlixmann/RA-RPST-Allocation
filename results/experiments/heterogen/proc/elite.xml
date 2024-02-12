@@ -1,8 +1,8 @@
 <description xmlns="http://cpee.org/ns/description/1.0">
-  <manipulate id="a1" label="start_process">level1level2level3<resources allocated_to="level3 role: level3rp_13"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_3" name="level3">
-        <resprofile id="rp_13" name="start_process" role="level3" task="start_process">
+  <manipulate id="a1" label="start_process">level1level2level3<resources allocated_to="level1 role: level1rp_1"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_1" name="level1">
+        <resprofile id="rp_1" name="start_process" role="level1" task="start_process">
             <measures>
-                <cost>52</cost>
+                <cost>47</cost>
             </measures>
         <children/></resprofile>
         </resource>

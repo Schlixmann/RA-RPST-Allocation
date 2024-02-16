@@ -171,8 +171,8 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
 
 if __name__ == "__main__":
     process = "tests/test_processes/offer_process_paper.xml"
-    resource = "resource_config/offer_resources_close_maxima.xml" # can we do it without valids?
-    out_folder = "results/experiments/close_maxima"
+    resource = "resource_config/offer_resources_plain_fully_synthetic_small.xml" # can we do it without valids?
+    out_folder = "results"
 
     # short process:
     #process = "resource_config/offer_resources_cascade_del.xml"

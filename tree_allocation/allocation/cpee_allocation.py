@@ -63,6 +63,7 @@ class ProcessAllocation():
         for allocation in list(self.allocations.values()):
             allocation.set_branches()
 
+        #TODO: can be deleted
         # delete in own tree:
         for allocation in allocations:
             if allocation.open_delete:

@@ -35,10 +35,10 @@ class TestEvent(unittest.TestCase):
         vary_resource_changepatterns(process, res, out, cp_ratio=0.4, in_de_re_ratios=in_de_re_ratios)
 
     def test_vary_res(self):
-        res = "resource_config/offer_resources_vary.xml"
-        out = "testy.xml"
+        res = "resource_config/offer_resources_many_invalid_branches copy.xml"
+        out = "resource_config/offer_resources_many_invalid_branches.xml"
         in_de_re_ratios=[0.3, 0.5, 0.1]
-        vary_resource_costs(res, "cost")
+        vary_resource_costs(res, "cost", out_path=out, max_val=150)
     
     def test_add_profile(self):
         res = "resource_config/offer_resources_vary.xml"

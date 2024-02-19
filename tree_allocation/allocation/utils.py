@@ -25,7 +25,7 @@ def get_next_task(tasks_iter, solution=None):
             break
     return task
 
-def vary_resource_costs(file_path, measure, max_val=100):
+def vary_resource_costs(file_path, measure, out_path=None, max_val=100):
     with open(file_path) as f:
         res_tree = etree.fromstring(f.read())
 
@@ -33,7 +33,9 @@ def vary_resource_costs(file_path, measure, max_val=100):
     for elm in elms:
         elm.text = str(random.randint(1, max_val))
 
-    with open(file_path, "wb") as f:
+    if not out_path:
+        out_path=file_path
+    with open(out_path, "wb") as f:
         f.write(etree.tostring(res_tree))
 
 def vary_resource_changepatterns(proc_file, res_file, output_file=None, cp_ratio=0.8, in_de_re_ratios:list = [0.33, 0.33, 0.34], tasks=["dummy"], allowed_roles = ["level1", "level2", "level3"], cp_file = "tree_allocation/allocation/cp_descriptions.xml", insert_tasks = ["dummy"]):

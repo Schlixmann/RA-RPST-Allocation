@@ -63,6 +63,7 @@ class ProcessAllocation():
         for allocation in list(self.allocations.values()):
             allocation.set_branches()
 
+        #TODO: can be deleted
         # delete in own tree:
         for allocation in allocations:
             if allocation.open_delete:
@@ -246,7 +247,7 @@ class TaskAllocation(ProcessAllocation):
                 root.xpath("cpee1:children", namespaces=self.ns)[0].append(resource)
                 
         task_elements = R_RPST.CpeeElements().task_elements
-        print("Root before Tasks: ")
+        #print("Root before Tasks: ")
         #self.print_node_structure(root)
 
         # End condition for recursive call
@@ -266,8 +267,6 @@ class TaskAllocation(ProcessAllocation):
         #excluded_ini = copy.copy(excluded)
         # Add next tasks to the tree
         for profile in root.xpath("cpee1:children/resource/resprofile", namespaces=self.ns):
-            if profile.attrib["id"] in [ "rp_10", "rp_17"]:
-                print("a")
             ex_branch = copy.copy(excluded)
 
             for change_pattern in profile.xpath("changepattern"):
@@ -296,17 +295,9 @@ class TaskAllocation(ProcessAllocation):
                         
                     elif change_pattern.xpath("@type")[0].lower() == "delete":
                         self.lock = True
-                        """
-                        TODO Handle Delete: 
-                        - end branch here
-                        - check if to delete is available in this branch
-                        --> run method delete_task in parent class
-                        - check if its available to delete in process
-                        - if no delete availble: delete Resource profile and maybe resource!
-                        """
                         profile.xpath("cpee1:children", namespaces=self.ns)[0].append(task)
                         self.open_delete = True
-                        
+                        # Branch ends here
 
                     else:
                         raise("Changepattern type not in ['insert', 'replace', 'delete']")

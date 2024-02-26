@@ -36,6 +36,7 @@ class ProcessAllocation():
         self.allocations = {}
         self.solutions = []
         self.ns = None
+        self.ra_rpst:str = None
      
     def allocate_process(self):
         """ 
@@ -81,6 +82,32 @@ class ProcessAllocation():
     def add_allocation(self, task, output):
         #task.xpath("cpee1:allocation", namespaces=self.ns)[0].append(output)
         pass
+
+    def get_ra_rpst(self) -> str:
+        if not self.ra_rpst:
+            self.build_ra_rpst()
+        return self.ra_rpst
+
+    def build_ra_rpst(self) -> None:
+        """
+        Build the RA-RPST from self.allocations
+        - The Allocation trees are part of the Cpee-Tree und the tag ra_rpst
+        - if self.allocations = {} -> call self.allocate_process()
+
+        return: 
+            RA-RPST as xml String in CPEE-Tree format.
+        """
+        if not self.allocations:
+            self.allocate_process()
+
+        process = copy.deepcopy(self.process)
+
+        for key, value in self.allocations.items():
+            node = process.xpath(f"//*[@id='{str(key)}']", namespaces = self.ns)[0]
+            node.append(etree.Element("ra_rpst")) # add new node ra_rpst
+            node.xpath("ra_rpst")[0].append(value.intermediate_trees[0].xpath("cpee1:children", namespaces=self.ns)[0]) # add allocation tree
+        
+        self.ra_rpst = etree.tostring(process)
 
     def get_best_solution(self, measure, operator=min, consider_all_solutions=True):
         solutions_to_evaluate = self.solutions if not consider_all_solutions else filter(lambda x: x.invalid_branches == False, self.solutions)

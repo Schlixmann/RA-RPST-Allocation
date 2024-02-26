@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <resources>
     <resource id="r_1" name="level1">
-        <resprofile id="rp_1" name="start_process" role="level1" task="start_process">
+        <resprofile id="rp_1" name="new_tender" role="level1" task="new_tender">
             <measures>
                 <cost>10</cost>
             </measures>
@@ -69,7 +69,7 @@
         </resprofile>
     </resource>
     <resource id="r_6" name="level1">
-        <resprofile id="rp_1" name="start_process" role="level1" task="start_process">
+        <resprofile id="rp_1" name="new_tender" role="level1" task="new_tender">
             <measures>
                 <cost>10</cost>
             </measures>
@@ -137,7 +137,7 @@
         </resprofile>
     </resource>
     <resource id="r_2" name="level2">
-        <resprofile id="rp_6" name="start_process" role="level2" task="start_process">
+        <resprofile id="rp_6" name="new_tender" role="level2" task="new_tender">
             <measures>
                 <cost>15</cost>
             </measures>
@@ -213,7 +213,7 @@
         </resprofile>
     </resource>
     <resource id="r_4" name="level2">
-        <resprofile id="rp_6" name="start_process" role="level2" task="start_process">
+        <resprofile id="rp_6" name="new_tender" role="level2" task="new_tender">
             <measures>
                 <cost>15</cost>
             </measures>
@@ -296,7 +296,7 @@
         </resprofile>
     </resource>
     <resource id="r_3" name="level3">
-        <resprofile id="rp_13" name="start_process" role="level3" task="start_process">
+        <resprofile id="rp_13" name="new_tender" role="level3" task="new_tender">
             <measures>
                 <cost>10</cost>
             </measures>
@@ -315,7 +315,7 @@
                     <direction>any</direction>
                 </parameters>
                 <description xmlns="http://cpee.org/ns/description/1.0">
-                    <manipulate id="a15" label="proposal_approval">
+                    <manipulate id="a15" label="decide_on_proposal">
                         <resources allocated_to="not_allocated">
                         </resources>
                     </manipulate>
@@ -368,14 +368,14 @@
                 <cost>10</cost>
             </measures>
         </resprofile>
-        <resprofile id="rp_25" name="proposal_approval" role="level3" task="proposal_approval">
+        <resprofile id="rp_25" name="decide_on_proposal" role="level3" task="decide_on_proposal">
             <measures>
                 <cost>5</cost>
             </measures>
         </resprofile>
     </resource>
     <resource id="r_5" name="level3">
-        <resprofile id="rp_13" name="start_process" role="level3" task="start_process">
+        <resprofile id="rp_13" name="new_tender" role="level3" task="new_tender">
             <measures>
                 <cost>10</cost>
             </measures>
@@ -394,7 +394,7 @@
                     <direction>any</direction>
                 </parameters>
                 <description xmlns="http://cpee.org/ns/description/1.0">
-                    <manipulate id="a15" label="proposal_approval">
+                    <manipulate id="a15" label="decide_on_proposal">
                         <resources allocated_to="not_allocated">
                         </resources>
                     </manipulate>
@@ -447,7 +447,7 @@
                 <cost>10</cost>
             </measures>
         </resprofile>
-        <resprofile id="rp_25" name="proposal_approval" role="level3" task="proposal_approval">
+        <resprofile id="rp_25" name="decide_on_proposal" role="level3" task="decide_on_proposal">
             <measures>
                 <cost>5</cost>
             </measures>

@@ -133,7 +133,7 @@ class TaskAllocation(ProcessAllocation):
         self.final_tree = None
         self.intermediate_trees = [] # etree
         self.invalid_branches:bool = False
-        self.branches:[Branch] = []
+        self.branches:list = []
         
         self.lock:bool = False
         self.open_delete = False

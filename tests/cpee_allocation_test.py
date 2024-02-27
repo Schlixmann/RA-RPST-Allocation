@@ -558,7 +558,7 @@ class TestCpeeAllocation(unittest.TestCase):
         b = brute_solutions.iter_product(opts)
         solutions = opts
         measure = "cost"
-        results = brute_solutions.find_solutions_ab(b, "cost")
+        results = brute_solutions.find_solutions(b, "cost")
         end = time.time()
         
 
@@ -598,7 +598,7 @@ class TestCpeeAllocation(unittest.TestCase):
         b = brute_solutions.iter_product(opts)
         solutions = opts
         measure = "cost"
-        results = brute_solutions.find_solutions_ab(b, "cost")
+        results = brute_solutions.find_solutions(b, "cost")
         print(results)
         end = time.time()
 
@@ -606,6 +606,12 @@ class TestCpeeAllocation(unittest.TestCase):
 
         for b in best_solutions:
             print(b)
+        
+        with(open("tests/solutions/best_brute_1.xml", "rb")) as f:
+            target_process = f.read()
+        self.assertEqual(target_process, best_solutions[-1]["solution"].process, "The target process should be the same as the resulting one")
+
+        
         
         print(f"Execution time was: {(end-start):.2f}")
         print(f"Execution time in min was: {(end-start)/60:.2f}")
@@ -663,7 +669,7 @@ class TestCpeeAllocation(unittest.TestCase):
         solutions = [{k: [v[0], 0]} for k, v in single_solution.items()]
         solutions = [list(o.values())[0] for o in solutions]
         b = brute_solutions.iter_product(solutions)
-        results = brute_solutions.find_solutions_ab(b, measure)
+        results = brute_solutions.find_solutions(b, measure)
         outcome = combine_pickles()
         end = time.time()
         print(outcome)

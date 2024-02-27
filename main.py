@@ -37,7 +37,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
         brute_solutions = Brute(process_allocation)
         solutions, tasklist = brute_solutions.get_all_opts()
         solutions = [list(o.values())[0] for o in solutions]
-        results = brute_solutions.find_solutions_ab(num_brute_solutions, measure)
+        results = brute_solutions.find_solutions(num_brute_solutions, measure)
         outcome = combine_pickles()
         end = time.time()
         print(outcome)

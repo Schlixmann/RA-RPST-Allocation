@@ -289,15 +289,15 @@ class Brute(SolutionSearch):
     def __init__(self, process_allocation):
         super(Brute, self).__init__(process_allocation)
         self.pickle_writer = 0
-    
+    """
     def find_solutions(self, tasks_iter=None, solution=None):
         #TODO should be callable with different options (Direct, Genetic, Heuristic, SemiHeuristic)
-        """
+        
         -> Add all Branches as new solutions
         -> for each branch, call, "new_solution(process, self, step+=1)"
         -> if i > 1: copy current solution and add new solution
         End: no further step
-        """
+
         ns = {"cpee1" : list(self.process_allocation.process.nsmap.values())[0]}
         if not self.solutions: 
             
@@ -332,7 +332,8 @@ class Brute(SolutionSearch):
             
             solution.process = branch.apply_to_process(solution.process, solution, task)
             self.find_solutions(copy.deepcopy(tasks_iter), solution)
-    
+    """
+
     def find_solutions_with_heuristic(self, tasks_iter=None, solution=None, measure="cost", top_n=1, force_valid=True):
         #TODO should be callable with different options (Direct, Genetic, Heuristic, SemiHeuristic)
         """
@@ -408,7 +409,7 @@ class Brute(SolutionSearch):
         return all_opts, tasklist
 
         # approach with itertools.product: 
-    
+    """
     def find_best_solution_bb(self, solutions, measure):
         best_solutions = [] 
         len(solutions)
@@ -447,6 +448,7 @@ class Brute(SolutionSearch):
             print(f"Done : {i}/{len(solutions)}")
 
         return best_solutions
+    """
 
     def retrieve_pickle(self, file_path):
         data = []
@@ -482,7 +484,7 @@ class Brute(SolutionSearch):
         fin_pop = sorted(fin_pop, key=lambda d: d['cost'], reverse=True) 
         return fin_pop
     
-    def find_solutions_ab(self, solutions, measure):
+    def find_solutions(self, solutions, measure):
 
         pool = mp.Pool()
         results = {1:[]}
@@ -507,18 +509,18 @@ class Brute(SolutionSearch):
         list_parts = [solutions[part_size * i : part_size * (i + 1)] for i in range(num_parts)]
 
         # Use starmap instead of map
-        results[1] = pool.map(find_best_solution_bb, [(part, measure, i) for i, part in enumerate(list_parts)])
+        results[1] = pool.map(find_best_solution, [(part, measure, i) for i, part in enumerate(list_parts)])
         #results.wait()
         #output = results.get
         pool.close()
         pool.join()
         print(results [1])
         best_solutions = []
-
+    
 def solution_search_factory():
     pass
 
-def find_best_solution_bb(solutions): # ,measure, n):
+def find_best_solution(solutions): # ,measure, n):
     solutions, measure, n = solutions
     with open("tmp/process.pkl", "rb") as f:
         process  = etree.fromstring(pickle.load(f))

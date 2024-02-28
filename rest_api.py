@@ -12,8 +12,8 @@ import threading
 import bottle
 from bottle import request, response, static_file
 from bottle import post, get, put, delete, route
-from tree_allocation.helpers import *
-from tree_allocation.allocation.allocation import *
+from src.helpers import *
+from src.allocation.allocation import *
 import json
 import time
 import requests

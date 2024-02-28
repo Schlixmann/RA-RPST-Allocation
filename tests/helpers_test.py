@@ -1,6 +1,6 @@
 import unittest
-from tree_allocation.proc_resource import *
-from tree_allocation.helpers import *
+from src.proc_resource import *
+from src.helpers import *
 
 class TestEvent(unittest.TestCase):
     def test_get_all_resourcees(self):

@@ -1,9 +1,10 @@
-from tree_allocation.allocation.solution_search import Genetic,Brute, combine_pickles
-from tree_allocation.allocation.cpee_allocation import *
+from src.allocation.solution_search import Genetic,Brute, combine_pickles
+from src.allocation.cpee_allocation import *
 
 
 from lxml import etree
 from collections import defaultdict
+import argparse
 import time
 import json
 import sys
@@ -171,25 +172,22 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
 
 if __name__ == "__main__":
     process = "tests/test_processes/offer_process_paper.xml"
-    resource = "resource_config/offer_resources_many_invalid_branches.xml" # can we do it without valids?
-    out_folder = "results/"
 
-    # short process:
-    #process = "resource_config/offer_resources_cascade_del.xml"
-    #resource = "tests/test_processes/offer_process_short.xml"
-    run(process, resource, tries=10, brute=True, out_folder=out_folder)
+    parser = argparse.ArgumentParser(description="""Run all experiments as described in the paper with this function. \n
+                                     To force the calculation of all solutions: use -b (be aware of long execution times) \n
+                                     You can access the results by running 'results_presentation/results.ipynb' """)
+    parser.add_argument("-b", "--brute", action="store_true", help="Enable brute-force mode, default == False")
 
-    i = None
-    if i:
-        print ('argument list', sys.argv)
-        process = int(sys.argv[1])
-        resource = int(sys.argv[2])
-        plot = int(sys.argv[3])
-        #print ("sum = {}".format(first+second))
+    args = parser.parse_args()
 
-# TODO dienstag: 
-    # Hyperparametertuning --> Measure in one Graph
-    # Different Branch numbers for Heuristic --> Show in one graph
-    # 
-    # Develop other use cases for testing Heuristic & GA
-    # --> Develop use cases only with different resource settings
+
+    targets = {"resource_config/offer_resources_heterogen.xml" : "results/experiments/heterogen",
+        "resource_config/offer_resources_close_maxima.xml" : "results/experiments/close_maxima",
+        "resource_config/offer_resources_plain_fully_synthetic.xml" : "results/experiments/fully_synthetic",
+        "resource_config/offer_resources_many_invalid_branches.xml" : "results/experiments/invalid_branches",
+        "resource_config/offer_resources_heterogen_no_deletes.xml" : "results/experiments/no_deletes"
+        }
+
+    target = args.target
+    for resource, target in targets.items():
+        run(process, resource, 10, args.brute, target)

@@ -6,11 +6,11 @@ import random
 from collections import defaultdict
 import json
 
-from tree_allocation.allocation.solution_search import Genetic,Brute
-from tree_allocation.allocation import cpee_allocation
-from tree_allocation.tree import parser, task_node as tn, gtw_node as gtw
-from tree_allocation.allocation import gen_deap
-from tree_allocation.tree import graphix
+from src.allocation.solution_search import Genetic,Brute
+from src.allocation import cpee_allocation
+from src.tree import parser, task_node as tn, gtw_node as gtw
+from src.allocation import gen_deap
+from src.tree import graphix
 
 class TestGenetic(unittest.TestCase):
     

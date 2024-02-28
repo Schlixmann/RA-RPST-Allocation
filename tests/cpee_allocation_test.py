@@ -1,13 +1,13 @@
-from context import tree_allocation
+from context import src
 import unittest
 from lxml import etree
 from xmldiff import main, formatting
-from tree_allocation.tree import parser, task_node as tn, gtw_node as gtw
-from tree_allocation.allocation import cpee_allocation
+from src.tree import parser, task_node as tn, gtw_node as gtw
+from src.allocation import cpee_allocation
 from pptree import *
 from PrettyPrint import PrettyPrintTree
-from tree_allocation.tree import graphix
-from tree_allocation.allocation.solution_search import *
+from src.tree import graphix
+from src.allocation.solution_search import *
 import time
 import multiprocessing as mp
 import os

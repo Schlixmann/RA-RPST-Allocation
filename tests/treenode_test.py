@@ -1,7 +1,7 @@
-from context import tree_allocation
+from context import src
 import unittest
 from lxml import etree
-from tree_allocation.tree import parser, task_node as tn, gtw_node as gtw, res_node as rn
+from src.tree import parser, task_node as tn, gtw_node as gtw, res_node as rn
 from pptree import *
 from PrettyPrint import PrettyPrintTree
 

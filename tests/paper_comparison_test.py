@@ -7,10 +7,10 @@ from collections import defaultdict
 import json
 import numpy as np
 
-from tree_allocation.allocation.solution_search import Genetic,Brute
-from tree_allocation.allocation import cpee_allocation
-from tree_allocation.tree import parser, task_node as tn, gtw_node as gtw
-from tree_allocation.allocation import gen_deap
+from src.allocation.solution_search import Genetic,Brute
+from src.allocation import cpee_allocation
+from src.tree import parser, task_node as tn, gtw_node as gtw
+from src.allocation import gen_deap
 
 class TestGenetic(unittest.TestCase):
     

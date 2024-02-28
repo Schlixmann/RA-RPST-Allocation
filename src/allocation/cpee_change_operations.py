@@ -6,8 +6,7 @@ import re
 
 class ChangeOperation():
     def get_proc_task(self, process, core_task):
-        with open("xml_out2.xml", "wb") as f:
-            f.write(etree.tostring(process))
+
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         proc_tasks = process.xpath(f"//*[@id='{core_task.attrib['id']}'][not(ancestor::changepattern)]", namespaces=ns)
         if len(proc_tasks) != 1:
@@ -22,9 +21,6 @@ class ChangeOperation():
         ns = {"cpee1" : list(task.nsmap.values())[0]}
         if not task.xpath("cpee1:allocation", namespaces=ns):
             task.xpath(".")[0].append(etree.Element(f"{{{ns['cpee1']}}}allocation"))
-        #task.xpath("cpee1:allocation", namespaces=ns)[0].append(etree.Element(f"{{{ns['cpee1']}}}res_allocation"))
-        #with open("res2_xml.xml", "wb") as f:
-        #    f.write(etree.tostring(output))
         set_allocation = output.xpath("@name")[0] + " role: " + output.xpath("*/@role")[0]  + output.xpath("*/@id")[0]  # add ID
         task.xpath("cpee1:resources", namespaces=ns)[0].set("allocated_to", set_allocation)
         task.xpath("cpee1:allocation", namespaces=ns)[0].append(output)
@@ -87,8 +83,6 @@ class Delete(ChangeOperation):
     def apply(self, process:etree.Element, core_task:etree.Element, task:etree.Element):
         invalid = False
         ns = {"cpee1" : list(process.nsmap.values())[0]}
-        with open("xml_out3.xml", "wb") as f:
-            f.write(etree.tostring(process))
         #proc_task= self.get_proc_task(process, core_task)
         proc_task = 1
         match task.attrib["direction"]:
@@ -139,8 +133,6 @@ class Delete(ChangeOperation):
                 try:
                     if pos_deletes:
                         to_del_id = pos_deletes[0]
-                        with open("xml_out", "wb") as f:
-                            f.write(etree.tostring(proc[0]))
                     else:
                         raise ChangeOperationError("No matching task to delete found in Process Model")
                 

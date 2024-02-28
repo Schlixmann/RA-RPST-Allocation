@@ -188,6 +188,6 @@ if __name__ == "__main__":
         "resource_config/offer_resources_heterogen_no_deletes.xml" : "results/experiments/no_deletes"
         }
 
-    #target = args.target
+    
     for resource, target in targets.items():
         run(process, resource, 10, args.brute, target)

@@ -28,5 +28,5 @@ python3 open_model.py processes/offer_process_paper.xml
 ```
 To look at the other best found process models change the folder accordingly e.g.:
 ```
-results/experiments/fully_synthetic/proc/..
+../fully_synthetic/proc/..
 ```

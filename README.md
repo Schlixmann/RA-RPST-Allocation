@@ -24,5 +24,5 @@ python3 open_model.py results/experiments/fully_synthetic/proc/brute.xml
 ```
 To look at the other best found process models change the folder accordingly e.g.:
 ```
-../close_maxima/proc/..
+results/experiments/fully_synthetic/proc/..
 ```

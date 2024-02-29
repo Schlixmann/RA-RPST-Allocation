@@ -17,3 +17,12 @@ If you also want to rerun calculation of the iterative optimization search:
 ```
 python main.py -b
 ```
+## View Process Models BPM Like: 
+To view a BPM-like representation of the resulting process models, use the following command:
+```
+python3 open_model.py results/experiments/fully_synthetic/proc/brute.xml
+```
+To look at the other best found process models change the folder accordingly e.g.:
+```
+../close_maxima/proc/..
+```

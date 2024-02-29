@@ -16,5 +16,6 @@ response = requests.post(
     data = xml
   )
 
+print(response)
   
 os.system(f"xdg-open https://cpee.org/flow/edit.html?monitor={json.loads(response.content)['CPEE-INSTANCE-URL']}")

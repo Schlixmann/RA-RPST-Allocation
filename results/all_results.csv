@@ -1,7 +1,0 @@
-,fully_synthetic size: 7779240,fully_synthetic size: 7779240,fully_synthetic size: 7779240,fully_synthetic size: 7779240,fully_synthetic size: 7779240,no_deletes size: 691200,no_deletes size: 691200,no_deletes size: 691200,no_deletes size: 691200,no_deletes size: 691200,heterogen size: 537600,heterogen size: 537600,heterogen size: 537600,heterogen size: 537600,heterogen size: 537600,close_maxima size: 4147200,close_maxima size: 4147200,close_maxima size: 4147200,close_maxima size: 4147200,close_maxima size: 4147200,invalid_branches size: 1658880,invalid_branches size: 1658880,invalid_branches size: 1658880,invalid_branches size: 1658880,invalid_branches size: 1658880
-,time in sec,best,delta,std,optimum perc.,time in sec,best,delta,std,optimum perc.,time in sec,best,delta,std,optimum perc.,time in sec,best,delta,std,optimum perc.,time in sec,best,delta,std,optimum perc.
-solver,,,,,,,,,,,,,,,,,,,,,,,,,
-brute,49691.16,357.0,0.0,,100.0%,2399.55,492.0,0.0,,100.0%,2436.09,491.0,0.0,,100.0%,23697.23,172.0,0.0,,100.0%,14142.22,187.0,0.0,,100.0%
-heuristic,4.28,370.0,13.0,,0.0%,1.5,492.0,0.0,,100.0%,1.88,491.0,0.0,,100.0%,2.75,183.0,11.0,,0.0%,3.09,253.0,66.0,,0.0%
-plain,37.93,417.5,60.5,33.56999321484061,0.0%,20.88,560.9,68.9,33.394776704016316,0.0%,31.06,528.1,37.1,19.3129202579229,0.0%,7.05,172.0,0.0,0.0,100.0%,27.17,187.0,0.0,0.0,100.0%
-elitist,11.48,363.4,6.4,6.915361322607968,0.0%,7.92,504.3,12.3,20.445320029559607,40.0%,4.96,504.9,13.9,7.894442489639292,20.0%,3.82,172.0,0.0,0.0,100.0%,7.71,187.0,0.0,0.0,100.0%

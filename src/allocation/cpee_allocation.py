@@ -28,7 +28,7 @@ class ProcessAllocation():
     - Allocation idea: Build all possible valid processes and search for best one
     """
 
-    def __init__(self, process:str, resource_url) -> None:
+    def __init__(self, process:str, resource_url:etree) -> None:
         self.id = str(uuid.uuid1())
         self.process = etree.fromstring(process)
         self.resource_url = resource_url
@@ -228,20 +228,17 @@ class TaskAllocation(ProcessAllocation):
         else:
             raise("cpee_allocation_set_branches: Wrong node Type")
 
-    def allocate_task(self, root=None, resource_url=None, excluded=[]):
+    def allocate_task(self, root=None, resource_url:etree=None, excluded=[]):
         """
-        Build the allocation tree for self.task. 
-        -> set self.state = running
-        -> Resources = Request from Resource Repository
-        -> Build allo_tree(task, resources)
-        -> if hitting delete or only invalid branches: 
-            -> set self.allo_tree = allo_tree
-            -> set self.state = stopped
-        -> if valid branch: 
-            -> set self.state = finished
-        -> Choose best branch (Local best allocation)
+        Builds the allocation tree for self.task. 
 
-        -> If Global best allocation becomes interesting: provide ordered list
+        params:
+        - root: the task to be allocated (initially = None since first task is self.task)
+        - resource_url: resource file as etree (etree)
+        - excluded: list, task that are already part of the branch
+
+        returns: 
+        -root: the allocation tree for self.task
         """
 
         if root is None:
@@ -254,8 +251,6 @@ class TaskAllocation(ProcessAllocation):
             return self.intermediate_trees[0]
         else:
             root.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
-            if root.attrib["id"] == "a9":
-                print("a")
             print("Task to allocate: ", R_RPST.get_label(etree.tostring(root)))
 
         res_xml = copy.deepcopy(resource_url)

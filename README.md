@@ -22,6 +22,10 @@ To view a BPM-like representation of the resulting process models, use the follo
 ```
 python3 open_model.py results/experiments/fully_synthetic/proc/brute.xml
 ```
+To show the plain process model: 
+```
+python3 open_model.py processes/offer_process_paper.xml
+```
 To look at the other best found process models change the folder accordingly e.g.:
 ```
 results/experiments/fully_synthetic/proc/..

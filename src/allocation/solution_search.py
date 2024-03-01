@@ -31,8 +31,6 @@ class Genetic(SolutionSearch):
     def __init__(self, process_allocation, pop_size, generations, k_sel=3, k_mut=0.1, early_abandon=True):
         super(Genetic, self).__init__(process_allocation)
         self.pop_size:int = pop_size
-        #TODO Genome = Process that is to be allocated/changed
-        #self.genome_size = genome_size
         self.generations:int = generations
         self.k_mut:float = k_mut
         self.k_sel:int = k_sel
@@ -42,6 +40,7 @@ class Genetic(SolutionSearch):
         
     def init_population(self): #, genome_size): initialize the population of bit vectors
         # create random solutions for number of pop_size
+
         population = []
         self.tasklist = self.process_allocation.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)
         for pop in range(self.pop_size): 
@@ -59,8 +58,6 @@ class Genetic(SolutionSearch):
             allocation = self.process_allocation.allocations[task.attrib['id']]
             branch_no = random.randint(0, len(allocation.branches)-1)
             used_branches[task] = branch_no
-            #branch = allocation.branches[branch_no]
-            #solution.process = branch.apply_to_process(solution.process, solution=solution)
             task = get_next_task(tasks_iter, solution)
             if task == "end":
                 break
@@ -101,12 +98,10 @@ class Genetic(SolutionSearch):
         #TODO improve dealing with invalid solutions
         
         xo = False # init xo flag
-        #for n in range(3):
+
         tournament = random.sample(range(len(population)-1), self.k_sel)
         tournament_fitnesses = [fitnesses[i] for i in tournament]
-            #if not np.isnan(tournament_fitnesses).all():
-            #    winner_index = tournament[np.nanargmin(tournament_fitnesses)]
-            #    break
+
         try:
             winner_index = tournament[np.nanargmin(tournament_fitnesses)]
         except ValueError:
@@ -175,7 +170,7 @@ class Genetic(SolutionSearch):
         return nextgen_population    
 
     def random_insert_evolve(self, population, fitnesses, gen):
-            
+        """not in use"""    
         nextgen_population = []
 
         for i in range(int(self.pop_size / 2)-2): # keep to spaces open for random individuals
@@ -189,7 +184,7 @@ class Genetic(SolutionSearch):
         return nextgen_population
     
     def parent_evolve(self, population, fitnesses, gen):
-        
+        """not in use"""            
         nextgen_population = []
         for i in range(int(self.pop_size / 2)):
             parent1, xo1 = self.selection(population, fitnesses, gen)  # select first parent
@@ -220,20 +215,20 @@ class Genetic(SolutionSearch):
         return nextgen_population
 
     def random_parent_evolve(self, population, fitnesses, gen):
-            
-            nextgen_population = []
-            for i in range(int(self.pop_size / 2)-2):
-                parent1, xo1 = self.selection(population, fitnesses, gen)  # select first parent
-                parent2, xo2 = self.selection(population, fitnesses, gen)  # select second parent
-                if xo1 or xo2:
-                    nextgen_population +=  [parent1, parent2]
+        """not in use"""                
+        nextgen_population = []
+        for i in range(int(self.pop_size / 2)-2):
+            parent1, xo1 = self.selection(population, fitnesses, gen)  # select first parent
+            parent2, xo2 = self.selection(population, fitnesses, gen)  # select second parent
+            if xo1 or xo2:
+                nextgen_population +=  [parent1, parent2]
 
-                else:
-                    offspring1, offspring2 = self.crossover(parent1, parent2)  # perform crossover between both parents
-                    nextgen_population += [self.mutation(offspring1, k_mut=self.k_mut), self.mutation(offspring2, k_mut=self.k_mut)] # mutate offspring
-                
-            nextgen_population += [{"branches" : self.build_individual(), "branches": self.build_individual()}]
-            return nextgen_population
+            else:
+                offspring1, offspring2 = self.crossover(parent1, parent2)  # perform crossover between both parents
+                nextgen_population += [self.mutation(offspring1, k_mut=self.k_mut), self.mutation(offspring2, k_mut=self.k_mut)] # mutate offspring
+            
+        nextgen_population += [{"branches" : self.build_individual(), "branches": self.build_individual()}]
+        return nextgen_population
          
     
     def find_solutions(self, ev_type, measure):
@@ -282,57 +277,10 @@ class Genetic(SolutionSearch):
         
         return fin_pop, data
 
-class Heuristic():
-    pass
-
 class Brute(SolutionSearch):
     def __init__(self, process_allocation):
         super(Brute, self).__init__(process_allocation)
         self.pickle_writer = 0
-    """
-    def find_solutions(self, tasks_iter=None, solution=None):
-        #TODO should be callable with different options (Direct, Genetic, Heuristic, SemiHeuristic)
-        
-        -> Add all Branches as new solutions
-        -> for each branch, call, "new_solution(process, self, step+=1)"
-        -> if i > 1: copy current solution and add new solution
-        End: no further step
-
-        ns = {"cpee1" : list(self.process_allocation.process.nsmap.values())[0]}
-        if not self.solutions: 
-            
-            tasklist = self.process_allocation.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)
-            self.solutions.append(Solution(copy.deepcopy(self.process_allocation.process)))
-            return self.find_solutions(iter(tasklist), self.solutions[0])
-        
-        # Find next task for solution
-        task = get_next_task(tasks_iter, solution)
-        if task == "end":
-            return
-        
-        allocation = self.process_allocation.allocations[task.attrib['id']]
-
-        for i, branch in enumerate(allocation.branches):
-            if i > 0:
-                new_solution = copy.deepcopy(solution)
-                self.solutions.append(new_solution)
-            else: 
-                solution_index=len(self.solutions)-1
-
-        for i, branch in enumerate(allocation.branches):
-            #TODO Delete Solution if error in Change Operation
-            if i > 0:
-                solution = self.solutions[solution_index + i]
-            #TODO ensure that label is the same too
-            tasklabel = R_RPST.get_label(etree.tostring(task))
-            task = solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)[0]
-
-            if branch.valid == False:
-                solution.invalid_branches = True
-            
-            solution.process = branch.apply_to_process(solution.process, solution, task)
-            self.find_solutions(copy.deepcopy(tasks_iter), solution)
-    """
 
     def find_solutions_with_heuristic(self, tasks_iter=None, solution=None, measure="cost", top_n=1, force_valid=True):
         #TODO should be callable with different options (Direct, Genetic, Heuristic, SemiHeuristic)
@@ -408,48 +356,6 @@ class Brute(SolutionSearch):
     
         return all_opts, tasklist
 
-        # approach with itertools.product: 
-    """
-    def find_best_solution_bb(self, solutions, measure):
-        best_solutions = [] 
-        len(solutions)
-        for i, solution in enumerate(solutions):
-            
-            new_solution = Solution(copy.deepcopy(self.process)) # create solution
-            ns = {"cpee1" : list(new_solution.process.nsmap.values())[0]}
-            tasklist = new_solution.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)
-            individual = {tasklist[i]: list(solution)[i] for i in range(len(solution))}
-            tasks_iter = iter(tasklist) # iterator
-            task = get_next_task(tasks_iter, new_solution) # gets next tasks and checks for deletes
-
-            while True:
-                allocation = self.process_allocation.allocations[task.attrib['id']] # get allocatin
-
-                branch_no = individual.get(task)    # get choosen number of branch
-                branch = allocation.branches[branch_no] # get actual branch as R-RPST
-
-                new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
-                
-                task = get_next_task(tasks_iter, new_solution)
-                if task == "end":
-                    break
-            
-            new_solution.check_validity()
-            if new_solution.invalid_branches:
-                value = np.nan        
-            else:
-                value = copy.deepcopy(new_solution.get_measure(measure))   # calc. fitness of solution
-                value = float(copy.deepcopy(value))
-            if not np.isnan(value):
-                if not best_solutions:
-                    best_solutions.append({"cost": value})             
-                elif (value < best_solutions[-1].get("cost") or not best_solutions) and not np.isnan(value):
-                    best_solutions.append({"cost": value})
-            print(f"Done : {i}/{len(solutions)}")
-
-        return best_solutions
-    """
-
     def retrieve_pickle(self, file_path):
         data = []
         file = open(file_path, 'rb') 
@@ -473,12 +379,9 @@ class Brute(SolutionSearch):
         solution_measure = {solution: solution.get_measure(measure) for solution in a}
 
         # Get the top N solutions
-        #sorted_solutions = sorted(solution_measure.items(), key=lambda x: x[1], reverse=(operator == max))
         sorted_solutions = np.argsort(list(solution_measure.values()))[:top_n]
-        #top_solutions = [solution for solution, _ in sorted_solutions[:top_n]]
         sorti = list(sorted_solutions)
         top_solutions = [a[i] for i in sorti]
-        #fin = [{solution: solution.get_measure("cost")} for solution in top_solutions]
         fin_pop = [{"solution": solution, "cost": solution.get_measure("cost")} for solution in top_solutions]
         
         fin_pop = sorted(fin_pop, key=lambda d: d['cost'], reverse=True) 
@@ -489,7 +392,6 @@ class Brute(SolutionSearch):
         pool = mp.Pool()
         results = {1:[]}
         num_parts = mp.cpu_count()
-        #num_parts = 1
         part_size = len(solutions) // num_parts
         args = []
         list_parts = []
@@ -508,17 +410,11 @@ class Brute(SolutionSearch):
 
         list_parts = [solutions[part_size * i : part_size * (i + 1)] for i in range(num_parts)]
 
-        # Use starmap instead of map
         results[1] = pool.map(find_best_solution, [(part, measure, i) for i, part in enumerate(list_parts)])
-        #results.wait()
-        #output = results.get
         pool.close()
         pool.join()
         print(results [1])
         best_solutions = []
-    
-def solution_search_factory():
-    pass
 
 def find_best_solution(solutions): # ,measure, n):
     solutions, measure, n = solutions

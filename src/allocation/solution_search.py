@@ -322,6 +322,8 @@ class Brute(SolutionSearch):
         if force_valid:
             possible_branches = [branch for branch in allocation.branches if branch.valid]
         indices = np.argsort([branch.get_measure(measure, operator=sum) for branch in possible_branches])[:top_n]
+        # TODO create Iterproduct for the resulting list
+
         used_branches = [allocation.branches[i] for i in indices]
         #print(f"used_branches: {used_branches}")
 

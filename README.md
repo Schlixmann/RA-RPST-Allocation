@@ -20,9 +20,7 @@ python main.py -b
 ```
 ## View Process Models BPM Like: 
 To view a BPM-like representation of the process models, use the following command:
-```
-python3 open_model.py path_to_model
-```
+`python3 open_model.py path_to_model`
 e.g.:
 ```
 python3 open_model.py results/experiments/fully_synthetic/proc/brute.xml
@@ -32,7 +30,5 @@ To show the plain process model:
 python3 open_model.py processes/offer_process_paper.xml
 ```
 To look at the other best process models, change the folder accordingly, e.g.:
-```
-../fully_synthetic/proc/..
-```
+`../fully_synthetic/proc/..`
 All results can be found in `results/experiments`.

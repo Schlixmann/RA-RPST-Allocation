@@ -18,14 +18,10 @@ logger = logging.getLogger(__name__)
 
 class ProcessAllocation(): 
     """
-    Call TaskAllocation() for every task in the process (extra: --> Define area which should be allocated)
-    - should be super of TaskAllocation
-    The call must be done in a threaded and Async fashion, thus: 
-    - Every Task allocation must run as a thread which has a state out of the task allocation steps. 
-    - eventually when all allocations have either reached "stopped" or "finished" all issues of stopped branches must be resolved. 
-    - the costs of the changes must be calculated and used in the allocation decision.
-
-    - Allocation idea: Build all possible valid processes and search for best one
+    Holds the allocation of the full process
+    self.allocation: dict of {task:TaskAllocation} pairs
+    self.solutions: list of all found solutions
+    self.ra_rpst: The RA-RPST as CPEE-Tree. build through self.get_ra_rpst
     """
 
     def __init__(self, process:str, resource_url:etree) -> None:
@@ -110,11 +106,22 @@ class ProcessAllocation():
         self.ra_rpst = etree.tostring(process)
 
     def get_best_solution(self, measure, operator=min, consider_all_solutions=True):
+        """
+        Returns the best solution out of self.solutions
+
+        params:
+        - measure: variable to compare solutions by
+        - operator: min or max
+        - consider_all_solutions: Bool Should invalid solutions also be considered
+        """
         solutions_to_evaluate = self.solutions if not consider_all_solutions else filter(lambda x: x.invalid_branches == False, self.solutions)
         solution_measure = {solution: solution.get_measure(measure) for solution in solutions_to_evaluate}
         return operator(solution_measure, key=solution_measure.get)
     
     def print_node_structure(self, node=None, level=0):
+        """
+        Prints structure of etree.element to cmd
+        """
         if node is None:
             node = self.process
         print('  ' * level + node.tag)
@@ -122,6 +129,7 @@ class ProcessAllocation():
             self.print_node_structure(child, level + 1)
 
 class TaskAllocation(ProcessAllocation):
+    "Creates the allocation tree for one task in process"
 
     def __init__(self, parent:ProcessAllocation, task:str, state='initialized' ) -> None:
         allowed_states = {'ready', 'running', 'stopped', 'finished', 'initialized'}
@@ -142,14 +150,11 @@ class TaskAllocation(ProcessAllocation):
     def set_branches(self, node=None, branch_obj=None):
         """ 
         Delete Everything from a deepcopied node, which is not part of the new branch
-        append branch to branches
+        append branch to self.branches
 
-        To do removal: 
-        build deep_copy to keep original node!
-        go through all Resprofiles
-        create new branch for each resprofile( -> from root)
-        Delete all other resprofiles except current one. Element.remove! 
-        deepcopy = self.task (otherwise tasknode is changed!)  
+        params:
+        - node: not needed for initialization
+        - branch_obj: not needed for initialization
         """
 
         if node is None:
@@ -269,8 +274,6 @@ class TaskAllocation(ProcessAllocation):
                 root.xpath("cpee1:children", namespaces=self.ns)[0].append(resource)
                 
         task_elements = R_RPST.CpeeElements().task_elements
-        #print("Root before Tasks: ")
-        #self.print_node_structure(root)
 
         # End condition for recursive call
         if len(root.xpath("cpee1:children", namespaces = self.ns)) == 0: # no task parents exist
@@ -286,7 +289,7 @@ class TaskAllocation(ProcessAllocation):
                 raise(ResourceError(task_parent))
             
             return root
-        #excluded_ini = copy.copy(excluded)
+
         # Add next tasks to the tree
         for profile in root.xpath("cpee1:children/resource/resprofile", namespaces=self.ns):
             ex_branch = copy.copy(excluded)
@@ -327,6 +330,9 @@ class TaskAllocation(ProcessAllocation):
         return root
     
     def print_node_structure(self, node, level=0):
+        """
+        Prints structure of etree.element to cmd
+        """
         print('  ' * level + node.tag + ' ' + str(node.attrib))
         for child in node.xpath("*"):
             self.print_node_structure(child, level + 1)

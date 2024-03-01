@@ -77,8 +77,7 @@ class Genetic(SolutionSearch):
 
             branch_no = individual["branches"].get(task)    # get choosen number of branch
             branch = allocation.branches[branch_no] # get actual branch as R-RPST
-            with open("branch.xml", "wb") as f:
-                f.write(etree.tostring(branch.node))
+
             if branch.node.xpath("//*[@type='delete']"):
                 delay_deletes.append((branch, task))
             else:
@@ -318,6 +317,7 @@ class Brute(SolutionSearch):
         allocation = self.process_allocation.allocations[task.attrib['id']]
 
         # select top n branches
+        # TODO do this in the beginning for all branches
         possible_branches = allocation.branches 
         if force_valid:
             possible_branches = [branch for branch in allocation.branches if branch.valid]
@@ -452,14 +452,23 @@ def find_best_solution(solutions): # ,measure, n):
         tasks_iter = copy.copy(iter(tasklist)) # iterator
         task = get_next_task(tasks_iter, new_solution) # gets next tasks and checks for deletes
 
+        delay_deletes = []
         while True:
 
             allocation = allocations[task.attrib['id']] # get allocation
             branch_no = individual.get(task)    # get choosen number of branch
             branch = allocation.branches[branch_no] # get actual branch as R-RPST           
-            new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
+            if branch.node.xpath("//*[@type='delete']"):
+                delay_deletes.append((branch, task))
+            else:
+                new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
+            
             task = get_next_task(tasks_iter, new_solution)
+            
             if task == "end":
+                for branch,task in delay_deletes:
+                    if new_solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=self.ns):
+                        new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # apply delays
                 break
                 
         new_solution.check_validity()

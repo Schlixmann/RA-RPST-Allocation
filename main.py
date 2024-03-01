@@ -94,8 +94,8 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
 
     # TOP 10 Outcome: 
     # List with 10 best processes
-
     """
+    
     # genetic_approach
     # genetic_config: 
     performance_genetic = defaultdict(list)
@@ -131,7 +131,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
     print("Invalid Branches? ", [ind["solution"].invalid_branches for ind in outcome])
     # TOP 10 Outcome: 
     # List with 10 best processes
-    """
+    
     
     # genetic_approach
     # genetic_config: 
@@ -166,10 +166,10 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
     with open(out_folder + "/proc/elite.xml", "wb") as f:
         f.write(etree.tostring(outcome[-1]["solution"].process))
     print("Invalid Branches? ", [ind["solution"].invalid_branches for ind in outcome])
-    
+    """
     # Top 10 Outcomes with Brute Force
     # List with top 10 outcome
-
+    
     print(f"done with : {resource_file_path}")
 
 if __name__ == "__main__":

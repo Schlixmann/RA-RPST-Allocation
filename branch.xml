@@ -104,13 +104,61 @@
 <children><manipulate id="r0" label="inform_head" type="insert" direction="before">
       <resources allocated_to="not_allocated">
       <resource>level2</resource><resource>level3</resource><resource>level2</resource></resources>
-    <children><resource id="r_2" name="level2">
+    <children><resource id="r_4" name="level2">
         <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
             <measures>
-                <cost>11</cost>
+                <cost>92</cost>
             </measures>
-        <children/></resprofile>
-    </resource>
+        <changepattern type="insert">
+  <parameters>
+    <direction>parallel</direction>
+  </parameters>
+  <description>
+    <manipulate id="r0" label="four_eyes_principle" type="insert" direction="parallel">
+      <resources allocated_to="not_allocated">
+      <resource>level1</resource></resources>
+    </manipulate>
+  </description>
+</changepattern>
+
+<changepattern type="replace">
+  <description>
+    <manipulate id="r0" label="head_confirmation" type="replace">
+      <resources allocated_to="not_allocated">
+      <resource>level1</resource></resources>
+    </manipulate>
+  </description>
+</changepattern>    
+<changepattern type="insert">
+  <parameters>
+    <direction>after</direction>
+  </parameters>
+  <description>
+    <manipulate id="r0" label="head_confirmation">
+      <resources allocated_to="not_allocated">
+      <resource>level3</resource><resource>level2</resource></resources>
+    </manipulate>
+  </description>
+</changepattern>
+
+<changepattern type="replace">
+  <description>
+    <manipulate id="r0" label="data_support">
+      <resources allocated_to="not_allocated">
+      <resource>level3</resource></resources>
+    </manipulate>
+  </description>
+</changepattern>    
+<children><manipulate id="r0" label="four_eyes_principle" type="insert" direction="parallel">
+      <resources allocated_to="not_allocated">
+      <resource>level1</resource></resources>
+    <children/></manipulate>
+  <manipulate id="r0" label="head_confirmation" type="replace">
+      <resources allocated_to="not_allocated">
+      <resource>level1</resource></resources>
+    <children/></manipulate>
+  </children></resprofile>
+        </resource>
     </children></manipulate>
   <manipulate id="r0" label="design_offer" type="delete" direction="any">
       <resources allocated_to="not_allocated">

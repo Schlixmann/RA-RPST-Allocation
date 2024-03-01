@@ -49,13 +49,28 @@ class Branch():
             resource_info = poop
             dummy.add_res_allocation(task, resource_info)
 
+        delay_deletes = []
         for task in tasks:
+            try:
+                if task.xpath("@type = 'delete'"):
+                    with open("task1.xml", "wb") as f:
+                        f.write(etree.tostring(task))
+                    delay_deletes.append(task)
+                else:
+                    anchor = task.xpath("ancestor::cpee1:manipulate | ancestor::cpee1:call", namespaces=ns)[-1]
+                    process, solution.invalid_branches = cpee_change_operations.ChangeOperationFactory(process, anchor, task, cptype= task.attrib["type"])
+
+            except cpee_change_operations.ChangeOperationError as inst:
+                solution.invalid_branches = True
+                #print(inst.__str__())
+                #print("Solution invalid_branches = True")
+        
+        for task in delay_deletes:
+            with open("task.xml", "wb") as f:
+                f.write(etree.tostring(task))
             try:
                 anchor = task.xpath("ancestor::cpee1:manipulate | ancestor::cpee1:call", namespaces=ns)[-1]
                 process, solution.invalid_branches = cpee_change_operations.ChangeOperationFactory(process, anchor, task, cptype= task.attrib["type"])
-                #resource_info = copy.deepcopy(core_task.xpath("cpee1:children/*", namespaces=ns)[0])
-                    
-                #graphix.TreeGraph().show(etree.tostring(self.node), filename=f"branch") 
 
             except cpee_change_operations.ChangeOperationError as inst:
                 solution.invalid_branches = True

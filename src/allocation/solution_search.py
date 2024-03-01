@@ -71,15 +71,25 @@ class Genetic(SolutionSearch):
         tasks_iter = iter(self.tasklist) # iterator
         task = get_next_task(tasks_iter, new_solution) # gets next tasks and checks for deletes
 
+        delay_deletes = []
         while True:
             allocation = self.process_allocation.allocations[task.attrib['id']] # get allocatin
 
             branch_no = individual["branches"].get(task)    # get choosen number of branch
             branch = allocation.branches[branch_no] # get actual branch as R-RPST
-            new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
+            with open("branch.xml", "wb") as f:
+                f.write(etree.tostring(branch.node))
+            if branch.node.xpath("//*[@type='delete']"):
+                delay_deletes.append((branch, task))
+            else:
+                new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
             
             task = get_next_task(tasks_iter, new_solution)
+            
             if task == "end":
+                for branch,task in delay_deletes:
+                    if new_solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=self.ns):
+                        new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # apply delays
                 break
         
         new_solution.check_validity()
@@ -88,6 +98,9 @@ class Genetic(SolutionSearch):
         else:
             value = new_solution.get_measure(measure)   # calc. fitness of solution
 
+        if delay_deletes:
+            with open("delay_delete.xml", "wb") as f:
+                f.write(etree.tostring(new_solution.process))
         if rtype=="solution":
             return new_solution
         else:

@@ -22,7 +22,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
     for i, tree in enumerate(list(trees.values())):    
         if i > 0:
             show = False
-        graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), format="svg", filename=f"alloc_tree_{i}", view=show) 
+        graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), format="svg", filename=f"alloc_tree_{i}", view=False) 
     
 
     # Overall Solutions:
@@ -95,6 +95,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
     # TOP 10 Outcome: 
     # List with 10 best processes
 
+    """
     # genetic_approach
     # genetic_config: 
     performance_genetic = defaultdict(list)
@@ -130,7 +131,8 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
     print("Invalid Branches? ", [ind["solution"].invalid_branches for ind in outcome])
     # TOP 10 Outcome: 
     # List with 10 best processes
-
+    """
+    
     # genetic_approach
     # genetic_config: 
     performance_genetic = defaultdict(list)
@@ -187,7 +189,8 @@ if __name__ == "__main__":
         "resource_config/offer_resources_many_invalid_branches.xml" : "results/experiments/invalid_branches",
         "resource_config/offer_resources_heterogen_no_deletes.xml" : "results/experiments/no_deletes"
         }
-
+    targets = {"resource_config/offer_resources_plain_fully_synthetic_small.xml" : "results/experiments/fully_synthetic"}
     
     for resource, target in targets.items():
-        run(process, resource, 10, args.brute, target)
+        #run(process, resource, 10, args.brute, target)
+        run(process, resource, 10, False, target)

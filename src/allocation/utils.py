@@ -17,7 +17,7 @@ def get_next_task(tasks_iter, solution=None):
         
         # check that next task was not deleted:
         elif solution: 
-            if not solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns):
+            if not solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=ns):
                 pass
             else:
                 break

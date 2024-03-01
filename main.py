@@ -171,7 +171,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
     print(f"done with : {resource_file_path}")
 
 if __name__ == "__main__":
-    process = "tests/test_processes/offer_process_paper.xml"
+    process = "processes/offer_process_paper.xml"
 
     parser = argparse.ArgumentParser(description="""Run all experiments as described in the paper with this function. \n
                                      To force the calculation of all solutions: use -b (be aware of long execution times) \n
@@ -183,11 +183,12 @@ if __name__ == "__main__":
 
     targets = {"resource_config/offer_resources_heterogen.xml" : "results/experiments/heterogen",
         "resource_config/offer_resources_close_maxima.xml" : "results/experiments/close_maxima",
-        "resource_config/offer_resources_plain_fully_synthetic.xml" : "results/experiments/fully_synthetic",
+        "resource_config/offer_resources_plain_fully_synthetic_small.xml" : "results/experiments/fully_synthetic",
         "resource_config/offer_resources_many_invalid_branches.xml" : "results/experiments/invalid_branches",
         "resource_config/offer_resources_heterogen_no_deletes.xml" : "results/experiments/no_deletes"
         }
 
+    targets={"resource_config/offer_resources_plain_fully_synthetic_small.xml" : "results/experiments/fully_synthetic"}
     
     for resource, target in targets.items():
         run(process, resource, 10, args.brute, target)

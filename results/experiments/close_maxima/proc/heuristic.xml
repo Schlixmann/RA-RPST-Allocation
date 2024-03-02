@@ -1,6 +1,6 @@
 <description xmlns="http://cpee.org/ns/description/1.0">
-  <manipulate id="a1" label="start_process">level1level2level3<resources allocated_to="level1 role: level1rp_1"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_1" name="level1">
-        <resprofile id="rp_1" name="start_process" role="level1" task="start_process">
+  <manipulate id="a1" label="new_tender">level1level2level3<resources allocated_to="level1 role: level1rp_1"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_6" name="level1">
+        <resprofile id="rp_1" name="new_tender" role="level1" task="new_tender">
             <measures>
                 <cost>10</cost>
             </measures>
@@ -77,7 +77,7 @@
         <children/></resprofile>
         </resource>
     </allocation></manipulate>
-                <manipulate id="a3" label="evaluate_risk">Must be checked by level3 if executed by 1 or 2<resources allocated_to="level1 role: level1rp_3"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_6" name="level1">
+                <manipulate id="a3" label="evaluate_risk">Must be checked by level3 if executed by 1 or 2<resources allocated_to="level1 role: level1rp_3"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_1" name="level1">
         <resprofile id="rp_3" name="evaluate_risk" role="level1" task="evaluate_risk">
             <measures>
                 <cost>10</cost>
@@ -117,8 +117,8 @@
         <children/></resprofile>
         </resource>
     </allocation></manipulate>
-  <manipulate id="a10" label="proposal_approval"><resources allocated_to="level3 role: level3rp_25"><resource>level3</resource></resources><allocation><resource id="r_5" name="level3">
-        <resprofile id="rp_25" name="proposal_approval" role="level3" task="proposal_approval">
+  <manipulate id="a10" label="decide_on_proposal"><resources allocated_to="level3 role: level3rp_25"><resource>level3</resource></resources><allocation><resource id="r_5" name="level3">
+        <resprofile id="rp_25" name="decide_on_proposal" role="level3" task="decide_on_proposal">
             <measures>
                 <cost>5</cost>
             </measures>
@@ -293,7 +293,7 @@
           <resource>level2</resource>
           <resource>level3</resource>
         </resources>
-      <allocation><resource id="r_6" name="level1">
+      <allocation><resource id="r_1" name="level1">
         <resprofile id="rp_16" name="handover_to_engineering" role="level3" task="handover_to_engineering">
             <measures>
                 <cost>15</cost>

@@ -1,6 +1,6 @@
 <description xmlns="http://cpee.org/ns/description/1.0">
-  <manipulate id="a1" label="start_process">level1level2level3<resources allocated_to="level3 role: level3rp_13"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_5" name="level3">
-        <resprofile id="rp_13" name="start_process" role="level3" task="start_process">
+  <manipulate id="a1" label="new_tender">level1level2level3<resources allocated_to="level3 role: level3rp_13"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_5" name="level3">
+        <resprofile id="rp_13" name="new_tender" role="level3" task="new_tender">
             <measures>
                 <cost>10</cost>
             </measures>
@@ -62,22 +62,22 @@
                         <resources allocated_to="level3 role: level3rp_23">
                             <resource>level3</resource>
                         </resources>
-                    <children><resource id="r_3" name="level3">
+                    <children><resource id="r_5" name="level3">
         <resprofile id="rp_23" name="head_confirmation" role="level3" task="head_confirmation">
             <measures>
                 <cost>5</cost>
             </measures>
         <children/></resprofile>
         </resource>
-    </children><allocation><resource id="r_3" name="level3">
+</children><allocation><resource id="r_5" name="level3">
         <resprofile id="rp_23" name="head_confirmation" role="level3" task="head_confirmation">
             <measures>
                 <cost>5</cost>
             </measures>
         <children/></resprofile>
         </resource>
-    </allocation></manipulate>
-                <manipulate id="a3" label="evaluate_risk">Must be checked by level3 if executed by 1 or 2<resources allocated_to="level1 role: level1rp_3"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_6" name="level1">
+</allocation></manipulate>
+                <manipulate id="a3" label="evaluate_risk">Must be checked by level3 if executed by 1 or 2<resources allocated_to="level1 role: level1rp_3"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_1" name="level1">
         <resprofile id="rp_3" name="evaluate_risk" role="level1" task="evaluate_risk">
             <measures>
                 <cost>10</cost>
@@ -98,14 +98,14 @@
                         <resources allocated_to="not_allocated">
                             <resource>level3</resource>
                         </resources>
-                    <children><resource id="r_3" name="level3">
+                    <children><resource id="r_5" name="level3">
         <resprofile id="rp_23" name="head_confirmation" role="level3" task="head_confirmation">
             <measures>
                 <cost>5</cost>
             </measures>
         <children/></resprofile>
         </resource>
-    </children></manipulate>
+</children></manipulate>
                 </children></resprofile>
         </resource>
     </allocation></manipulate>
@@ -121,7 +121,7 @@
                 <description>
                     </description>
             </changepattern>
-        <children><manipulate id="a15" label="proposal_approval" type="delete" direction="any">
+        <children><manipulate id="a15" label="decide_on_proposal" type="delete" direction="any">
                         <resources allocated_to="not_allocated">
                         </resources>
                     </manipulate>
@@ -179,7 +179,7 @@
           <resource>level2</resource>
           <resource>level3</resource>
         </resources>
-      <allocation><resource id="r_3" name="level3">
+      <allocation><resource id="r_5" name="level3">
         <resprofile id="rp_9" name="design_offer" role="level3" task="design_offer">
             <measures>
                 <cost>50</cost>
@@ -197,7 +197,7 @@
                     </manipulate>
                 </children></resprofile>
         </resource>
-    </allocation></call>
+</allocation></call>
     </parallel_branch>
     <parallel_branch pass="" local="">
       <call id="a8" endpoint="">

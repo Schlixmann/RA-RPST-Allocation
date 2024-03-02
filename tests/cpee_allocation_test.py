@@ -690,3 +690,31 @@ class TestCpeeAllocation(unittest.TestCase):
             f.write(ra_rpst)
             
             
+    def test_heur_opts(self):
+        process = "processes/offer_process_paper.xml"
+        resources = "resource_config/offer_resources_many_invalid_branches.xml"
+        with open(process) as f:
+            task_xml = f.read()
+        
+        with open(resources) as f:
+            resource_et = etree.fromstring(f.read())
+
+        heuristic_config = {"top_n":2, "include_invalid":False, "measure":"cost"}
+
+        process_allocation = ProcessAllocation(task_xml, resource_url=resource_et)
+        trees = process_allocation.allocate_process()
+        start = time.time()
+        brute_solutions = Brute(process_allocation)
+        brute_solutions.find_solutions_with_heuristic(top_n=2, force_valid=True)
+        ProcessAllocation.solutions = brute_solutions.solutions
+        outcome = brute_solutions.get_best_solutions(heuristic_config["measure"], 
+                                                    include_invalid=heuristic_config["include_invalid"], top_n=10)
+        end = time.time()
+        
+        with open("test_heur_paper.xml", "wb") as f:
+            f.write(etree.tostring(outcome[-1]["solution"].process))
+
+        print(outcome)
+        print(f"Time: {end-start}")
+        
+        print("Invalid Branches? ", [ind["solution"].invalid_branches for ind in outcome])

@@ -22,7 +22,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
     for i, tree in enumerate(list(trees.values())):    
         if i > 0:
             show = False
-        graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), format="svg", filename=f"alloc_tree_{i}", view=False) 
+        graphix.TreeGraph().show(etree.tostring(tree.intermediate_trees[0]), format="png", filename=f"alloc_tree_{i}", view=show) 
     
 
     # Overall Solutions:
@@ -68,7 +68,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
     start = time.time()
     brute_solutions = Brute(process_allocation)
     brute_solutions.find_solutions_with_heuristic(top_n=2, force_valid=True)
-    ProcessAllocation.solutions = brute_solutions.solutions
+    process_allocation.solutions = brute_solutions.solutions
     outcome = brute_solutions.get_best_solutions(heuristic_config["measure"], 
                                                  include_invalid=heuristic_config["include_invalid"], top_n=10)
     end = time.time()
@@ -94,7 +94,6 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
 
     # TOP 10 Outcome: 
     # List with 10 best processes
-    """
     
     # genetic_approach
     # genetic_config: 
@@ -166,7 +165,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
     with open(out_folder + "/proc/elite.xml", "wb") as f:
         f.write(etree.tostring(outcome[-1]["solution"].process))
     print("Invalid Branches? ", [ind["solution"].invalid_branches for ind in outcome])
-    """
+
     # Top 10 Outcomes with Brute Force
     # List with top 10 outcome
     
@@ -183,14 +182,13 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
 
-    targets = {"resource_config/offer_resources_heterogen.xml" : "results/experiments/heterogen",
-        "resource_config/offer_resources_close_maxima.xml" : "results/experiments/close_maxima",
-        "resource_config/offer_resources_plain_fully_synthetic.xml" : "results/experiments/fully_synthetic",
-        "resource_config/offer_resources_many_invalid_branches.xml" : "results/experiments/invalid_branches",
-        "resource_config/offer_resources_heterogen_no_deletes.xml" : "results/experiments/no_deletes"
+    targets = {#"resource_config/offer_resources_heterogen.xml" : "results/experiments/heterogen",
+        #"resource_config/offer_resources_close_maxima.xml" : "results/experiments/close_maxima",
+        #"resource_config/offer_resources_many_invalid_branches.xml" : "results/experiments/invalid_branches",
+        #"resource_config/offer_resources_heterogen_no_deletes.xml" : "results/experiments/no_deletes",
+        "resource_config/offer_resources_plain_fully_synthetic_small.xml" : "results/experiments/fully_synthetic"
         }
-    targets = {"resource_config/offer_resources_plain_fully_synthetic_small.xml" : "results/experiments/fully_synthetic"}
     
     for resource, target in targets.items():
         #run(process, resource, 10, args.brute, target)
-        run(process, resource, 10, False, target)
+        run(process, resource, 10, True, target)

@@ -40,7 +40,7 @@ class TestGenetic(unittest.TestCase):
             f.write(etree.tostring(population[0]["solution"].process))
 
     def test_gen_vs_brute_short(self):
-        with open("resource_config/offer_resources_cascade_del.xml") as f: 
+        with open("resource_config/offer_resources_plain_fully_synthetic_small.xml") as f: 
             resource_et = etree.fromstring(f.read())
         with open("tests/test_processes/offer_process_short.xml") as f:
             task_xml = f.read()

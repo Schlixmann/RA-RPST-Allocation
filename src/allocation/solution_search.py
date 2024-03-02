@@ -302,6 +302,56 @@ class Brute(SolutionSearch):
         -> if i > 1: copy current solution and add new solution
         End: no further step
         """
+        branches = []
+
+        for id, allocation in self.process_allocation.allocations.items():
+            if force_valid:
+                possible_branches = [branch for branch in allocation.branches if branch.valid]
+            else:
+                possible_branches = allocation.branches
+            for branch in allocation.branches:
+                a = np.argsort([branch.get_measure(measure, operator=sum)])
+            branches.append(np.argsort([branch.get_measure(measure, operator=sum) for branch in possible_branches])[:top_n])
+        #branches.append([np.argsort([branch.get_measure(measure, operator=sum) for branch in task.branches])[:top_n] for task in self.process_allocation.allocations])
+        p_solutions = self.iter_product(branches)
+        tasklist = self.process_allocation.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)
+        for p_solution in p_solutions:
+            new_solution = Solution(copy.deepcopy(self.process)) # create solution
+            tasks_iter = iter(tasklist) # iterator
+            task = get_next_task(tasks_iter, new_solution) # gets next tasks and checks for deletes
+            individual = {task: branch_no for task, branch_no in zip(tasklist,p_solution)}
+            delay_deletes = []
+            while True:
+                allocation = self.process_allocation.allocations[task.attrib['id']] # get allocatin
+
+                branch_no = individual[task] # get choosen number of branch
+                branch = allocation.branches[branch_no] # get actual branch as R-RPST
+
+                if branch.node.xpath("//*[@type='delete']"):
+                    delay_deletes.append((branch, task))
+                else:
+                    new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
+                
+                task = get_next_task(tasks_iter, new_solution)
+                
+                if task == "end":
+                    for branch,task in delay_deletes:
+                        if new_solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=self.ns):
+                            new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # apply delays
+                    break
+            
+            new_solution.check_validity()
+            if new_solution.invalid_branches:
+                value = np.nan        
+            else:
+                value = new_solution.get_measure(measure)   # calc. fitness of solution
+
+            if delay_deletes:
+                with open("delay_delete.xml", "wb") as f:
+                    f.write(etree.tostring(new_solution.process))
+
+            self.solutions.append(new_solution)
+        """
         ns = {"cpee1" : list(self.process_allocation.process.nsmap.values())[0]}
         if not self.solutions: 
             
@@ -309,6 +359,8 @@ class Brute(SolutionSearch):
             self.solutions.append(Solution(copy.deepcopy(self.process_allocation.process)))
             return self.find_solutions_with_heuristic(iter(tasklist), self.solutions[0], top_n=top_n)
         
+
+        branches = np.argsort([branch.get_measure(measure, operator=sum) for branch in possible_branches])[:top_n]
         # Find next task for solution
         task = get_next_task(tasks_iter, solution)
         if task == "end":
@@ -347,7 +399,7 @@ class Brute(SolutionSearch):
             
             solution.process = branch.apply_to_process(solution.process, solution, task)
             self.find_solutions_with_heuristic(copy.deepcopy(tasks_iter), solution, top_n=top_n)
-    
+        """
    
     def get_all_opts(self):
         #TODO should be callable with different options (Direct, Genetic, Heuristic, SemiHeuristic)
@@ -400,6 +452,8 @@ class Brute(SolutionSearch):
         fin_pop = [{"solution": solution, "cost": solution.get_measure("cost")} for solution in top_solutions]
         
         fin_pop = sorted(fin_pop, key=lambda d: d['cost'], reverse=True) 
+        if not fin_pop:
+            raise NoSolutionError
         return fin_pop
     
     def find_solutions(self, solutions, measure):
@@ -469,7 +523,7 @@ def find_best_solution(solutions): # ,measure, n):
             
             if task == "end":
                 for branch,task in delay_deletes:
-                    if new_solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=self.ns):
+                    if new_solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=ns):
                         new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # apply delays
                 break
                 
@@ -529,3 +583,6 @@ def combine_pickles(folder_path="tmp/results", measure="cost"):
     return best_solutions
 
 
+class NoSolutionError(Exception):
+    "Raised when no Solution can be found with the given configuration"
+    pass

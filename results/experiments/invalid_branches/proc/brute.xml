@@ -1,6 +1,6 @@
 <description xmlns="http://cpee.org/ns/description/1.0">
-  <manipulate id="a1" label="start_process">level1level2level3<resources allocated_to="level3 role: level3rp_13"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_3" name="level3">
-        <resprofile id="rp_13" name="start_process" role="level3" task="start_process">
+  <manipulate id="a1" label="new_tender">level1level2level3<resources allocated_to="level3 role: level3rp_13"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_3" name="level3">
+        <resprofile id="rp_13" name="new_tender" role="level3" task="new_tender">
             <measures>
                 <cost>10</cost>
             </measures>
@@ -78,7 +78,7 @@
                 <description>
                     </description>
             </changepattern>
-        <children><manipulate id="a15" label="proposal_approval" type="delete" direction="any">
+        <children><manipulate id="a15" label="decide_on_proposal" type="delete" direction="any">
                         <resources allocated_to="not_allocated">
                         </resources>
                     </manipulate>

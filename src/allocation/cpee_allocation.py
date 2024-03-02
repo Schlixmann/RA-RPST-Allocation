@@ -214,7 +214,15 @@ class TaskAllocation(ProcessAllocation):
                     branch_obj.open_delete = True
 
             if not children and node_type != 'delete':
-                branch_obj.valid = False
+                #TODO if delete.TaskName in self.process: valid = True
+                    branch_obj.valid = False
+            
+            if not children and node_type == 'delete':
+                p_tasks = [element for element in self.process.xpath(".//*") if element.tag in R_RPST.CpeeElements().task_elements]
+                task_labels = [R_RPST.get_label(etree.tostring(task)).lower() for task in p_tasks]
+                del_task = R_RPST.get_label(etree.tostring(node).lower())
+                if  del_task not in task_labels:
+                    branch_obj.valid = False
                         
             branches = [],[]
             for i, child in enumerate(children):

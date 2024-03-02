@@ -1,5 +1,6 @@
-<manipulate xmlns="http://cpee.org/ns/description/1.0" id="r0" label="contact_suppliers" type="delete" direction="any">
-      <resources allocated_to="not_allocated">
-      <resource>level2</resource><resource>level3</resource></resources>
-    </manipulate>
-  
+<manipulate xmlns="http://cpee.org/ns/description/1.0" id="r2" label="head_confirmation" type="delete" direction="any">
+                        <resources allocated_to="not_allocated">
+                            <resource>level3</resource>
+                        </resources>
+                    </manipulate>
+                

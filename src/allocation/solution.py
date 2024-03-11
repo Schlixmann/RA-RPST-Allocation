@@ -22,6 +22,6 @@ class Solution():
             if not task.xpath("cpee1:allocation/*", namespaces=self.ns):
                 self.invalid_branches=True
                 break
-            else:
-                self.invalid_branches=False
+            #else:
+            #    self.invalid_branches=False
 

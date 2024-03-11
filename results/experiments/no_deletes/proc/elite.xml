@@ -128,15 +128,15 @@
             <description/>
           </code>
         </documentation>
-        <resources allocated_to="level2 role: level2rp_99">
+        <resources allocated_to="level2 role: level2rp_89">
           <resource>level1</resource>
           <resource>level2</resource>
           <resource>level3</resource>
         </resources>
-      <allocation><resource id="r_4" name="level2">
-        <resprofile id="rp_99" name="design_offer" role="level2" task="design_offer">
+      <allocation><resource id="r_2" name="level2">
+        <resprofile id="rp_89" name="design_offer" role="level2" task="design_offer">
             <measures>
-                <cost>55</cost>
+                <cost>43</cost>
             </measures>
         <children/></resprofile>
         </resource>

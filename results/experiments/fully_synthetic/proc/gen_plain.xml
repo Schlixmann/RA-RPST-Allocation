@@ -100,7 +100,7 @@
   </children></manipulate>
         </children></resprofile>
     </resource>
-  </allocation></manipulate><manipulate id="r5" label="inform_head" type="insert" direction="before">
+  </allocation></manipulate><manipulate id="r4" label="inform_head" type="insert" direction="before">
             <resources allocated_to="level2 role: level2rp_22">
               <resource>level2</resource>
               <resource>level3</resource>
@@ -121,7 +121,7 @@
     <children/></resprofile>
   </resource>
   </allocation></manipulate>
-        <manipulate id="r4" label="data_support" type="insert" direction="after">
+        <manipulate id="r3" label="data_support" type="insert" direction="after">
             <resources allocated_to="level2 role: level2rp_20">
               <resource>level1</resource>
               <resource>level2</resource>
@@ -257,6 +257,14 @@
     </resource>
   </allocation></manipulate>
         
+  <manipulate id="a10" label="decide_on_proposal"><resources allocated_to="level3 role: level3rp_25"><resource>level3</resource></resources><allocation><resource id="r_5" name="level3">
+    <resprofile id="rp_25" name="decide_on_proposal" role="level3" task="decide_on_proposal">
+      <measures>
+        <cost>23</cost>
+      </measures>
+    <children/></resprofile>
+  </resource>
+</allocation></manipulate>
   <choose xmlns="http://cpee.org/ns/description/1.0" mode="exclusive">
   <alternative condition=""> 
   <parallel wait="-1" cancel="last">
@@ -289,64 +297,14 @@
         
     </parallel_branch>
   </parallel>
-  <manipulate id="a5" label="send_offer">level1level2level3<resources allocated_to="level3 role: level3rp_17"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_5" name="level3">
-    <resprofile id="rp_17" name="send_offer" role="level3" task="send_offer">
+  <manipulate id="a5" label="send_offer">level1level2level3<resources allocated_to="level1 role: level1rp_5"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_1" name="level1">
+    <resprofile id="rp_5" name="send_offer" role="level1" task="send_offer">
       <measures>
-        <cost>56</cost>
-      </measures>
-      <changepattern type="insert">
-        <parameters>
-          <direction>after</direction>
-        </parameters>
-        <description>
-          <manipulate id="r0" label="four_eyes_principle" type="insert" direction="after">
-            <resources allocated_to="not_allocated">
-              <resource>level1</resource>
-              <resource>level2</resource>
-              <resource>level3</resource>
-            </resources>
-          </manipulate>
-        </description>
-      </changepattern>
-
-    <children><manipulate id="r0" label="four_eyes_principle" type="insert" direction="after">
-            <resources allocated_to="not_allocated">
-              <resource>level1</resource>
-              <resource>level2</resource>
-              <resource>level3</resource>
-            </resources>
-          <children><resource id="r_3" name="level3">
-    <resprofile id="rp_24" name="four_eyes_principle" role="level3" task="four_eyes_principle">
-      <measures>
-        <cost>53</cost>
+        <cost>50</cost>
       </measures>
     <children/></resprofile>
-    </resource>
-  </children></manipulate>
-        </children></resprofile>
-    </resource>
-</allocation></manipulate><manipulate id="r3" label="four_eyes_principle" type="insert" direction="after">
-            <resources allocated_to="level3 role: level3rp_24">
-              <resource>level1</resource>
-              <resource>level2</resource>
-              <resource>level3</resource>
-            </resources>
-          <children><resource id="r_3" name="level3">
-    <resprofile id="rp_24" name="four_eyes_principle" role="level3" task="four_eyes_principle">
-      <measures>
-        <cost>53</cost>
-      </measures>
-    <children/></resprofile>
-    </resource>
-  </children><allocation><resource id="r_3" name="level3">
-    <resprofile id="rp_24" name="four_eyes_principle" role="level3" task="four_eyes_principle">
-      <measures>
-        <cost>53</cost>
-      </measures>
-    <children/></resprofile>
-    </resource>
+  </resource>
   </allocation></manipulate>
-        
   <choose mode="exclusive">
     <alternative condition="positive">
       <_probability>
@@ -410,7 +368,7 @@
   </allocation></call>
     </alternative>
     <otherwise>
-      <manipulate id="r8" label="create_proposal" type="replace">
+      <manipulate id="r6" label="create_proposal" type="replace">
             <resources allocated_to="level3 role: level3rp_15">
               <resource>level1</resource>
               <resource>level2</resource>
@@ -431,7 +389,7 @@
     <children/></resprofile>
     </resource>
   </allocation></manipulate>
-        <manipulate id="r7" label="four_eyes_principle" type="insert" direction="after">
+        <manipulate id="r5" label="four_eyes_principle" type="insert" direction="after">
             <resources allocated_to="not_allocated">
               <resource>level2</resource>
             </resources>

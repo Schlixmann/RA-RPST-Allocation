@@ -67,7 +67,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
     trees = process_allocation.allocate_process()
     start = time.time()
     brute_solutions = Brute(process_allocation)
-    brute_solutions.find_solutions_with_heuristic(top_n=2, force_valid=True)
+    brute_solutions.find_solutions_with_heuristic(top_n=1, force_valid=True)
     process_allocation.solutions = brute_solutions.solutions
     outcome = brute_solutions.get_best_solutions(heuristic_config["measure"], 
                                                  include_invalid=heuristic_config["include_invalid"], top_n=10)
@@ -191,4 +191,4 @@ if __name__ == "__main__":
     
     for resource, target in targets.items():
         #run(process, resource, 10, args.brute, target)
-        run(process, resource, 10, True, target)
+        run(process, resource, 10, False, target)

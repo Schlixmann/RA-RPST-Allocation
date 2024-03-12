@@ -1,12 +1,12 @@
 <description xmlns="http://cpee.org/ns/description/1.0">
-  <manipulate id="a1" label="new_tender">level1level2level3<resources allocated_to="level1 role: level1rp_1"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_6" name="level1">
-        <resprofile id="rp_1" name="new_tender" role="level1" task="new_tender">
+  <manipulate id="a1" label="new_tender">level1level2level3<resources allocated_to="level3 role: level3rp_13"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_5" name="level3">
+        <resprofile id="rp_13" name="new_tender" role="level3" task="new_tender">
             <measures>
                 <cost>10</cost>
             </measures>
         <children/></resprofile>
         </resource>
-    </allocation></manipulate>
+</allocation></manipulate>
   <manipulate id="r2" label="data_support" type="insert" direction="before">
                         <resources allocated_to="level2 role: level2rp_20">
                             <resource>level2</resource>
@@ -236,14 +236,14 @@
         <resources allocated_to="level3 role: level3rp_16">
           <resource>level3</resource>
         </resources>
-      <allocation><resource id="r_3" name="level3">
+      <allocation><resource id="r_5" name="level3">
         <resprofile id="rp_16" name="contact_suppliers" role="level3" task="contact_suppliers">
             <measures>
                 <cost>15</cost>
             </measures>
         <children/></resprofile>
         </resource>
-    </allocation></call>
+</allocation></call>
     </parallel_branch>
   </parallel>
   <choose mode="exclusive">

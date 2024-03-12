@@ -190,5 +190,5 @@ if __name__ == "__main__":
         }
     
     for resource, target in targets.items():
-        #run(process, resource, 10, args.brute, target)
-        run(process, resource, 10, False, target)
+        run(process, resource, 10, args.brute, target)
+        

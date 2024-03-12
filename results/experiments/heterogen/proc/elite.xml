@@ -131,28 +131,17 @@
             <description/>
           </code>
         </documentation>
-        <resources allocated_to="level3 role: level3rp_9">
+        <resources allocated_to="level2 role: level2rp_89">
           <resource>level1</resource>
           <resource>level2</resource>
           <resource>level3</resource>
         </resources>
-      <allocation><resource id="r_3" name="level3">
-        <resprofile id="rp_9" name="design_offer" role="level3" task="design_offer">
+      <allocation><resource id="r_2" name="level2">
+        <resprofile id="rp_89" name="design_offer" role="level2" task="design_offer">
             <measures>
-                <cost>80</cost>
+                <cost>43</cost>
             </measures>
-            <changepattern type="delete">
-                <parameters>
-                    <direction>any</direction>
-                </parameters>
-                <description>
-                    </description>
-            </changepattern>
-        <children><manipulate id="a8" label="send_offer" type="delete" direction="any">
-                        <resources allocated_to="not_allocated">
-                        </resources>
-                    </manipulate>
-                </children></resprofile>
+        <children/></resprofile>
         </resource>
     </allocation></call>
     </parallel_branch>
@@ -203,6 +192,14 @@
     </allocation></call>
     </parallel_branch>
   </parallel>
+  <manipulate id="a5" label="send_offer">level1level2level3<resources allocated_to="level1 role: level1rp_5"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><allocation><resource id="r_1" name="level1">
+        <resprofile id="rp_5" name="send_offer" role="level1" task="send_offer">
+            <measures>
+                <cost>18</cost>
+            </measures>
+        <children/></resprofile>
+    </resource>
+    </allocation></manipulate>
   <choose mode="exclusive">
     <alternative condition="positive">
       <_probability>

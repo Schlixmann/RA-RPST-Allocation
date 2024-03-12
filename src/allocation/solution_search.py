@@ -97,9 +97,6 @@ class Genetic(SolutionSearch):
         else:
             value = new_solution.get_measure(measure)   # calc. fitness of solution
 
-        if delay_deletes:
-            with open("delay_delete.xml", "wb") as f:
-                f.write(etree.tostring(new_solution.process))
         if rtype=="solution":
             return new_solution
         else:
@@ -345,10 +342,6 @@ class Brute(SolutionSearch):
                 value = np.nan        
             else:
                 value = new_solution.get_measure(measure)   # calc. fitness of solution
-
-            if delay_deletes:
-                with open("delay_delete.xml", "wb") as f:
-                    f.write(etree.tostring(new_solution.process))
 
             self.solutions.append(new_solution)
         """

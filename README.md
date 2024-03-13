@@ -3,7 +3,7 @@
 All results of the experiments can be found in the directory: `results/experiments`. <br>
 The table and aggregations can be found in the Jupyternotebook: `results_presentation/results.ipynb`
 
-To reproduce the experiments from Schumann & Rinderle-Ma (2024): Optimizing Resource-Driven Process Configuration through Genetic Algorithms:
+To reproduce the experiments from Optimizing Resource-Driven Process Configuration through Genetic Algorithms (2024):
 
 **Please note:** <br> Rerunning the iterative solution search is time and resource-consuming (>10h, >10GB Ram). <br>
 The results for the genetic algorithms might differ slightly from our results since the genetic algorithm is non-deterministic.

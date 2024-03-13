@@ -13,3 +13,4 @@ requests
 urllib3
 zope.event
 zope.interface
+graphviz

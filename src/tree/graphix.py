@@ -94,6 +94,10 @@ class TreeGraph():
         self.dot_content += '}\n'
         
         # Write DOT content to a file (replace 'call_tree.dot' with your desired filename)
+        folder_name = 'src/tree/tmp/'
+        if not os.path.exists(folder_name):
+            os.makedirs(folder_name)
+
         with open('src/tree/tmp/call_tree.dot', 'w') as dot_file:
             dot_file.write(self.dot_content)
         

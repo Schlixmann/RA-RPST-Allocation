@@ -18,7 +18,7 @@ If you also want to rerun the calculation of the iterative optimization search:
 ```
 python main.py -b
 ```
-## View Process Models BPM Like: 
+## View Process Models in BPM Like representation: 
 To view a BPM-like representation of the process models, use the following command:
 `python3 open_model.py path_to_model`
 e.g.:

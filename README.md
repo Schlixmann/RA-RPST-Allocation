@@ -5,7 +5,7 @@ The table and aggregations can be found in the Jupyternotebook: `results_present
 
 To reproduce the experiments from Optimizing Resource-Driven Process Configuration through Genetic Algorithms (2024):
 
-**Please note:** <br> Rerunning the iterative solution search is time and resource-consuming (>12h, >10GB Ram). <br>
+**Please note:** <br> Rerunning the iterative solution search is time and resource-consuming (>12h, >10GB RAM). <br>
 The results for the genetic algorithms might differ slightly from our results since the genetic algorithm is non-deterministic.
 
 To run heuristic search and genetic algorithm:

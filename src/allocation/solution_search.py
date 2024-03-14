@@ -457,6 +457,12 @@ class Brute(SolutionSearch):
         part_size = len(solutions) // num_parts
         args = []
         list_parts = []
+        
+        folder_name = 'tmp'
+        if not os.path.exists(folder_name):
+            os.makedirs(folder_name)
+            os.makedirs(folder_name + "/results")
+        
         with open("tmp/process.pkl", "wb") as f: 
             pickle.dump(etree.tostring(self.process), f)
         with open("tmp/allocations.pkl", "wb") as f:

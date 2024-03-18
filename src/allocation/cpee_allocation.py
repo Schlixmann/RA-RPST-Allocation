@@ -97,12 +97,28 @@ class ProcessAllocation():
             self.allocate_process()
 
         process = copy.deepcopy(self.process)
+        root = etree.Element("{http://cpee.org/ns/description/1.0}description")
+        ns_uri = "http://cpee.org/ns/ra_rpst"
+        ns_prefix = "ra_rpst"
+        nsmap = {None:ns_uri} | self.ns
+        #for prefix, uri in nsmap.items():
+        #    root.set(f"xmlns:{prefix}", uri)
+        
+        print("new_etree:" , etree.tostring(root, pretty_print=True).decode())
 
         for key, value in self.allocations.items():
+            element = etree.Element(etree.QName(ns_uri, ns_prefix), nsmap = nsmap)
+            #element.set('xmlns', f"{ns_prefix}:{ns_uri}")
             node = process.xpath(f"//*[@id='{str(key)}']", namespaces = self.ns)[0]
-            node.append(etree.Element("ra_rpst")) # add new node ra_rpst
-            node.xpath("ra_rpst")[0].append(value.intermediate_trees[0].xpath("cpee1:children", namespaces=self.ns)[0]) # add allocation tree
-        
+            node.append(element) # add new node ra_rpst
+            #node.xpath("ra_rpst:ra_rpst", namespaces=nsmap)[0].append(value.intermediate_trees[0].xpath("cpee1:children", namespaces=self.ns)[0]) # add allocation tree
+
+        print(nsmap)
+
+
+
+        with open("x_test.xml", "wb") as f:
+            f.write(etree.tostring(process))
         self.ra_rpst = etree.tostring(process)
 
     def get_best_solution(self, measure, operator=min, consider_all_solutions=True):

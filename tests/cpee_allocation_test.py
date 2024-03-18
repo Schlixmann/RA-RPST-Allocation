@@ -685,7 +685,7 @@ class TestCpeeAllocation(unittest.TestCase):
         trees = process_allocation.allocate_process()
 
         ra_rpst = process_allocation.get_ra_rpst()
-        
+                
         with open("ra_rpst.xml", "wb") as f:
             f.write(ra_rpst)
             

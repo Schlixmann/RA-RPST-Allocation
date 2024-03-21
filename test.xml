@@ -44,7 +44,7 @@
           <resource>level3</resource>
           <resource>level2</resource>
         </resources>
-      <ra_rpst xmlns="http://cpee.org/ns/ra_rpst"><children><resource id="r_2" name="level2">
+      <children><resource id="r_2" name="level2">
         <resprofile id="rp_12" name="close_project" role="level2" task="close_project">
             <measures>
                 <cost>40</cost>
@@ -99,26 +99,7 @@
                     </manipulate>
                 </description>
             </changepattern>
-        <children><manipulate id="r7" label="inform_head" type="insert" direction="after">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    <children><resource id="r_2" name="level2">
-        <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
-            <measures>
-                <cost>125</cost>
-            </measures>
         <children/></resprofile>
-    </resource>
-    <resource id="r_4" name="level2">
-        <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
-            <measures>
-                <cost>31</cost>
-            </measures>
-        <children/></resprofile>
-        </resource>
-    </children></manipulate>
-                </children></resprofile>
         </resource>
     <resource id="r_3" name="level3">
         <resprofile id="rp_19" name="close_project" role="level3" task="close_project">
@@ -134,5 +115,4 @@
             </measures>
         <children/></resprofile>
         </resource>
-</children></ra_rpst></call>
-    
+</children><children/></call>

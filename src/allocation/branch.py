@@ -31,8 +31,8 @@ class Branch():
         -> apply change operations
         """
         ns = {"cpee1" : list(process.nsmap.values())[0]}
-        #with open("branch_raw.xml", "wb") as f:
-        #    f.write(etree.tostring(self.node))
+        with open("branch_raw.xml", "wb") as f:
+            f.write(etree.tostring(self.node))
         #TODO Set allocated Resource!
 
         tasks = copy.deepcopy(self.node).xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:changepattern)and not(ancestor::cpee1:allocation)]", namespaces=ns)[1:]

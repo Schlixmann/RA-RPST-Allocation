@@ -18,12 +18,19 @@ class ChangeOperation():
         return proc_tasks[0]
 
     def add_res_allocation(self, task, output):
-        ns = {"cpee1" : list(task.nsmap.values())[0]}
-        if not task.xpath("cpee1:allocation", namespaces=ns):
-            task.xpath(".")[0].append(etree.Element(f"{{{ns['cpee1']}}}allocation"))
+
+        ns = {"cpee1" : list(task.nsmap.values())[0], "allo" : "http://cpee.org/ns/allocation"}
+        output.tag = etree.QName(output).localname
+        if not task.xpath("allo:allocation", namespaces=ns):
+            new_element = etree.Element(f"allocation")
+            new_element.attrib["xmlns"] = "http://cpee.org/ns/allocation"
+            print("NEW ELEM:", etree.tostring(new_element))
+        print(etree.tostring(output))
+        new_element.append(output)
+        etree.ElementTree(output).write("text.xml")
+        task.xpath(".")[0].append(new_element)
         set_allocation = output.xpath("@name")[0] + " role: " + output.xpath("*/@role")[0]  + output.xpath("*/@id")[0]  # add ID
         task.xpath("cpee1:resources", namespaces=ns)[0].set("allocated_to", set_allocation)
-        task.xpath("cpee1:allocation", namespaces=ns)[0].append(output)
     
     def get_next_task_id(self, process):
         # create unique task_id

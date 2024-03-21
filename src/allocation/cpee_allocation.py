@@ -40,7 +40,7 @@ class ProcessAllocation():
         - if in parallel or XOR maybe add a flag?!
         """
         # TODO Tasks must still be adapted, only for testing purposes now
-        self.ns = {"cpee1" : list(self.process.nsmap.values())[0]}
+        self.ns = {"cpee1" : list(self.process.nsmap.values())[0], "ra_pst" : "http://cpee.org/ns/ra_rpst"}
         tasks = self.process.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)
         allocations = []
         threads = []
@@ -84,6 +84,14 @@ class ProcessAllocation():
             self.build_ra_rpst()
         return self.ra_rpst
 
+
+    def remove_namespace(self, elem, ns_uri):
+        """Recursively removes namespaces and prefixes throughout the subtree"""
+        if elem.prefix == ns_uri:  # If the element has the namespace prefix
+            elem.tag = etree.QName(elem).localname  # Strip the namespace, keeping the local name
+        for child in elem.getchildren():
+            self.remove_namespace(child, ns_uri)  
+
     def build_ra_rpst(self) -> None:
         """
         Build the RA-RPST from self.allocations
@@ -97,29 +105,25 @@ class ProcessAllocation():
             self.allocate_process()
 
         process = copy.deepcopy(self.process)
-        root = etree.Element("{http://cpee.org/ns/description/1.0}description")
         ns_uri = "http://cpee.org/ns/ra_rpst"
         ns_prefix = "ra_rpst"
-        nsmap = {None:ns_uri} | self.ns
-        #for prefix, uri in nsmap.items():
-        #    root.set(f"xmlns:{prefix}", uri)
-        
-        print("new_etree:" , etree.tostring(root, pretty_print=True).decode())
+        nsmap =  self.ns
+        namespace = {"rpst":ns_uri}
 
         for key, value in self.allocations.items():
-            element = etree.Element(etree.QName(ns_uri, ns_prefix), nsmap = nsmap)
-            #element.set('xmlns', f"{ns_prefix}:{ns_uri}")
+            element = etree.Element(etree.QName(ns_uri, "ra_rpst"))
+            element = etree.Element('ra_rpst')
+            element.attrib["xmlns"] = ns_uri
             node = process.xpath(f"//*[@id='{str(key)}']", namespaces = self.ns)[0]
             node.append(element) # add new node ra_rpst
-            #node.xpath("ra_rpst:ra_rpst", namespaces=nsmap)[0].append(value.intermediate_trees[0].xpath("cpee1:children", namespaces=self.ns)[0]) # add allocation tree
+            # Add RA-RPST as Subelement
+            ra_tree = value.intermediate_trees[0].xpath("cpee1:children", namespaces=self.ns)[0]
+            
+            node.xpath("ra_rpst", namespaces=namespace)[0].append(ra_tree) # add allocation tree
 
-        print(nsmap)
-
-
-
-        with open("x_test.xml", "wb") as f:
-            f.write(etree.tostring(process))
         self.ra_rpst = etree.tostring(process)
+        x = etree.fromstring(etree.tostring(process))
+        print(x.xpath("//*"))
 
     def get_best_solution(self, measure, operator=min, consider_all_solutions=True):
         """
@@ -248,7 +252,7 @@ class TaskAllocation(ProcessAllocation):
                     new_branch = Branch(copy.deepcopy(child.xpath("/*", namespaces=self.ns)[0]))
                     self.branches.append(new_branch)
                     branches[1].append(new_branch)
-                    branches[0].append(new_branch.node.xpath(path)[0])
+                    branches[0].append(new_branch.node.xpath(path, namespaces=self.ns)[0])
                 else:
                     branches[0].append(child)
                     branches[1].append(branch_obj)
@@ -274,14 +278,17 @@ class TaskAllocation(ProcessAllocation):
             self.state='running'
             root = etree.fromstring(self.task)
             print("New created root: ", root)
-            self.ns = {"cpee1" : list(root.nsmap.values())[0]}
-            root.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
+            self.ns = {"cpee1" : list(root.nsmap.values())[0], "ra_pst" : "http://cpee.org/ns/ra_rpst"}
+            #etree.register_namespace("ra_pst", self.ns["ra_pst"])
+            new_element = etree.Element(f"{{{self.ns['cpee1']}}}children")
+            root.append(new_element)
             self.intermediate_trees.append(copy.deepcopy(self.allocate_task(root, resource_url=resource_url, excluded=[root])))
             return self.intermediate_trees[0]
         else:
             root.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
             print("Task to allocate: ", R_RPST.get_label(etree.tostring(root)))
 
+        etree.register_namespace("ra_pst", self.ns["ra_pst"])
         res_xml = copy.deepcopy(resource_url)
         # Create Resource Children
         for resource in res_xml.xpath("*"):
@@ -336,7 +343,8 @@ class TaskAllocation(ProcessAllocation):
                     
                     if change_pattern.xpath("@type")[0].lower() in ["insert", "replace"]:                           
                         path = etree.ElementTree(task.xpath("/*")[0]).getpath(task) # generate path to current task
-                        task = copy.deepcopy(task.xpath("/*")[0]).xpath(path)[0]    # Deepcopy whole tree and re-locate current task
+                        etree.ElementTree(task.xpath("/*")[0]).write("test.xml")
+                        task = copy.deepcopy(task.xpath("/*", namespaces=self.ns)[0]).xpath(path, namespaces=self.ns)[0]    # Deepcopy whole tree and re-locate current task
                         ex_branch.append(task)
                         if change_pattern.xpath("@type")[0].lower() in ["replace"]:   
                             print("stop")

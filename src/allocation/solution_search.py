@@ -585,3 +585,16 @@ def combine_pickles(folder_path="tmp/results", measure="cost"):
 class NoSolutionError(Exception):
     "Raised when no Solution can be found with the given configuration"
     pass
+
+class Reinforcement(SolutionSearch):
+    def __init__(self, process_allocation, environment, agent):
+        super(Genetic, self).__init__(process_allocation)
+        self.env = environment
+        self.agent = agent
+    
+
+class JobShopEnv():
+    def __init__(self, all_machines):
+        self.machines = all_machines
+        self.schedule = {}  # Holds information on existing schedule situation, all allocated tasks to machines
+        self.new_job = None

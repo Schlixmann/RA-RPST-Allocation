@@ -82,12 +82,6 @@ class ProcessAllocation():
         if not self.ra_rpst:
             self.build_ra_rpst()
         return self.ra_rpst
-    
-    def get_clean_ra_rpst(self) -> str:
-        if not self.clean_ra_rpst:
-            self.build_clean_ra_rpst()
-        return self.clean_ra_rpst
-
 
     def remove_namespace(self, elem, ns_uri):
         """Recursively removes namespaces and prefixes throughout the subtree"""
@@ -116,14 +110,14 @@ class ProcessAllocation():
 
         for key, value in self.allocations.items():
             #element = etree.Element(etree.QName(ns_uri, "ra_rpst"))
-            element = etree.Element('ra_rpst')
+            #element = etree.Element('ra_rpst')
             #element.attrib["xmlns"] = ns_uri
             node = process.xpath(f"//*[@id='{str(key)}']", namespaces = self.ns)[0]
-            node.append(element) # add new node ra_rpst
+            #node.append(element) # add new node ra_rpst
             # Add RA-RPST as Subelement
             ra_tree = value.intermediate_trees[0].xpath("cpee1:children", namespaces=self.ns)[0]
             
-            node.xpath("ra_rpst", namespaces=namespace)[0].append(ra_tree) # add allocation tree
+            node.append(ra_tree) # add allocation tree
 
         self.ra_rpst = etree.tostring(process)
         x = etree.fromstring(etree.tostring(process))

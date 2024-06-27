@@ -13,8 +13,8 @@ class Reinforcement():
 
 class JobShopEnv():
     def __init__(self, ra_pst, schedule={}):
-        self.ra_pst_xml = etree.tostring(ra_pst)
-        self.ra_pst_et = ra_pst
+        self.ra_pst_xml = ra_pst
+        self.ra_pst_et = etree.fromstring(ra_pst)
         self.schedule = schedule  # Holds information on existing schedule situation, all allocated tasks to machines
         self.current_step = 0
 
@@ -50,10 +50,12 @@ class JobShopEnv():
         else:
             # for now, choose random branch
             current_task = copy.deepcopy(self.task_list[self.current_step])
-            branches = current_task.xpath("children/*", namespaces= self.ns) # get branches of RA-PST
+            with open("test.xml", "wb") as f:
+                f.write(etree.tostring(current_task))
+            branches = current_task.xpath("cpee1:children/*", namespaces= self.ns) # get branches of RA-PST
             #branches = current_task.xpath("cpee1:children/*", namespaces= self.ns) # get branches of RA-PST
             branch_no = random.randint(0, len(branches)-1)
-            branch = etree.Element("children")
+            branch = etree.Element(f"{{{self.ns["cpee1"]}}}children")
             branch.append(branches[branch_no])
 
             for child in current_task.xpath("*"):
@@ -65,9 +67,11 @@ class JobShopEnv():
             finished = branch.apply_to_process(self.ra_pst_et)
             with open("test.xml", "wb") as f:
                 f.write(etree.tostring(finished))
-
-
             # TODO: choose branch with reinforcement learn "action"
+
+            # TODO: Scheduling
+            # Schedule all branches with existing resource allocation into Schedule
+
         print("done2")
 
     def calculate_makespan(self):

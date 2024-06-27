@@ -17,7 +17,7 @@ class TestReinforcementApproach(unittest.TestCase):
         ra_rpst = process_allocation.get_ra_rpst()
 
         # Create JobShopEnv
-        env = JobShopEnv(process_allocation.process)
+        env = JobShopEnv(ra_rpst)
         env.step()
 
 

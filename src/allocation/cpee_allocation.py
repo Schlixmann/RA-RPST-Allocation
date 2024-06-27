@@ -39,7 +39,6 @@ class ProcessAllocation():
         This method triggers the threaded allocation of each task in the process
         - if in parallel or XOR maybe add a flag?!
         """
-        # TODO Tasks must still be adapted, only for testing purposes now
         self.ns = {"cpee1" : list(self.process.nsmap.values())[0], "ra_pst" : "http://cpee.org/ns/ra_rpst"}
         tasks = self.process.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)
         allocations = []

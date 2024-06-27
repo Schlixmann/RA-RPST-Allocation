@@ -1,138 +1,91 @@
-<call xmlns="http://cpee.org/ns/description/1.0" id="a9" endpoint="">
-        <parameters>
-          <label>close_project</label>
-          <method>:post</method>
-          <arguments/>
-        </parameters>
-        <code>
-          <prepare/>
-          <finalize output="result"/>
-          <update output="result"/>
-          <rescue output="result"/>
-        </code>
-        <annotations>
-          <_timing>
-            <_timing_weight/>
-            <_timing_avg/>
-            <explanations/>
-          </_timing>
-          <_shifting>
-            <_shifting_type>Duration</_shifting_type>
-          </_shifting>
-          <_context_data_analysis>
-            <probes/>
-            <ips/>
-          </_context_data_analysis>
-          <report>
-            <url/>
-          </report>
-          <_notes>
-            <_notes_general/>
-          </_notes>
-        </annotations>
-        <documentation>
-          <input/>
-          <output/>
-          <implementation>
-            <description/>
-          </implementation>
-          <code>
-            <description/>
-          </code>
-        </documentation>
-        <resources allocated_to="not_allocated">
-          <resource>level3</resource>
-          <resource>level2</resource>
-        </resources>
-      <ra_rpst xmlns="http://cpee.org/ns/ra_rpst"><children><resource id="r_2" name="level2">
-        <resprofile id="rp_12" name="close_project" role="level2" task="close_project">
-            <measures>
-                <cost>40</cost>
-            </measures>
-            <changepattern type="insert">
-                <parameters>
-                    <direction>after</direction>
-                </parameters>
-                <description>
-                    <manipulate id="r4" label="inform_head" type="insert" direction="after">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    </manipulate>
-                </description>
-            </changepattern>
-        <children><manipulate id="r4" label="inform_head" type="insert" direction="after">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    <children><resource id="r_2" name="level2">
-        <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
-            <measures>
-                <cost>125</cost>
-            </measures>
-        <children/></resprofile>
-    </resource>
-    <resource id="r_4" name="level2">
-        <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
-            <measures>
-                <cost>31</cost>
-            </measures>
-        <children/></resprofile>
-        </resource>
-    </children></manipulate>
-                </children></resprofile>
-        </resource>
-    <resource id="r_4" name="level2">
-        <resprofile id="rp_12" name="close_project" role="level2" task="close_project">
-            <measures>
-                <cost>77</cost>
-            </measures>
-            <changepattern type="insert">
-                <parameters>
-                    <direction>after</direction>
-                </parameters>
-                <description>
-                    <manipulate id="r7" label="inform_head" type="insert" direction="after">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    </manipulate>
-                </description>
-            </changepattern>
-        <children><manipulate id="r7" label="inform_head" type="insert" direction="after">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    <children><resource id="r_2" name="level2">
-        <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
-            <measures>
-                <cost>125</cost>
-            </measures>
-        <children/></resprofile>
-    </resource>
-    <resource id="r_4" name="level2">
-        <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
-            <measures>
-                <cost>31</cost>
-            </measures>
-        <children/></resprofile>
-        </resource>
-    </children></manipulate>
-                </children></resprofile>
-        </resource>
-    <resource id="r_3" name="level3">
-        <resprofile id="rp_19" name="close_project" role="level3" task="close_project">
-            <measures>
-                <cost>122</cost>
-            </measures>
-        <children/></resprofile>
-        </resource>
-    <resource id="r_5" name="level3">
-        <resprofile id="rp_19" name="close_project" role="level3" task="close_project">
-            <measures>
-                <cost>2</cost>
-            </measures>
-        <children/></resprofile>
-        </resource>
-</children></ra_rpst></call>
-    
+b'<description xmlns="http://cpee.org/ns/description/1.0">\n  <manipulate id="a1" label="new_tender">level1level2level3<resources allocated_to="not_allocated">
+    <resource>level1</resource>
+    <resource>level2</resource>
+    <resource>level3</resource>
+</resources>
+</manipulate>\n  <manipulate id="a2" label="data_gathering">level1level2<resources allocated_to="not_allocated">
+<resource>level1</resource>
+<resource>level2</resource>
+</resources>
+</manipulate>\n  <manipulate id="a3" label="evaluate_risk">Must be checked by level3 if executed by 1 or 2<resources allocated_to="not_allocated">
+<resource>level1</resource>
+<resource>level2</resource>
+<resource>level3</resource>
+</resources>
+</manipulate>\n  <manipulate id="a4" label="create_proposal">level3<resources allocated_to="not_allocated">
+<resource>level3</resource>
+<resource>level2</resource>
+</resources>
+</manipulate>\n  <manipulate id="a10" label="decide_on_proposal">
+<resources allocated_to="not_allocated">
+<resource>level3</resource>
+</resources>
+</manipulate>\n  <choose xmlns="http://cpee.org/ns/description/1.0" mode="exclusive">\n  <alternative condition=""> \n  <parallel wait="-1" cancel="last">\n    <parallel_branch pass="" local="">\n      <call id="a7" endpoint="">\n        <parameters>\n          <label>design_offer</label>\n          <method>:post</method>\n          <arguments/>
+\n        </parameters>\n        <code>\n          <prepare/>
+\n          <finalize output="result"/>
+\n          <update output="result"/>
+\n          <rescue output="result"/>
+\n        </code>\n        <annotations>\n          <_timing>\n            <_timing_weight/>
+\n            <_timing_avg/>
+\n            <explanations/>
+\n          </_timing>\n          <_shifting>\n            <_shifting_type>Duration</_shifting_type>\n          </_shifting>\n          <_context_data_analysis>\n            <probes/>
+\n            <ips/>
+\n          </_context_data_analysis>\n          <report>\n            <url/>
+\n          </report>\n          <_notes>\n            <_notes_general/>
+\n          </_notes>\n        </annotations>\n        <documentation>\n          <input/>
+\n          <output/>
+\n          <implementation>\n            <description/>
+\n          </implementation>\n          <code>\n            <description/>
+\n          </code>\n        </documentation>\n        <resources allocated_to="not_allocated">\n          <resource>level1</resource>\n          <resource>level2</resource>\n          <resource>level3</resource>\n        </resources>\n      </call>\n    </parallel_branch>\n    <parallel_branch pass="" local="">\n      <call id="a8" endpoint="">\n        <parameters>\n          <label>contact_suppliers</label>\n          <method>:post</method>\n          <arguments/>
+\n        </parameters>\n        <annotations>\n          <_timing>\n            <_timing_weight/>
+\n            <_timing_avg/>
+\n            <explanations/>
+\n          </_timing>\n          <_shifting>\n            <_shifting_type>Duration</_shifting_type>\n          </_shifting>\n          <_context_data_analysis>\n            <probes/>
+\n            <ips/>
+\n          </_context_data_analysis>\n          <report>\n            <url/>
+\n          </report>\n          <_notes>\n            <_notes_general/>
+\n          </_notes>\n        </annotations>\n        <documentation>\n          <input/>
+\n          <output/>
+\n          <implementation>\n            <description/>
+\n          </implementation>\n        </documentation>\n        <resources allocated_to="not_allocated">\n          <resource>level3</resource>\n        </resources>\n      </call>\n    </parallel_branch>\n  </parallel>\n  <manipulate id="a5" label="send_offer">level1level2level3<resources allocated_to="not_allocated">
+<resource>level1</resource>
+<resource>level2</resource>
+<resource>level3</resource>
+</resources>
+</manipulate>\n  <choose mode="exclusive">\n    <alternative condition="positive">\n      <_probability>\n        <_probability_min/>
+\n        <_probability_max/>
+\n        <_probability_avg/>
+\n      </_probability>\n      <call id="a6" endpoint="">\n        <parameters>\n          <label>handover_to_engineering</label>\n          <method>:post</method>\n          <arguments/>
+\n        </parameters>\n        <code>\n          <prepare/>
+\n          <finalize output="result"/>
+\n          <update output="result"/>
+\n          <rescue output="result"/>
+\n        </code>\n        <annotations>\n          <_timing>\n            <_timing_weight/>
+\n            <_timing_avg/>
+\n            <explanations/>
+\n          </_timing>\n          <_shifting>\n            <_shifting_type>Duration</_shifting_type>\n          </_shifting>\n          <_context_data_analysis>\n            <probes/>
+\n            <ips/>
+\n          </_context_data_analysis>\n          <report>\n            <url/>
+\n          </report>\n          <_notes>\n            <_notes_general/>
+\n          </_notes>\n        </annotations>\n        <documentation>\n          <input/>
+\n          <output/>
+\n          <implementation>\n            <description/>
+\n          </implementation>\n          <code>\n            <description/>
+\n          </code>\n        </documentation>\n        <resources allocated_to="not_allocated">\n          <resource>level2</resource>\n          <resource>level3</resource>\n        </resources>\n      </call>\n    </alternative>\n    <otherwise>\n      <call id="a9" endpoint="">\n        <parameters>\n          <label>close_project</label>\n          <method>:post</method>\n          <arguments/>
+\n        </parameters>\n        <code>\n          <prepare/>
+\n          <finalize output="result"/>
+\n          <update output="result"/>
+\n          <rescue output="result"/>
+\n        </code>\n        <annotations>\n          <_timing>\n            <_timing_weight/>
+\n            <_timing_avg/>
+\n            <explanations/>
+\n          </_timing>\n          <_shifting>\n            <_shifting_type>Duration</_shifting_type>\n          </_shifting>\n          <_context_data_analysis>\n            <probes/>
+\n            <ips/>
+\n          </_context_data_analysis>\n          <report>\n            <url/>
+\n          </report>\n          <_notes>\n            <_notes_general/>
+\n          </_notes>\n        </annotations>\n        <documentation>\n          <input/>
+\n          <output/>
+\n          <implementation>\n            <description/>
+\n          </implementation>\n          <code>\n            <description/>
+\n          </code>\n        </documentation>\n        <resources allocated_to="not_allocated">\n          <resource>level3</resource>\n          <resource>level2</resource>\n        </resources>\n      </call>\n    </otherwise>\n  </choose>\n  </alternative>\n<otherwise/>
+\n</choose>\n</description>'

@@ -24,9 +24,11 @@ class TestReinforcementApproach(unittest.TestCase):
         env = JobShopEnv(ra_rpst)
         done = False
         while not done :
-            done, final_process = env.step()
+            done, final_process, schedule = env.step()
 
         with open("final_process.xml", "wb") as f:
             f.write(etree.tostring(final_process))
+
+        print(schedule)
 
 

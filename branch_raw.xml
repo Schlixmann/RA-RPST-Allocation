@@ -44,12 +44,12 @@
           <resource>level3</resource>
           <resource>level2</resource>
         </resources>
-      <children><resource id="r_5" name="level3">
+      <children><resource id="r_3" name="level3">
         <resprofile id="rp_19" name="close_project" role="level3" task="close_project">
             <measures>
-                <cost>2</cost>
+                <cost>122</cost>
             </measures>
         <children/></resprofile>
         </resource>
-</children></call>
+    </children></call>
     

@@ -18,6 +18,7 @@ class TestReinforcementApproach(unittest.TestCase):
 
         # Create JobShopEnv
         env = JobShopEnv(ra_rpst)
-        env.step()
+        while env.current_step < 2:
+            env.step()
 
 

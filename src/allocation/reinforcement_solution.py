@@ -1,4 +1,5 @@
 from src.allocation.branch import Branch
+from src.allocation.solution import Solution
 
 from lxml import etree
 import random
@@ -17,6 +18,7 @@ class JobShopEnv():
         self.ra_pst_et = etree.fromstring(ra_pst)
         self.schedule = schedule  # Holds information on existing schedule situation, all allocated tasks to machines
         self.current_step = 0
+        self.solution = Solution(self.ra_pst_et)
 
         self.ns = {"cpee1" : list(self.ra_pst_et.nsmap.values())[0], "ra_rpst" : "http://cpee.org/ns/ra_rpst"}
         self.task_list = self.ra_pst_et.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)
@@ -64,14 +66,15 @@ class JobShopEnv():
 
             
             branch = Branch(current_task)
-            finished = branch.apply_to_process(self.ra_pst_et)
+            finished = branch.apply_to_process(self.ra_pst_et, self.solution)
             with open("test.xml", "wb") as f:
                 f.write(etree.tostring(finished))
             # TODO: choose branch with reinforcement learn "action"
 
+            # Get only the newly allocated taskss
             # TODO: Scheduling
             # Schedule all branches with existing resource allocation into Schedule
-
+            self.current_step += 1
         print("done2")
 
     def calculate_makespan(self):

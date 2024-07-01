@@ -1,9 +1,40 @@
-<manipulate xmlns="http://cpee.org/ns/description/1.0" id="a1" label="new_tender">level1level2level3<children><resource id="r_4" name="level2">
-        <resprofile id="rp_6" name="new_tender" role="level2" task="new_tender">
+<manipulate xmlns="http://cpee.org/ns/description/1.0" id="a2" label="data_gathering">level1level2<children><resource id="r_1" name="level1">
+        <resprofile id="rp_2" name="data_gathering" role="level1" task="data_gathering">
             <measures>
-                <cost>121</cost>
+                <cost>61</cost>
+            </measures>
+            <changepattern type="insert">
+                <parameters>
+                    <direction>before</direction>
+                </parameters>
+                <description>
+                    <manipulate id="r1" label="data_support" type="insert" direction="before">
+                        <resources allocated_to="not_allocated">
+                            <resource>level2</resource>
+                        </resources>
+                    </manipulate>
+                </description>
+            </changepattern>
+        <children><manipulate id="r1" label="data_support" type="insert" direction="before">
+                        <resources allocated_to="not_allocated">
+                            <resource>level2</resource>
+                        </resources>
+                    <children><resource id="r_2" name="level2">
+        <resprofile id="rp_20" name="data_support" role="level2" task="data_support">
+            <measures>
+                <cost>42</cost>
             </measures>
         <children/></resprofile>
+        </resource>
+    <resource id="r_4" name="level2">
+        <resprofile id="rp_20" name="data_support" role="level2" task="data_support">
+            <measures>
+                <cost>57</cost>
+            </measures>
+        <children/></resprofile>
+        </resource>
+    </children></manipulate>
+                </children></resprofile>
         </resource>
     </children></manipulate>
   

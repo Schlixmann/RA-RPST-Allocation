@@ -71,7 +71,7 @@ class ProcessAllocation():
                     [hit for hit in hits if not hit.xpath("@type='delete'")]
                     #TODO -> should only be allowed to delete in branches which are not the delete branch is part of
                     # Implement
-        
+
         return self.allocations
     
     def add_allocation(self, task, output):
@@ -112,7 +112,7 @@ class ProcessAllocation():
             #element = etree.Element(etree.QName(ns_uri, "ra_rpst"))
             #element = etree.Element('ra_rpst')
             #element.attrib["xmlns"] = ns_uri
-            node = process.xpath(f"//*[@id='{str(key)}']", namespaces = self.ns)[0]
+            node = process.xpath(f"//*[@id='{str(key)}'][not(ancestor::cpee1:children)]", namespaces = self.ns)[0]
             #node.append(element) # add new node ra_rpst
             # Add RA-RPST as Subelement
             ra_tree = value.intermediate_trees[0].xpath("cpee1:children", namespaces=self.ns)[0]

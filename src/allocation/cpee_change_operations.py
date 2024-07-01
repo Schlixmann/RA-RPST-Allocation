@@ -14,7 +14,7 @@ class ChangeOperation():
             if len(proc_tasks) > 1:
                 raise ProcessError(f"Task identifier + label is not unique for task {R_RPST.get_label(etree.tostring(core_task)), core_task.attrib}")
             elif len(proc_tasks) == 0:
-                raise ProcessError(f"Task identifier + label do not exist {R_RPST.get_label(etree.tostring(core_task)), core_task.attrib}")
+                raise ProcessError(f"Task identifier + label do not exist {R_RPST.get_label(etree.tostring(core_task)), core_task.attrib}. Are you trying to allocate a deleted resource?")
         return proc_tasks[0]
 
     def add_res_allocation(self, task, output):
@@ -23,7 +23,7 @@ class ChangeOperation():
         output.tag = etree.QName(output).localname
         if not task.xpath("allo:allocation", namespaces=ns):
             new_element = etree.Element(f"allocation")
-            new_element.attrib["xmlns"] = "http://cpee.org/ns/allocation"
+            #new_element.attrib["xmlns"] += "http://cpee.org/ns/allocation"
             print("NEW ELEM:", etree.tostring(new_element))
         print(etree.tostring(output))
         new_element.append(output)
@@ -131,6 +131,8 @@ class Delete(ChangeOperation):
                 pos_deletes = []
                 for x in proc: 
                     try: 
+                        with open("new_x.xml", "wb") as f: 
+                            f.write(etree.tostring(x))
                         if to_del_label == R_RPST.get_label(etree.tostring(x)).lower():
                             pos_deletes.append(x.xpath("@id", namespaces=ns)[0])
 

@@ -17,8 +17,16 @@ class TestReinforcementApproach(unittest.TestCase):
         ra_rpst = process_allocation.get_ra_rpst()
 
         # Create JobShopEnv
+        with open("RA-PST.xml", "wb") as f:
+            f.write(ra_rpst)
+        with open("trees.xml", "wb") as f:
+            f.write(etree.tostring(process_allocation.process))
         env = JobShopEnv(ra_rpst)
-        while env.current_step < 2:
-            env.step()
+        done = False
+        while not done :
+            done, final_process = env.step()
+
+        with open("final_process.xml", "wb") as f:
+            f.write(etree.tostring(final_process))
 
 

@@ -1,5 +1,7 @@
 import unittest
 from lxml import etree
+import copy
+from collections import defaultdict
 
 from src.allocation.cpee_allocation import ProcessAllocation
 from src.allocation.reinforcement_solution import JobShopEnv
@@ -21,14 +23,22 @@ class TestReinforcementApproach(unittest.TestCase):
             f.write(ra_rpst)
         with open("trees.xml", "wb") as f:
             f.write(etree.tostring(process_allocation.process))
-        env = JobShopEnv(ra_rpst)
-        done = False
-        while not done :
-            done, final_process, schedule = env.step()
 
-        with open("final_process.xml", "wb") as f:
-            f.write(etree.tostring(final_process))
+        ra_pst2 = copy.deepcopy(ra_rpst)
+        processes = [ra_rpst, ra_pst2]
 
-        print(schedule)
+        schedule = defaultdict(list)
+        
+        for instance in processes:
+            env = JobShopEnv(instance, schedule)
+            done = False
+            while not done :
+                done, final_process, schedule = env.step()
+
+            with open("final_process.xml", "wb") as f:
+                f.write(etree.tostring(final_process))
+
+            print(schedule)
+        print(env.get_state())
 
 

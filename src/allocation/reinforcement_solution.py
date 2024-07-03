@@ -1,6 +1,6 @@
 from src.allocation.branch import Branch
 from src.allocation.solution import Solution
-from src.allocation.utils import get_next_task
+from src.allocation.utils import *
 
 from lxml import etree
 import random
@@ -24,15 +24,27 @@ class JobShopEnv():
         self.current_step = 0
         self.solution = Solution(self.ra_pst_et)
         self.final_config = None
+        self.to_delete =[]
+        self.valid_solution = []
 
         self.ns = {"cpee1": list(self.ra_pst_et.nsmap.values())[0], "ra_rpst": "http://cpee.org/ns/ra_rpst"}
         self.task_list = copy.deepcopy(self.ra_pst_et.xpath(
             "(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children)]", namespaces=self.ns))
         self.tasks_iter = copy.copy(iter(self.task_list))  # iterator
+    
+    def get_next_schedule_id(self):
+        highest_id = 0
+        for resource, tasks in self.schedule.items():
+            for task in tasks:
+                highest_id = max(highest_id, task['id'])
+        return highest_id + 1
 
-    def add_task_to_schedule(self, task):
+
+    def add_task_to_schedule(self, task, label=None):
         # TODO: Ensure precedence rules
-
+        if label in self.to_delete:
+            return self.schedule
+        
         with open("task.xml", "wb") as f:
             f.write(etree.tostring(task))
 
@@ -41,17 +53,28 @@ class JobShopEnv():
             "cpee1:allocation/cpee1:resource", namespaces=self.ns)
         if resources:
             # TODO: make attribute independent
+            # TODO: set start time on previous task in process
             resource, task_id, time, start_time = resources[0].attrib["id"], task.attrib["id"], float(task.xpath(
                 "cpee1:allocation/cpee1:resource/cpee1:resprofile/cpee1:measures/cpee1:cost", namespaces=self.ns)[0].text), 0
 
             if self.schedule[resource]:
                 start_time = self.schedule[resource][-1]["start"] + \
                     self.schedule[resource][-1]["duration"]
+                
+            print(f"Task_attrib_id: {task.attrib['id']}")
+            task_in_config = self.final_config.xpath(f"//*[@id = '{task.attrib['id']}']")[0]
+            schedule_id = self.get_next_schedule_id()
+            task_in_config.attrib["scheduled_id"] = str(schedule_id)
 
             self.schedule[resource].append(
-                {"task": task_id, "duration": time, "start": start_time})
+                {"task": task_id, "id":schedule_id, "duration": time, "start": start_time})
+
+
+
         else:
-            raise ValueError(f"No resource found for task_id {task.attrib["id"]}")
+            pass
+            #raise ValueError(f"No resource found for task_id {task.attrib["id"]}")
+        
         return self.schedule
 
     def reset(self):
@@ -76,6 +99,7 @@ class JobShopEnv():
         return matrix.flatten()
 
     def step(self, action=None):
+
         # TODO:
         # Decides on Konfiguration and schedules it into Schedule
         # updates the State
@@ -85,7 +109,7 @@ class JobShopEnv():
             self.reload_etree()
             print("Etrees are the same: ", etree.tostring(
                 self.final_config) == etree.tostring(self.ra_pst_et))
-            if True:  # TODO: toggle if dynamic scheduling during config or after config is finished
+            if False:  # TODO: toggle if dynamic scheduling during config or after config is finished
                 # TODO: create schedule for fully configured process
                 to_schedule_list = copy.deepcopy(self.final_config.xpath(
                     "(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children or ancestor::cpee1:allocation)]", namespaces=self.ns))
@@ -93,9 +117,18 @@ class JobShopEnv():
                 # TODO base scheduling on RA-PST Ancestors (if Ancestor parallel: schedule in parallel)
                 for task in to_schedule_list:
                     self.add_task_to_schedule(task)
-                print("done")
-                done = True
-                return done, self.final_config, self.schedule
+
+            with open("text.xml", "wb") as f:
+                f.write(etree.tostring(self.solution.process))
+            
+            #TODO: Fix all namespace issues
+            self.solution.process = etree.fromstring(etree.tostring(self.solution.process))
+            self.solution.check_validity()
+            self.valid_solution.append(self.solution.invalid_branches)
+
+            print("done")
+            done = True
+            return done, self.final_config, self.schedule
             # return current state (Schedule)
             # return konfigured process model (CPEE Tree)
             # return done
@@ -107,6 +140,11 @@ class JobShopEnv():
                 "cpee1:children/*", namespaces=self.ns)  # get branches of RA-PST
             with open("test.xml", "wb") as f:
                 f.write(etree.tostring(current_task))
+            
+            #TODO: Choose branch based on action
+            #   Reward: direct impact + notion on overall validity
+            #   Reward: direct impact must come from scheduling
+            #   Reward: discount later schedulings
 
             
             #self.print_node_structure(current_task)
@@ -122,8 +160,33 @@ class JobShopEnv():
 
             self.final_config = branch.apply_to_process(
                 self.ra_pst_et, self.solution)
-            with open("test.xml", "wb") as f:
-                f.write(etree.tostring(self.final_config))
+        
+            print(" ")
+        
+
+
+            for task in branch.node.xpath("(//cpee1:manipulate|//cpee1:call)[not(ancestor::cpee1:changepattern)]", namespaces=self.ns):
+                # find task in final konfig: 
+                #label = task.attrib["label"]
+                with open("text.xml", "wb") as f:
+                    f.write(etree.tostring(branch.node))
+
+                self.reload_etree()
+                label = get_label(etree.tostring(task))    
+                if ("type","delete") in task.attrib.items():
+                    # deleted task must not be scheduled
+                    continue
+                
+                proc_task = self.final_config.xpath(f"(//cpee1:manipulate[@label='{label}']|//cpee1:call/cpee1:parameters/cpee1:label[text()='{label}']/ancestor::*[2])[not(ancestor::cpee1:children|ancestor::cpee1:allocation)]", namespaces=self.ns)
+                if len(proc_task)>1:
+                    raise ValueError
+
+                self.add_task_to_schedule(proc_task[0], label)
+
+
+
+
+            
             # TODO: choose branch with reinforcement learn "action"
             # TODO: Get only the newly allocated tasks and schedule during Configuration
             #   ->  needed to get immidiate reward. Maybe Identification via label & resource
@@ -157,20 +220,21 @@ class JobShopEnv():
         self.final_config = etree.fromstring(etree.tostring(self.final_config))
 
 
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.optimizers import Adam
+#import tensorflow as tf
+#from tensorflow.keras.models import Sequential
+#from tensorflow.keras.layers import Dense
+#from tensorflow.keras.optimizers import Adam
 
 import random
 from collections import deque
 
 class DQNAgentConfiguration:
     def __init__(self, state_size, action_size):
-        self.state_size = state_size 
-        # From Env all resources, all jobs per resource, current max makespan, current overall machine usage
-        # From Process: Possible Configs Resources, exp. exec. times, earliest possible start time of task 
-        self.action_size = action_size # could be len of process or just one int
+        self.state_size = state_size # No_of_resources * 2 + (No_of_branches*No_of_resources) + No_of_branches
+        # From Env all resources, current max job end time per resource, current resource workload
+        # From Process: workload per resource per branch, Task Delta per Branch
+        self.action_size = action_size # = max_branches_per_task
+        # TODO: flattened matrix of valid branches per task (shape: no_of_tasks, max_branches_per_task)
         self.memory = deque(maxlen=2000)
         self.gamma = 0.95    # discount rate
         self.epsilon = 1.0  # exploration rate
@@ -179,13 +243,13 @@ class DQNAgentConfiguration:
         self.learning_rate = 0.001
         self.model = self._build_model()
 
-    def _build_model(self):
-        model = Sequential()
-        model.add(Dense(24, input_dim=self.state_size, activation='relu'))
-        model.add(Dense(24, activation='relu'))
-        model.add(Dense(self.max_action_size, activation='linear'))
-        model.compile(loss='mse', optimizer=Adam(learning_rate=self.learning_rate))
-        return model
+#   def _build_model(self):
+#        model = Sequential()
+#        model.add(Dense(24, input_dim=self.state_size, activation='relu'))
+#        model.add(Dense(24, activation='relu'))
+#        model.add(Dense(self.max_action_size, activation='linear'))
+#        model.compile(loss='mse', optimizer=Adam(learning_rate=self.learning_rate))
+#        return model
     
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))

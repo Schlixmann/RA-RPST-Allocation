@@ -1,4 +1,5 @@
 from lxml import etree
+import src.allocation.utils
 from src.tree import R_RPST
 import copy
 import re
@@ -10,11 +11,11 @@ class ChangeOperation():
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         proc_tasks = process.xpath(f"//*[@id='{core_task.attrib['id']}'][not(ancestor::changepattern)]", namespaces=ns)
         if len(proc_tasks) != 1:
-            proc_tasks = list(filter(lambda x: R_RPST.get_label(etree.tostring(core_task))== R_RPST.get_label(etree.tostring(x)), proc_tasks))
+            proc_tasks = list(filter(lambda x: src.allocation.utils.get_label(etree.tostring(core_task))== src.allocation.utils.get_label(etree.tostring(x)), proc_tasks))
             if len(proc_tasks) > 1:
-                raise ProcessError(f"Task identifier + label is not unique for task {R_RPST.get_label(etree.tostring(core_task)), core_task.attrib}")
+                raise ProcessError(f"Task identifier + label is not unique for task {src.allocation.utils.get_label(etree.tostring(core_task)), core_task.attrib}")
             elif len(proc_tasks) == 0:
-                raise ProcessError(f"Task identifier + label do not exist {R_RPST.get_label(etree.tostring(core_task)), core_task.attrib}. Are you trying to allocate a deleted resource?")
+                raise ProcessError(f"Task identifier + label do not exist {src.allocation.utils.get_label(etree.tostring(core_task)), core_task.attrib}. Are you trying to allocate a deleted resource?")
         return proc_tasks[0]
 
     def add_res_allocation(self, task, output):
@@ -123,7 +124,7 @@ class Delete(ChangeOperation):
                 labels = []
 
                 try:
-                    to_del_label = R_RPST.get_label(etree.tostring(task)).lower()
+                    to_del_label = src.allocation.utils.get_label(etree.tostring(task)).lower()
                 except TypeError as inst:
                     print(inst.__str__())
                     print("The Element Tag of the task is {}".format(inst.args[1]))
@@ -133,7 +134,7 @@ class Delete(ChangeOperation):
                     try: 
                         with open("new_x.xml", "wb") as f: 
                             f.write(etree.tostring(x))
-                        if to_del_label == R_RPST.get_label(etree.tostring(x)).lower():
+                        if to_del_label == src.allocation.utils.get_label(etree.tostring(x)).lower():
                             pos_deletes.append(x.xpath("@id", namespaces=ns)[0])
 
                     except TypeError as inst:
@@ -185,7 +186,7 @@ class Replace(ChangeOperation):
                 resource_info = copy.deepcopy(task.xpath("cpee1:children/*", namespaces=ns)[0])
                 self.add_res_allocation(task, resource_info)
             else: 
-                raise ChangeOperationError(f"No Resource available for replaced {R_RPST.get_label(etree.tostring(task))}. Invalid Allocation")
+                raise ChangeOperationError(f"No Resource available for replaced {src.allocation.utils.get_label(etree.tostring(task))}. Invalid Allocation")
         
         except ChangeOperationError as inst:
             #print(inst.__str__())

@@ -1,6 +1,7 @@
 from lxml import etree
 import uuid
 from graphviz import Source
+from src.allocation.utils import get_label
 from src.tree.R_RPST import *
 
 class TreeGraph():

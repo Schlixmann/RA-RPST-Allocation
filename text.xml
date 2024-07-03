@@ -1,7 +1,51 @@
-<resource xmlns="http://cpee.org/ns/description/1.0" id="r_5" name="level3">
-        <resprofile id="rp_19" name="close_project" role="level3" task="close_project">
+<manipulate xmlns="http://cpee.org/ns/description/1.0" id="a1" label="new_tender">level1level2level3<resources allocated_to="level1 role: level1rp_1"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><children><resource id="r_1" name="level1">
+        <resprofile id="rp_1" name="new_tender" role="level1" task="new_tender">
             <measures>
-                <cost>2</cost>
+                <cost>10</cost>
             </measures>
         <children/></resprofile>
         </resource>
+    <resource id="r_6" name="level1">
+        <resprofile id="rp_1" name="new_tender" role="level1" task="new_tender">
+            <measures>
+                <cost>10</cost>
+            </measures>
+        <children/></resprofile>
+        </resource>
+    <resource id="r_2" name="level2">
+        <resprofile id="rp_6" name="new_tender" role="level2" task="new_tender">
+            <measures>
+                <cost>15</cost>
+            </measures>
+        <children/></resprofile>
+        </resource>
+    <resource id="r_4" name="level2">
+        <resprofile id="rp_6" name="new_tender" role="level2" task="new_tender">
+            <measures>
+                <cost>15</cost>
+            </measures>
+        <children/></resprofile>
+        </resource>
+    <resource id="r_3" name="level3">
+        <resprofile id="rp_13" name="new_tender" role="level3" task="new_tender">
+            <measures>
+                <cost>10</cost>
+            </measures>
+        <children/></resprofile>
+        </resource>
+    <resource id="r_5" name="level3">
+        <resprofile id="rp_13" name="new_tender" role="level3" task="new_tender">
+            <measures>
+                <cost>10</cost>
+            </measures>
+        <children/></resprofile>
+        </resource>
+</children><allocation><resource id="r_6" name="level1">
+        <resprofile id="rp_1" name="new_tender" role="level1" task="new_tender">
+            <measures>
+                <cost>10</cost>
+            </measures>
+        <children/></resprofile>
+        </resource>
+    </allocation></manipulate>
+  

@@ -1,3 +1,6 @@
+from lxml import etree
+
+
 class Solution():
     def __init__(self, process):
 
@@ -16,10 +19,12 @@ class Solution():
 
     def check_validity(self):
         #TODO Expand to also check if same resource is allocated in a parallel branch
-        tasks = self.process.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::allo:allocation)and not(ancestor::cpee1:children)]", namespaces=self.ns)
+        tasks = self.process.xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::cpee1:changepattern) and not(ancestor::cpee1:allocation)and not(ancestor::cpee1:children)]", namespaces=self.ns)
         for task in tasks:
-            a = task.xpath("allo:allocation/*", namespaces=self.ns)
-            if not task.xpath("allo:allocation/*", namespaces=self.ns):
+            a = task.xpath("cpee1:allocation/*", namespaces=self.ns)
+            with open("text.xml", "wb") as f:
+                f.write(etree.tostring(task))
+            if not task.xpath("cpee1:allocation/*", namespaces=self.ns):
                 self.invalid_branches=True
                 break
             #else:

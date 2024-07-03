@@ -27,7 +27,7 @@ class Branch():
     def apply_to_process(self, process, solution=None, next_task=None) -> etree:
         #TODO should be part of "Branch"
         """
-        -> Find task to allocate in self.process
+        -> Find task to allocate in process
         -> apply change operations
         """
         ns = {"cpee1" : list(process.nsmap.values())[0]}

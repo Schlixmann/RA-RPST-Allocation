@@ -10,7 +10,7 @@ class TestReinforcementApproach(unittest.TestCase):
     def test_build_ra_rpst(self):        
         with open("tests/test_processes/offer_process_paper.xml") as f: 
             task_xml = f.read()
-        with open("/home/felixs/Programming_Projects/RDPM_private/resource_config/offer_resources_heterogen.xml") as f:
+        with open("/home/felixs/Programming_Projects/RDPM_private/resource_config/offer_resources_many_invalid_branches.xml") as f:
             resource_et = etree.fromstring(f.read())
         
         # Create RA-PST
@@ -39,6 +39,10 @@ class TestReinforcementApproach(unittest.TestCase):
                 f.write(etree.tostring(final_process))
 
             print(schedule)
+            print(env.valid_solution)
+        
+            with open("final_config.xml", "wb") as f:
+                f.write(etree.tostring(env.final_config))
         print(env.get_state())
 
 

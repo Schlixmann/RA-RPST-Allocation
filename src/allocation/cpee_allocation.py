@@ -37,8 +37,7 @@ class ProcessAllocation():
      
     def allocate_process(self):
         """ 
-        This method triggers the threaded allocation of each task in the process
-        - if in parallel or XOR maybe add a flag?!
+        This method calls the allocation of each task in the process
         """
         self.ns = {"cpee1" : list(self.process.nsmap.values())[0], "ra_pst" : "http://cpee.org/ns/ra_rpst"}
         tasks = self.process.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)
@@ -84,13 +83,6 @@ class ProcessAllocation():
             self.build_ra_rpst()
         return self.ra_rpst
 
-    def remove_namespace(self, elem, ns_uri):
-        """Recursively removes namespaces and prefixes throughout the subtree"""
-        if elem.prefix == ns_uri:  # If the element has the namespace prefix
-            elem.tag = etree.QName(elem).localname  # Strip the namespace, keeping the local name
-        for child in elem.getchildren():
-            self.remove_namespace(child, ns_uri)  
-
     def build_ra_rpst(self) -> None:
         """
         Build the RA-RPST from self.allocations
@@ -104,10 +96,10 @@ class ProcessAllocation():
             self.allocate_process()
 
         process = copy.deepcopy(self.process)
-        ns_uri = "http://cpee.org/ns/ra_rpst"
-        ns_prefix = "ra_rpst"
-        nsmap =  self.ns
-        namespace = {"rpst":ns_uri}
+        #ns_uri = "http://cpee.org/ns/ra_rpst"
+        #ns_prefix = "ra_rpst"
+        #nsmap =  self.ns
+        #namespace = {"rpst":ns_uri}
 
         for key, value in self.allocations.items():
             #element = etree.Element(etree.QName(ns_uri, "ra_rpst"))
@@ -122,7 +114,6 @@ class ProcessAllocation():
 
         self.ra_rpst = etree.tostring(process)
         x = etree.fromstring(etree.tostring(process))
-        #print(x.xpath("//*"))
 
     def get_best_solution(self, measure, operator=min, consider_all_solutions=True):
         """

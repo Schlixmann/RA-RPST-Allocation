@@ -1,51 +1,177 @@
-<manipulate xmlns="http://cpee.org/ns/description/1.0" id="a1" label="new_tender">level1level2level3<resources allocated_to="level1 role: level1rp_1"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><children><resource id="r_1" name="level1">
-        <resprofile id="rp_1" name="new_tender" role="level1" task="new_tender">
+<call xmlns="http://cpee.org/ns/description/1.0" id="a9" endpoint="">
+        <parameters>
+          <label>close_project</label>
+          <method>:post</method>
+          <arguments/>
+        </parameters>
+        <code>
+          <prepare/>
+          <finalize output="result"/>
+          <update output="result"/>
+          <rescue output="result"/>
+        </code>
+        <annotations>
+          <_timing>
+            <_timing_weight/>
+            <_timing_avg/>
+            <explanations/>
+          </_timing>
+          <_shifting>
+            <_shifting_type>Duration</_shifting_type>
+          </_shifting>
+          <_context_data_analysis>
+            <probes/>
+            <ips/>
+          </_context_data_analysis>
+          <report>
+            <url/>
+          </report>
+          <_notes>
+            <_notes_general/>
+          </_notes>
+        </annotations>
+        <documentation>
+          <input/>
+          <output/>
+          <implementation>
+            <description/>
+          </implementation>
+          <code>
+            <description/>
+          </code>
+        </documentation>
+        <resources allocated_to="level2 role: level2rp_12">
+          <resource>level3</resource>
+          <resource>level2</resource>
+        </resources>
+      <children><resource id="r_2" name="level2">
+        <resprofile id="rp_12" name="close_project" role="level2" task="close_project">
             <measures>
                 <cost>10</cost>
             </measures>
-        <children/></resprofile>
-        </resource>
-    <resource id="r_6" name="level1">
-        <resprofile id="rp_1" name="new_tender" role="level1" task="new_tender">
-            <measures>
-                <cost>10</cost>
-            </measures>
-        <children/></resprofile>
-        </resource>
-    <resource id="r_2" name="level2">
-        <resprofile id="rp_6" name="new_tender" role="level2" task="new_tender">
+            <changepattern type="insert">
+                <parameters>
+                    <direction>after</direction>
+                </parameters>
+                <description>
+                    <manipulate id="r4" label="inform_head" type="insert" direction="after">
+                        <resources allocated_to="not_allocated">
+                            <resource>level2</resource>
+                        </resources>
+                    </manipulate>
+                </description>
+            </changepattern>
+        <children><manipulate id="r4" label="inform_head" type="insert" direction="after">
+                        <resources allocated_to="not_allocated">
+                            <resource>level2</resource>
+                        </resources>
+                    <children><resource id="r_2" name="level2">
+        <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
             <measures>
                 <cost>15</cost>
             </measures>
         <children/></resprofile>
+    </resource>
+    <resource id="r_4" name="level2">
+        <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
+            <measures>
+                <cost>15</cost>
+            </measures>
+        <children/></resprofile>
+        </resource>
+    </children></manipulate>
+                </children></resprofile>
         </resource>
     <resource id="r_4" name="level2">
-        <resprofile id="rp_6" name="new_tender" role="level2" task="new_tender">
+        <resprofile id="rp_12" name="close_project" role="level2" task="close_project">
+            <measures>
+                <cost>15</cost>
+            </measures>
+            <changepattern type="insert">
+                <parameters>
+                    <direction>after</direction>
+                </parameters>
+                <description>
+                    <manipulate id="r7" label="inform_head" type="insert" direction="after">
+                        <resources allocated_to="not_allocated">
+                            <resource>level2</resource>
+                        </resources>
+                    </manipulate>
+                </description>
+            </changepattern>
+        <children><manipulate id="r7" label="inform_head" type="insert" direction="after">
+                        <resources allocated_to="not_allocated">
+                            <resource>level2</resource>
+                        </resources>
+                    <children><resource id="r_2" name="level2">
+        <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
+            <measures>
+                <cost>15</cost>
+            </measures>
+        <children/></resprofile>
+    </resource>
+    <resource id="r_4" name="level2">
+        <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
             <measures>
                 <cost>15</cost>
             </measures>
         <children/></resprofile>
         </resource>
+    </children></manipulate>
+                </children></resprofile>
+        </resource>
     <resource id="r_3" name="level3">
-        <resprofile id="rp_13" name="new_tender" role="level3" task="new_tender">
+        <resprofile id="rp_19" name="close_project" role="level3" task="close_project">
             <measures>
-                <cost>10</cost>
+                <cost>20</cost>
             </measures>
         <children/></resprofile>
         </resource>
     <resource id="r_5" name="level3">
-        <resprofile id="rp_13" name="new_tender" role="level3" task="new_tender">
+        <resprofile id="rp_19" name="close_project" role="level3" task="close_project">
+            <measures>
+                <cost>25</cost>
+            </measures>
+        <children/></resprofile>
+
+        </resource>
+</children><allocation><resource id="r_2" name="level2">
+        <resprofile id="rp_12" name="close_project" role="level2" task="close_project">
             <measures>
                 <cost>10</cost>
             </measures>
-        <children/></resprofile>
-        </resource>
-</children><allocation><resource id="r_6" name="level1">
-        <resprofile id="rp_1" name="new_tender" role="level1" task="new_tender">
+            <changepattern type="insert">
+                <parameters>
+                    <direction>after</direction>
+                </parameters>
+                <description>
+                    <manipulate id="r4" label="inform_head" type="insert" direction="after">
+                        <resources allocated_to="not_allocated">
+                            <resource>level2</resource>
+                        </resources>
+                    </manipulate>
+                </description>
+            </changepattern>
+        <children><manipulate id="r4" label="inform_head" type="insert" direction="after">
+                        <resources allocated_to="not_allocated">
+                            <resource>level2</resource>
+                        </resources>
+                    <children><resource id="r_2" name="level2">
+        <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
             <measures>
-                <cost>10</cost>
+                <cost>15</cost>
+            </measures>
+        <children/></resprofile>
+    </resource>
+    <resource id="r_4" name="level2">
+        <resprofile id="rp_22" name="inform_head" role="level2" task="inform_head">
+            <measures>
+                <cost>15</cost>
             </measures>
         <children/></resprofile>
         </resource>
-    </allocation></manipulate>
-  
+    </children></manipulate>
+                </children></resprofile>
+        </resource>
+    </allocation></call>
+    

@@ -124,6 +124,7 @@ class JobShopEnv():
             #TODO: Fix all namespace issues
             self.solution.process = etree.fromstring(etree.tostring(self.solution.process))
             self.solution.check_validity()
+            self.valid_solution.append("full:")
             self.valid_solution.append(self.solution.invalid_branches)
 
             print("done")
@@ -160,7 +161,8 @@ class JobShopEnv():
 
             self.final_config = branch.apply_to_process(
                 self.ra_pst_et, self.solution)
-        
+            
+            self.valid_solution.append(self.solution.invalid_branches)
             print(" ")
         
 

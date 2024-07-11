@@ -14,7 +14,7 @@ tests/branches/*
 tests/solutions/*
 tmp/*
 tmp/results/*
-
+/*.xml
 
 !tmp/results
 

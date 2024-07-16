@@ -15,6 +15,7 @@ tests/solutions/*
 tmp/*
 tmp/results/*
 /*.xml
+*.pkl
 
 !tmp/results
 

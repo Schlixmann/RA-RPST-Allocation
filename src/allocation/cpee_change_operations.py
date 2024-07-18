@@ -25,8 +25,8 @@ class ChangeOperation():
         if not task.xpath("allo:allocation", namespaces=ns):
             new_element = etree.Element(f"allocation")
             #new_element.attrib["xmlns"] += "http://cpee.org/ns/allocation"
-            print("NEW ELEM:", etree.tostring(new_element))
-        print(etree.tostring(output))
+            #print("NEW ELEM:", etree.tostring(new_element))
+        #print(etree.tostring(output))
         new_element.append(output)
         etree.ElementTree(output).write("text.xml")
         task.xpath(".")[0].append(new_element)

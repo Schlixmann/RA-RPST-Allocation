@@ -8,7 +8,7 @@ import copy
 from collections import defaultdict
 import numpy as np
 
-from tensorflow.keras.models import Sequential
+from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
 
@@ -28,12 +28,13 @@ class JobShopEnv():
 
         self.init_ra_pst_et = copy.deepcopy(self.ra_pst_et)
         self.init_schedule = copy.deepcopy(self.schedule)
-        self.current_step = 0
-        self.solution = Solution(self.ra_pst_et)
-        self.final_config = None
+        self.current_    = 0
+        self.final_config = copy.deepcopy(self.ra_pst_et)
+        self.solution = Solution(self.final_config)
         self.to_delete =[]
         self.valid_solution = []
         self.current_instance_id = current_instance_id
+        self.actions = []
 
         self.ns = {"cpee1": list(self.ra_pst_et.nsmap.values())[0], "ra_rpst": "http://cpee.org/ns/ra_rpst"}
         self.task_list = copy.deepcopy(self.ra_pst_et.xpath(
@@ -101,7 +102,7 @@ class JobShopEnv():
                         else:
                             conflict = False
 
-            task_in_config = self.final_config.xpath(f"//*[@id = '{proc_task.attrib['id']}']")[0]
+            task_in_config = self.solution.process.xpath(f"//*[@id = '{proc_task.attrib['id']}']")[0]
             schedule_id = self.get_next_schedule_id()
             task_in_config.attrib["schedule_id"] = str(schedule_id)
 
@@ -116,20 +117,23 @@ class JobShopEnv():
 
     def reset(self):
         # TODO: reset state
-        self.schedule = self.init_schedule
+        self.schedule = copy.deepcopy(self.init_schedule)
         self.current_task_number = -1
         self.ra_pst_et = copy.deepcopy(self.init_ra_pst_et)
 
         self.task_list = copy.deepcopy(self.ra_pst_et.xpath(
             "(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children)]", namespaces=self.ns))
         self.tasks_iter = copy.copy(iter(self.task_list))  # iterator
-        self.current_task = get_next_task(self.tasks_iter, self.solution)
+
         self.current_task_number = 0
 
-        self.solution = Solution(self.ra_pst_et)
-        self.final_config = None
+
+        self.final_config = copy.deepcopy(self.ra_pst_et)
+        self.solution = Solution(self.final_config)
+        self.current_task = get_next_task(self.tasks_iter, self.solution)
         self.to_delete =[]
         self.valid_solution = []
+        self.actions  = []
 
         return self.get_state_aggregation()
 
@@ -161,7 +165,7 @@ class JobShopEnv():
         for resource, tasks in self.schedule.items():
             last_task = {"start": 0, "duration":0}
             for task, values in tasks.items():
-                if values["start"] > last_task["start"]:
+                if values["start"] + values["duration"] >= last_task["start"] + last_task["duration"]:
                     last_task = values
 
             last_task_end = last_task["start"] + last_task["duration"]
@@ -185,7 +189,7 @@ class JobShopEnv():
         # TODO:
         # Decides on Konfiguration and schedules it into Schedule
         # updates the State
-
+        self.actions.append(action)
         task = self.current_task
 
         # for now, choose random branch
@@ -202,9 +206,12 @@ class JobShopEnv():
         
         #self.print_node_structure(current_task)
         
-        print("Action: ", action)
+        print("Action: ", action, "Current_task: ", current_task.attrib["id"])
         et_elem = etree.Element(f"{{{self.ns["cpee1"]}}}children")
-        et_elem.append(branches[action])
+        if action:
+            et_elem.append(branches[action])
+        else:
+            et_elem.append(branches[random.randint(0, len(branches)-1)])
 
         # remove existing children to get branch
         for child in current_task.xpath("cpee1:children", namespaces=self.ns):
@@ -212,8 +219,8 @@ class JobShopEnv():
         current_task.append(et_elem)
         branch = Branch(current_task)
 
-        self.final_config = branch.apply_to_process(
-            self.ra_pst_et, self.solution)
+        self.solution.process = branch.apply_to_process(
+            self.solution.process, self.solution)
         
         self.valid_solution.append(self.solution.invalid_branches)
         print(" ")
@@ -232,7 +239,7 @@ class JobShopEnv():
                 # deleted task must not be scheduled
                 continue
             
-            proc_task = self.final_config.xpath(f"(//cpee1:manipulate[@label='{label}']|//cpee1:call/cpee1:parameters/cpee1:label[text()='{label}']/ancestor::*[2])[not(ancestor::cpee1:children|ancestor::cpee1:allocation)]", namespaces=self.ns)
+            proc_task = self.solution.process.xpath(f"(//cpee1:manipulate[@label='{label}']|//cpee1:call/cpee1:parameters/cpee1:label[text()='{label}']/ancestor::*[2])[not(ancestor::cpee1:children|ancestor::cpee1:allocation)]", namespaces=self.ns)
             if len(proc_task)>1:
                 raise ValueError
 
@@ -245,12 +252,12 @@ class JobShopEnv():
         #   ->  possibility to get reward + discounted reward?
         # TODO: Scheduling with good scheduler, Scheduling of one allocated task
 
-        self.current_step += 1
+        #self.current_step += 1
         self.current_task = get_next_task(self.tasks_iter, self.solution)
         if self.current_task == "end":
             self.reload_etree()
             print("Etrees are the same: ", etree.tostring(
-                self.final_config) == etree.tostring(self.ra_pst_et))
+                self.solution.process) == etree.tostring(self.ra_pst_et))
             
             #TODO: Fix all namespace issues
             self.solution.process = etree.fromstring(etree.tostring(self.solution.process))
@@ -293,7 +300,7 @@ class JobShopEnv():
         return np.arange(sum_poss_branches)# list of len(#possible_branches)
     
     def sort_schedule_by_resource(self):
-        self.schedule = dict(sorted(self.schedule.items())) 
+        self.schedule = defaultdict(dict, sorted(self.schedule.items())) 
 
 
     def calculate_makespan(self):
@@ -319,7 +326,7 @@ class JobShopEnv():
             self.print_node_structure(child, level + 1)
 
     def reload_etree(self):
-        self.final_config = etree.fromstring(etree.tostring(self.final_config))
+        self.solution.process = etree.fromstring(etree.tostring(self.solution.process))
 
 
 #import tensorflow as tf
@@ -344,6 +351,7 @@ class DQNAgentConfiguration:
         self.epsilon_decay = 0.995
         self.learning_rate = 0.001
         self.model = self._build_model()
+        self.randomness_counter = 0
 
     def _build_model(self):
         model = Sequential()
@@ -354,10 +362,12 @@ class DQNAgentConfiguration:
         return model
     
     def remember(self, state, action, reward, next_state, done):
+        print("Start remember: ")
         self.memory.append((state, action, reward, next_state, done))
     
     def act(self, state, possible_actions):
         if np.random.rand() <= self.epsilon:
+            self.randomness_counter += 1
             return random.choice(possible_actions)
         
         act_values = self.model.predict(state)
@@ -366,6 +376,7 @@ class DQNAgentConfiguration:
         return np.argmax(mask)
     
     def replay(self, batch_size):
+        print("Start Replay:")
         minibatch = random.sample(self.memory, batch_size)
         for state, action, reward, next_state, done in minibatch:
             target = reward
@@ -382,5 +393,15 @@ class DQNAgentConfiguration:
     
     def save(self, name):
         self.model.save_weights(name)
+
+    def save_model(self, model_path, epsilon_path):
+        self.model.save(model_path)
+        with open(epsilon_path, 'w') as f:
+            f.write(str(self.epsilon))
+    
+    def load_model(self, model_path, epsilon_path):
+        self.model = load_model(model_path)
+        with open(epsilon_path, 'r') as f:
+            self.epsilon = float(f.read())
 
 

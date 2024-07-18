@@ -16,6 +16,8 @@ tmp/*
 tmp/results/*
 /*.xml
 *.pkl
+actions.txt
+final_schedule.json
 
 !tmp/results
 

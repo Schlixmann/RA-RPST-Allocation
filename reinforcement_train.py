@@ -9,14 +9,19 @@ from lxml import etree
 import copy
 from collections import defaultdict
 import pickle
+import json
 
-def train_dqn(env, episodes=1000, batch_size=32):
+def train_dqn(env, episodes=50, batch_size=64):
     state_size = env.get_state_aggregation().shape[0]
     max_action_size = len(env.get_possible_branches()[1]) # All branches in RA-PST are possible actions
     agent = DQNAgentConfiguration(state_size, max_action_size)
+    id = 10
     
     for e in range(episodes):
+        print(f"Episode_nr: {e}")
         state = env.reset()
+        id += 1
+        env.current_instance_id = id
         state = np.reshape(state, [1, state_size])
         
         while True:
@@ -32,12 +37,19 @@ def train_dqn(env, episodes=1000, batch_size=32):
                 
                 with open("final.xml", "wb") as f:
                     f.write(etree.tostring(env.solution.process))
+                
+                with open("final_schedule.json", "w") as f:
+                    json.dump(env.schedule, f)
+                
+                with open("actions.txt", "a") as f:
+                    f.write(str(env.actions) + '\n')
                 print(f"Is invalid? {env.solution.invalid_branches}, TPT: {env.last_task_end}")
                 break
                 
             if len(agent.memory) > batch_size:
                 agent.replay(batch_size)
     
+    agent.save_model("dqn_model.keras", "epsilon.txt")
     return agent
 
 # Train the DQN agent
@@ -59,5 +71,4 @@ with open("schedule.pkl", "rb") as f:
 schedule = defaultdict(list)        
 
 env = JobShopEnv(process, new)
-
 agent = train_dqn(env)

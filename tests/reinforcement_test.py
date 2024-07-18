@@ -39,11 +39,9 @@ class TestReinforcementApproach(unittest.TestCase):
             env = JobShopEnv(instance, schedule=schedule, current_instance_id=i)
             done = False
             while not done :
-                done, final_process, schedule = env.step()
-
-            with open("final_process.xml", "wb") as f:
-                f.write(etree.tostring(final_process))
-
+                state, reward, done, _ = env.step()
+            env.sort_schedule_by_resource()
+            schedule = env.schedule
             print("Schedule", schedule)
             print(env.valid_solution)
         
@@ -52,7 +50,6 @@ class TestReinforcementApproach(unittest.TestCase):
             i += 1
 
         with open("schedule.pkl", "wb") as f:
-            env.sort_schedule_by_resource()
             pickle.dump(env.schedule, f)
         print(env.get_state())
     

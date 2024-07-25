@@ -28,7 +28,7 @@ def train_dqn(env, episodes=50, batch_size=64):
             possible_actions = env.get_possible_actions()
             action = agent.act(state, possible_actions)
             next_state, reward, done, _ = env.step(action)
-            next_state = np.reshape(next_state, [1, state_size])
+            next_state = np.reshape(next_state, [1, state_size])            
             agent.remember(state, action, reward, next_state, done)
             state = next_state
             
@@ -68,7 +68,7 @@ process = ra_rpst
 
 with open("schedule.pkl", "rb") as f:
     new = pickle.load(f)
-schedule = defaultdict(list)        
+schedule = defaultdict(list)
 
 env = JobShopEnv(process, new)
 agent = train_dqn(env)

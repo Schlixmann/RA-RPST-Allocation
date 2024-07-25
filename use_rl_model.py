@@ -68,4 +68,4 @@ with open("final_schedule.json", "w") as f:
 with open("actions.txt", "a") as f:
     f.write(str(env.actions) + '\n')
 env.solution.check_validity()
-print("action:", actions, "Invalid Solution?", env.solution.is_valid, "Random Choices: ", loaded_agent.randomness_counter)
+print("action:", actions, "Invalid Solution?", env.solution.invalid_branches, "Random Choices: ", loaded_agent.randomness_counter)

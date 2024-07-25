@@ -221,7 +221,7 @@ class JobShopEnv():
         self.solution.process = branch.apply_to_process(
             self.solution.process, self.solution)
         
-        self.valid_solution.append(self.solution.is_valid)
+        self.valid_solution.append(self.solution.invalid_branches)
         print(" ")
     
 
@@ -262,7 +262,7 @@ class JobShopEnv():
             self.solution.process = etree.fromstring(etree.tostring(self.solution.process))
             self.solution.check_validity()
             self.valid_solution.append("full:")
-            self.valid_solution.append(self.solution.is_valid)
+            self.valid_solution.append(self.solution.invalid_branches)
 
             print("done")
             done = True

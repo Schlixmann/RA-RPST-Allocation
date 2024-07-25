@@ -1,16 +1,23 @@
 from lxml import etree
 
+from src.allocation import utils
+
 
 class Solution():
-    def __init__(self, process):
+    def __init__(self, process, process_allocation):
 
-        self.open_delete = False
-        self.invalid_branches = False
         self.process = process
+        self.process_allocation = process_allocation
+        self.invalid_branches = False #rename to "is_valid"
+        self.is_final = False
+        self.allocated_branches = []
         self.ns = {"cpee1" : list(process.nsmap.values())[0], "allo": "http://cpee.org/ns/allocation"}
+        self.tasklist = self.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)
+        self.tasks_iter = iter(self.tasklist) # iterator
 
     def get_measure(self, measure, operator=sum, flag=False):
         """Returns 0 if Flag is set wrong or no values are given, does not check if allocation is valid"""
+        # TODO: Namespace is wrong
         if flag:
             values = self.process.xpath(f".//allo:allocation/cpee1:resource/cpee1:resprofile/cpee1:measures/cpee1:{measure}", namespaces=self.ns)
         else:
@@ -32,3 +39,23 @@ class Solution():
             #else:
             #    self.invalid_branches=False
 
+    def apply_branches(self, branches:list):
+        
+        # TODO Testen und checken!
+        for branch_no in branches:      
+            task = utils.get_next_task(self.tasks_iter, self) # gets next tasks and checks for deletes
+            if task == "end":
+                for branch,task in delay_deletes:
+                    if self.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=self.ns):
+                        self.process = branch.apply_to_process(self.process, solution=self) # apply delays
+                
+                delay_deletes = []
+
+                allocation = self.process_allocation.allocations[task.attrib['id']] # get allocatin
+                branch = allocation.branches[branch_no] # get actual branch as R-RPST
+
+                if branch.node.xpath("//*[@type='delete']"):
+                    delay_deletes.append((branch, task))
+                else:
+                    self.process = branch.apply_to_process(self.process, solution=self) # build branch
+            

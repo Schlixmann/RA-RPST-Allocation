@@ -173,7 +173,6 @@ class JobShopEnv():
 
             last_tasks[resource]["last_task"] = last_task
         
-
         fin_list = np.zeros((2, len(self.all_resources)))
         for resource, values in last_tasks.items():
             last_tasks[resource]["attributes"] = {"coverage": sum(values["duration"] for task, values in self.schedule[resource].items()) / max_last_task}
@@ -222,7 +221,7 @@ class JobShopEnv():
         self.solution.process = branch.apply_to_process(
             self.solution.process, self.solution)
         
-        self.valid_solution.append(self.solution.invalid_branches)
+        self.valid_solution.append(self.solution.is_valid)
         print(" ")
     
 
@@ -263,7 +262,7 @@ class JobShopEnv():
             self.solution.process = etree.fromstring(etree.tostring(self.solution.process))
             self.solution.check_validity()
             self.valid_solution.append("full:")
-            self.valid_solution.append(self.solution.invalid_branches)
+            self.valid_solution.append(self.solution.is_valid)
 
             print("done")
             done = True
@@ -403,5 +402,3 @@ class DQNAgentConfiguration:
         self.model = load_model(model_path)
         with open(epsilon_path, 'r') as f:
             self.epsilon = float(f.read())
-
-

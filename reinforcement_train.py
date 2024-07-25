@@ -53,9 +53,9 @@ def train_dqn(env, episodes=50, batch_size=64):
     return agent
 
 # Train the DQN agent
-with open("tests/test_processes/offer_process_paper.xml") as f: 
+with open("tests/test_processes/offer_process_paper_sequential.xml") as f: 
             task_xml = f.read()
-with open("/home/felixs/Programming_Projects/RDPM_private/resource_config/offer_resources_many_invalid_branches.xml") as f:
+with open("/home/felixs/Programming_Projects/RDPM_private/resource_config/offer_resources_many_invalid_branches_sequential.xml") as f:
     resource_et = etree.fromstring(f.read())
 
 # Create RA-PST

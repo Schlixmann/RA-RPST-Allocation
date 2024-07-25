@@ -92,7 +92,7 @@ class Genetic(SolutionSearch):
                 break
         
         new_solution.check_validity()
-        if new_solution.invalid_branches:
+        if new_solution.is_valid:
             value = np.nan        
         else:
             value = new_solution.get_measure(measure)   # calc. fitness of solution
@@ -338,7 +338,7 @@ class Brute(SolutionSearch):
                     break
             
             new_solution.check_validity()
-            if new_solution.invalid_branches:
+            if new_solution.is_valid:
                 value = np.nan        
             else:
                 value = new_solution.get_measure(measure)   # calc. fitness of solution
@@ -527,7 +527,7 @@ def find_best_solution(solutions): # ,measure, n):
                 break
                 
         new_solution.check_validity()
-        if new_solution.invalid_branches:
+        if new_solution.is_valid:
             value = np.nan        
         else:
             value = copy.deepcopy(new_solution.get_measure(measure, flag=True))   # calc. fitness of solution

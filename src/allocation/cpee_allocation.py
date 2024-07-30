@@ -29,11 +29,12 @@ class ProcessAllocation():
         self.id = str(uuid.uuid1())
         self.process = etree.fromstring(process)
         self.resource_url = resource_url
-        self.valid_allocations = []
         self.allocations = {}
         self.solutions = []
         self.ns = None
         self.ra_rpst:str = None
+
+        self.solver = None
      
     def allocate_process(self):
         """ 
@@ -72,6 +73,7 @@ class ProcessAllocation():
                     #TODO -> should only be allowed to delete in branches which are not the delete branch is part of
                     # Implement
 
+        self.get_ra_rpst()
         return self.allocations
     
     def add_allocation(self, task, output):

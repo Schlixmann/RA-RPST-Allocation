@@ -5,7 +5,7 @@ import re
 # iterate open tasks
 def get_next_task(tasks_iter, solution=None):
     if solution:
-        ns = {"cpee1" : list(solution.process.nsmap.values())[0]}
+        ns = solution.ns
     while True:
         task = next(tasks_iter, "end")
         if task == "end":
@@ -16,7 +16,7 @@ def get_next_task(tasks_iter, solution=None):
         
         # check that next task was not deleted:
         elif solution: 
-            if not solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=ns):
+            if not solution.solution_ra_pst.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=ns):
                 pass
             else:
                 break

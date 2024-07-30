@@ -10,7 +10,7 @@ import copy
 class Branch():
     def __init__(self, node):
         self.node = node
-        self.valid = True
+        self.is_valid = True
         self.open_delete = False
         self.current_path = ''
 

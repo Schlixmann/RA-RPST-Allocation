@@ -7,7 +7,7 @@ from collections import defaultdict
 import json
 
 from src.allocation.solution_search import Genetic,Brute
-from src.allocation import cpee_allocation
+from src.allocation.cpee_allocation import ProcessAllocation
 from src.tree import parser, task_node as tn, gtw_node as gtw
 from src.allocation import gen_deap
 from src.tree import graphix
@@ -184,3 +184,29 @@ class TestGenetic(unittest.TestCase):
         with open("z_out.xml", "wb") as f:
             f.write(etree.tostring(population[-1]["solution"].process))
             print(population[-1]["solution"].invalid_branches)
+
+
+    def test_genetic_new_approach(self):
+        with open("resource_config/offer_resources_close_maxima.xml") as f: 
+            resource_et = etree.fromstring(f.read())
+        with open("tests/test_processes/offer_process_paper.xml") as f:
+            task_xml = f.read()
+        
+        process_allocation = ProcessAllocation(task_xml, resource_url=resource_et)    
+        process_allocation.allocate_process()
+
+        process_allocation.solver = Genetic(process_allocation.ra_rpst, pop_size=25, generations=25, k_mut=0.2)
+        start = time.time()
+        population, data = process_allocation.solver.find_solutions('elitist', "cost")
+        end = time.time()
+        gen_time = end - start
+        
+        for individual in population:
+            print("Branches: ", individual["solution"].allocated_branches)
+            print("Solution Costs: ", individual["solution"].get_measure("cost"))
+        print("Gen_time: ", gen_time)
+        print(process_allocation.solver.best_tournament)
+
+        #print(population)
+        with open("tests/solutions/gen_solution.xml", "wb") as f:
+            f.write(etree.tostring(population[0]["solution"].solution_ra_pst))

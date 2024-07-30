@@ -22,9 +22,9 @@ class SolutionSearch():
 
     def __init__(self, process_allocation):
         self.solutions = []
-        self.process_allocation = process_allocation
-        self.process = process_allocation.process
-        self.ns = {"cpee1" : list(self.process.nsmap.values())[0]}
+        self.process_allocation = etree.fromstring(process_allocation)
+        #self.process = process_allocation.process
+        self.ns = {"cpee1" : list(self.process_allocation.nsmap.values())[0]}
 
 class Genetic(SolutionSearch):
 
@@ -42,15 +42,20 @@ class Genetic(SolutionSearch):
         # create random solutions for number of pop_size
 
         population = []
-        self.tasklist = self.process_allocation.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)
+        self.tasklist = self.process_allocation.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)
         for pop in range(self.pop_size): 
-            population.append({"branches":self.build_individual()})
+            solution = Solution(copy.deepcopy(self.process_allocation))
+            to_apply = self.build_individual(solution)
+            population.append(solution)
         return population
 
-    def build_individual(self):
+    def build_individual(self, solution):
         # choose random branch per task:
 
-        solution = Solution(copy.deepcopy(self.process))
+        # build randomly a solution pattern [1,4,2,3,...]
+        # TODO: create this out of class RA_PST with "Get possible branches"
+        #solution = Solution(copy.deepcopy(self.process_allocation))
+        """
         used_branches = {task:0 for task in self.tasklist}
         tasks_iter = iter(self.tasklist)
         task = get_next_task(tasks_iter, solution)
@@ -61,13 +66,18 @@ class Genetic(SolutionSearch):
             task = get_next_task(tasks_iter, solution)
             if task == "end":
                 break
-        
+        """
+        possible_branches = solution.get_possible_branches()
+        used_branches = [random.randint(0, i) for  i in possible_branches]
+        solution.branches_to_apply = used_branches
         return used_branches
     
-    def fitness(self, individual, measure:str="cost", rtype:str = "value"):
+    def fitness(self, solution,  measure:str="cost", rtype:str = "value"):
+        # TODO: create a new solution, use "individual" as branches, apply branches to solution
         # calculate the fitness of a solution
-
-        new_solution = Solution(copy.deepcopy(self.process)) # create solution
+        individual = solution.branches_to_apply
+        #ew_solution = Solution(copy.deepcopy(self.process_allocation)) # create solution
+        """
         tasks_iter = iter(self.tasklist) # iterator
         task = get_next_task(tasks_iter, new_solution) # gets next tasks and checks for deletes
 
@@ -90,15 +100,17 @@ class Genetic(SolutionSearch):
                     if new_solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=self.ns):
                         new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # apply delays
                 break
-        
-        new_solution.check_validity()
-        if new_solution.invalid_branches:
+        """
+        solution.get_possible_branches()
+        solution.apply_branches(individual)
+        solution.check_validity()
+        if solution.invalid_branches:
             value = np.nan        
         else:
-            value = new_solution.get_measure(measure)   # calc. fitness of solution
+            value = solution.get_measure(measure)   # calc. fitness of solution
 
         if rtype=="solution":
-            return new_solution
+            return solution
         else:
             return value
     
@@ -127,29 +139,31 @@ class Genetic(SolutionSearch):
     def crossover(self, parent1, parent2): 
         parent1, parent2 = (copy.copy(parent1), copy.copy(parent2))
 
-        proc_len = len(parent1["branches"].values())
+        proc_len = len(parent1.branches_to_apply)
         xo_point = random.randint(1, proc_len - 2)
-        parent1_list = list(parent1["branches"].values())
-        parent2_list = list(parent2["branches"].values())
-        parent1_list, parent2_list = ([parent1_list[:xo_point] + parent2_list[xo_point:],
-                parent2_list[:xo_point] + parent1_list[xo_point:]])
+        parent1_list = list(parent1.branches_to_apply)
+        parent2_list = list(parent2.branches_to_apply)
+        #parent1_list, parent2_list = 
         
-        parent1["branches"] = dict(zip(list(parent1["branches"].keys()), parent1_list))
-        parent2["branches"] = dict(zip(list(parent2["branches"].keys()), parent2_list))
-        return (parent1, parent2)
+        offspring1, offspring2 = copy.deepcopy(parent1), copy.deepcopy(parent2)
+        offspring1.branches_to_apply, offspring2.branches_to_apply = ([parent1_list[:xo_point] + parent2_list[xo_point:],
+                parent2_list[:xo_point] + parent1_list[xo_point:]])
+        #parent1["branches"] = dict(zip(list(parent1["branches"].keys()), parent1_list))
+        #parent2["branches"] = dict(zip(list(parent2["branches"].keys()), parent2_list))
+        return (offspring1, offspring2)
     
     # mutation
-    def mutation(self, individual, k_mut = 0.1):
+    def mutation(self, solution, k_mut = 0.1):
 
-        for task, i in individual["branches"].items():
-            b_range = len(self.process_allocation.allocations[task.attrib['id']].branches)-1
+        for i in range(len(solution.branches_to_apply)):
+            b_range = solution.get_possible_branches()[i]
             if random.random() < k_mut and b_range > 0:
                 while True:
                     no = random.randint(0, b_range)
                     if no != i:
                         break
-                individual["branches"][task] = no
-        return copy.copy(individual)
+                solution.branches_to_apply[i] = no
+        return solution
 
     def build_solution(self, ind, measure="cost", rtype="solution"):
         return self.fitness(ind, measure, rtype)   
@@ -213,7 +227,7 @@ class Genetic(SolutionSearch):
         # top_two_fitnesses: 
         top_indices = np.argsort(fitnesses)[:2]
         nextgen_population = [copy.copy(population[i]) for i in top_indices]
-
+        print(nextgen_population)
         for i in range(int((self.pop_size-2) / 2)):
             parent1, xo1 = self.selection(population, fitnesses, gen)  # select first parent
             parent2, xo2 = self.selection(population, fitnesses, gen)  # select second parent
@@ -240,7 +254,7 @@ class Genetic(SolutionSearch):
         return nextgen_population
          
     
-    def find_solutions(self, ev_type, measure):
+    def find_solutions(self, ev_type, measure): #TODO should probably move into RA_PST.
 
         data = defaultdict(list)
         data["solver"].append(ev_type)
@@ -250,8 +264,9 @@ class Genetic(SolutionSearch):
         for gen in range(self.generations):
             
             #TODO solve this with multiprocessing
-            [unique_solutions.append(list(individual["branches"].values())) for individual in population if list(individual["branches"].values()) not in unique_solutions]
-            fitnesses = [self.fitness(individual, measure) for individual in population]
+            #[unique_solutions.append(list(individual["branches"].values())) for individual in population if list(individual["branches"].values()) not in unique_solutions]
+            [unique_solutions.append(list(solution.branches_to_apply)) for solution in population if list(solution.branches_to_apply) not in unique_solutions]  
+            fitnesses = [self.fitness(solution, measure) for solution in population]
             population = self.evolve(ev_type, population, fitnesses, gen) # Next Evolution Step
 
             # write data per generation
@@ -275,11 +290,12 @@ class Genetic(SolutionSearch):
 
         # add solutions to population
         fin_pop = []
-        for ind in population:
-            ind["solution"] = self.build_solution(ind, measure=measure)
-            ind[measure] = ind["solution"].get_measure(measure)
-            ind.pop("branches")
-            fin_pop.append(ind)
+        for solution in population:
+            #ind["solution"] = self.build_solution(ind, measure=measure)
+            #ind[measure] = ind["solution"].get_measure(measure)
+            #ind.pop("branches")
+
+            fin_pop.append({"solution": solution, str(measure): solution.get_measure(measure)})
         
         #TODO Check if whole population is invalid
         fin_pop = sorted(fin_pop, key=lambda d: d['cost'], reverse=True) 

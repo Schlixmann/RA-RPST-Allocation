@@ -263,7 +263,7 @@ class Genetic(SolutionSearch):
         start = time.time()     # Start of evolution
         for gen in range(self.generations):
             
-            #TODO solve this with multiprocessing
+            #TODO irgendwo hier verschmeißt er die Elite solutions
             #[unique_solutions.append(list(individual["branches"].values())) for individual in population if list(individual["branches"].values()) not in unique_solutions]
             [unique_solutions.append(list(solution.branches_to_apply)) for solution in population if list(solution.branches_to_apply) not in unique_solutions]  
             fitnesses = [self.fitness(solution, measure) for solution in population]

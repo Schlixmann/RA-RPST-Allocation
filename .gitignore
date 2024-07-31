@@ -18,6 +18,7 @@ tmp/results/*
 *.pkl
 actions.txt
 final_schedule.json
+tests/results/*
 
 !tmp/results
 

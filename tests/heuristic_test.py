@@ -3,7 +3,7 @@ import unittest
 from lxml import etree
 from xmldiff import main, formatting
 from src.tree import parser, task_node as tn, gtw_node as gtw
-from src.allocation import cpee_allocation
+from src.allocation.cpee_allocation import ProcessAllocation
 from pptree import *
 from PrettyPrint import PrettyPrintTree
 from src.tree import graphix
@@ -50,3 +50,37 @@ class TestCpeeAllocation(unittest.TestCase):
         for i, solution in enumerate(best_solutions):
             with open(f"tests/solutions/test_heu_short_proc_{i}.xml", "wb") as f:
                 f.write(etree.tostring(list(solution.keys())[0].process))
+
+    def test_heuristic_solution_new(self):
+        with open("resource_config/offer_resources_close_maxima.xml") as f: 
+                resource_et = etree.fromstring(f.read())
+        with open("tests/test_processes/offer_process_paper.xml") as f:
+                task_xml = f.read()
+        show_graph = False
+            
+        process_allocation = ProcessAllocation(task_xml, resource_url=resource_et)
+        process_allocation.allocate_process()
+        process_allocation.solver = Brute(process_allocation.ra_rpst)
+
+        start = time.time()
+        brute_solutions = process_allocation.solver.find_solutions_with_heuristic(measure="cost", top_n=1)
+        end = time.time()
+
+        print("Number of Solutions: {}".format(len(brute_solutions)))
+        print("Solutions found in: {} s".format(end-start))
+
+        measure = "cost"
+        #ProcessAllocation.solutions = brute_solutions.solutions
+        
+        best_solutions = process_allocation.solver.get_best_solutions(measure, include_invalid=False, top_n=5)
+        print("best_solutions:", best_solutions)
+
+        print("brute_solutions: ", brute_solutions)
+        #for i, solution in enumerate(best_solutions):
+        #    with open(f"tests/benchmarks/best_brute_{i}.xml", "wb") as f:
+        #        key = next(iter(solution))
+        #        f.write(etree.tostring(key.process))             
+        
+        for i, solution in enumerate(best_solutions):
+            with open(f"tests/solutions/test_heu_short_proc_{i}.xml", "wb") as f:
+                f.write(etree.tostring(solution["solution"].solution_ra_pst))

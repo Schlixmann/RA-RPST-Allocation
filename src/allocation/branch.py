@@ -20,7 +20,7 @@ class Branch():
         ns = {"cpee1" : list(self.node.nsmap.values())[0]}
         #TODO should calculate the sum of the measure for the branch
         # For one allocation the best bracnch should then be found (or best 2,3,4 etc)
-        values = self.node.xpath(f".//cpee1:children/resource/resprofile/measures/{measure}", namespaces=ns)
+        values = self.node.xpath(f".//cpee1:children/cpee1:resource/cpee1:resprofile/cpee1:measures/cpee1:{measure}", namespaces=ns)
         return operator([float(value.text) for value in values])
         pass
 

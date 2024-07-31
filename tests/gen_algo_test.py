@@ -189,7 +189,7 @@ class TestGenetic(unittest.TestCase):
     def test_genetic_new_approach(self):
         with open("resource_config/offer_resources_close_maxima.xml") as f: 
             resource_et = etree.fromstring(f.read())
-        with open("tests/test_processes/offer_process_paper.xml") as f:
+        with open("tests/test_processes/offer_process_short.xml") as f:
             task_xml = f.read()
         
         process_allocation = ProcessAllocation(task_xml, resource_url=resource_et)    
@@ -209,4 +209,5 @@ class TestGenetic(unittest.TestCase):
 
         #print(population)
         with open("tests/solutions/gen_solution.xml", "wb") as f:
-            f.write(etree.tostring(population[0]["solution"].solution_ra_pst))
+            f.write(etree.tostring(population[-1]["solution"].solution_ra_pst))
+        print("done")

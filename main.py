@@ -18,7 +18,7 @@ def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_
     process_allocation = ProcessAllocation(task_xml, resource_url=resource_et)
     trees = process_allocation.allocate_process()
     
-    show = True
+    show = False
     for i, tree in enumerate(list(trees.values())):    
         if i > 0:
             show = False

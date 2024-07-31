@@ -9,29 +9,24 @@ import numpy as np
 class Solution():
     def __init__(self, ra_pst):
 
-        self.init_ra_pst = ra_pst  #TODO: init RA_PST
-        self.solution_ra_pst = copy.deepcopy(self.init_ra_pst) #TODO: current/modified RA_PST
-
-        #self.process_allocation = process_allocation #TODO: Delete
-        self.invalid_branches = False #rename to "is_valid"
-        self.is_final = False # new flag
+        self.init_ra_pst = ra_pst  
+        self.solution_ra_pst = copy.deepcopy(self.init_ra_pst) 
+        self.invalid_branches = False # rename to "is_valid"
+        self.is_final = False
         self.allocated_branches = []
         self.ns = {"cpee1" : list(self.init_ra_pst.nsmap.values())[0], "allo": "http://cpee.org/ns/allocation"}
         self.task_list = self.init_ra_pst.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)
-        self.tasks_iter = iter(self.task_list) # iterator #TODO should be the only used iterator during solution search
+        self.tasks_iter = iter(self.task_list) # iterator 
         self.delay_deletes = [] #TODO must handle delayed deletes over multiple operations
-
         self.branches_to_apply = []
         self.allowed_branches = []
         self.branches = []
 
     def get_measure(self, measure, operator=sum, flag=False): #TODO fix calculation
         """Returns 0 if Flag is set wrong or no values are given, does not check if allocation is is_valid"""
-        # TODO: Namespace is wrong
         if flag:
             values = self.solution_ra_pst.xpath(f".//allo:allocation/cpee1:resource/cpee1:resprofile/cpee1:measures/cpee1:{measure}", namespaces=self.ns)
         else:
-            #values = self.solution_ra_pst.xpath(f".//allo:allocation/resource/resprofile/measures/{measure}", namespaces=self.ns)
             values = self.solution_ra_pst.xpath(f".//cpee1:allocation/cpee1:resource/cpee1:resprofile/cpee1:measures/cpee1:{measure}", namespaces=self.ns)
         
         if self.invalid_branches:
@@ -51,12 +46,10 @@ class Solution():
             if not task.xpath("cpee1:allocation/*", namespaces=self.ns):
                 self.invalid_branches=True
                 break
-            #else:
-            #    self.invalid_branches=False
+
 
     def apply_branches(self, branches:list):
-        
-        # TODO Testen und checken!
+
         for branch_no in branches:      
             task = utils.get_next_task(self.tasks_iter, self) # gets next tasks and checks for deletes
             self.branches = []
@@ -72,8 +65,6 @@ class Solution():
             node = self.init_ra_pst.xpath(f"//*[@id = '{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=self.ns)
             self.get_branches_for_task(node[0])
 
-
-            #allocation = self.process_allocation.allocations[task.attrib['id']] #TODO: should i get this from the RA_PST?
             branch = self.branches[branch_no] # get actual branch as R-RPST
             self.allocated_branches.append(branch_no)
 
@@ -201,13 +192,11 @@ class Solution():
         solution = copy.deepcopy(self)
         solution.init_ra_pst = etree.tostring(solution.init_ra_pst) 
         solution.solution_ra_pst = etree.tostring(solution.solution_ra_pst) 
-
         solution.allocated_branches = []
         solution.ns = {"cpee1" : list(self.init_ra_pst.nsmap.values())[0], "allo": "http://cpee.org/ns/allocation"}
         solution.task_list = []
         solution.tasks_iter = None
         solution.delay_deletes = []
-
         solution.allowed_branches = []
         solution.branches = []
 

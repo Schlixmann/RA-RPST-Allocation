@@ -9,6 +9,10 @@ import time
 import json
 import sys
 
+
+# TODO: Fix main to new solution search process
+
+
 def run(process_file_path, resource_file_path, tries=10, brute:bool =False, out_folder="results/experiments"):
     with open(process_file_path) as f: 
         task_xml = f.read()

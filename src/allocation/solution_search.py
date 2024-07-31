@@ -54,61 +54,19 @@ class Genetic(SolutionSearch):
 
         # build randomly a solution pattern [1,4,2,3,...]
         # TODO: create this out of class RA_PST with "Get possible branches"
-        #solution = Solution(copy.deepcopy(self.process_allocation))
-        """
-        used_branches = {task:0 for task in self.tasklist}
-        tasks_iter = iter(self.tasklist)
-        task = get_next_task(tasks_iter, solution)
-        while True:
-            allocation = self.process_allocation.allocations[task.attrib['id']]
-            branch_no = random.randint(0, len(allocation.branches)-1)
-            used_branches[task] = branch_no
-            task = get_next_task(tasks_iter, solution)
-            if task == "end":
-                break
-        """
+
         possible_branches = solution.get_possible_branches()
         used_branches = [random.randint(0, i) for  i in possible_branches]
         solution.branches_to_apply = used_branches
         return used_branches
     
     def fitness(self, solution,  measure:str="cost", rtype:str = "value"):
-        # TODO: create a new solution, use "individual" as branches, apply branches to solution
         # calculate the fitness of a solution
         individual = solution.branches_to_apply
-        #ew_solution = Solution(copy.deepcopy(self.process_allocation)) # create solution
-        """
-        tasks_iter = iter(self.tasklist) # iterator
-        task = get_next_task(tasks_iter, new_solution) # gets next tasks and checks for deletes
 
-        delay_deletes = []
-        while True:
-            allocation = self.process_allocation.allocations[task.attrib['id']] # get allocatin
-
-            branch_no = individual["branches"].get(task)    # get choosen number of branch
-            branch = allocation.branches[branch_no] # get actual branch as R-RPST
-
-            if branch.node.xpath("//*[@type='delete']"):
-                delay_deletes.append((branch, task))
-            else:
-                new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # build branch
-            
-            task = get_next_task(tasks_iter, new_solution)
-            
-            if task == "end":
-                for branch,task in delay_deletes:
-                    if new_solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=self.ns):
-                        new_solution.process = branch.apply_to_process(new_solution.process, solution=new_solution) # apply delays
-                break
-        """
-
-        #solution.get_possible_branches()
         if not solution.is_final:
             solution.apply_branches(individual)
         solution.check_validity()
-        #if solution.invalid_branches:
-        #    value = np.nan        
-        #else:
         value = solution.get_measure(measure)   # if solution is invalid, value = np.nan
 
         if rtype=="solution":
@@ -150,8 +108,6 @@ class Genetic(SolutionSearch):
         offspring1, offspring2 = Solution(parent1.init_ra_pst), Solution(parent2.init_ra_pst)
         offspring1.branches_to_apply, offspring2.branches_to_apply = ([parent1_list[:xo_point] + parent2_list[xo_point:],
                 parent2_list[:xo_point] + parent1_list[xo_point:]])
-        #parent1["branches"] = dict(zip(list(parent1["branches"].keys()), parent1_list))
-        #parent2["branches"] = dict(zip(list(parent2["branches"].keys()), parent2_list))
         return (offspring1, offspring2)
     
     # mutation
@@ -294,10 +250,6 @@ class Genetic(SolutionSearch):
         # add solutions to population
         fin_pop = []
         for solution in population:
-            #ind["solution"] = self.build_solution(ind, measure=measure)
-            #ind[measure] = ind["solution"].get_measure(measure)
-            #ind.pop("branches")
-
             fin_pop.append({"solution": solution, str(measure): solution.get_measure(measure)})
         
         #TODO Check if whole population is invalid
@@ -328,19 +280,13 @@ class Brute(SolutionSearch):
             if force_valid:
                 possible_branches = [branch for branch in possible_branches if branch.is_valid]
             
-            #for branch in allocation.branches:
-            #    a = np.argsort([branch.get_measure(measure, operator=sum)])
             branches.append(np.argsort([branch.get_measure(measure, operator=sum) for branch in possible_branches])[:top_n])
             print(branches)
 
         possible_solutions = self.iter_product(branches)
-        #tasklist = self.process_allocation.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=self.ns)
         
         for solution_branches in possible_solutions:
             new_solution = Solution(copy.deepcopy(self.process_allocation)) # create solution
-            #tasks_iter = iter(tasklist) # iterator
-            #task = get_next_task(tasks_iter, new_solution) # gets next tasks and checks for deletes
-            #individual = {task: branch_no for task, branch_no in zip(tasklist,p_solution)}
             new_solution.branches_to_apply = list(solution_branches)
 
             new_solution.apply_branches(new_solution.branches_to_apply)            
@@ -350,55 +296,7 @@ class Brute(SolutionSearch):
             self.solutions.append(new_solution)
         
         return [{"solution": solution, str(measure): solution.get_measure(measure)} for solution in self.solutions] 
-        """
-        ns = {"cpee1" : list(self.process_allocation.process.nsmap.values())[0]}
-        if not self.solutions: 
-            
-            tasklist = self.process_allocation.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)
-            self.solutions.append(Solution(copy.deepcopy(self.process_allocation.process)))
-            return self.find_solutions_with_heuristic(iter(tasklist), self.solutions[0], top_n=top_n)
         
-
-        branches = np.argsort([branch.get_measure(measure, operator=sum) for branch in possible_branches])[:top_n]
-        # Find next task for solution
-        task = get_next_task(tasks_iter, solution)
-        if task == "end":
-            return
-        
-        allocation = self.process_allocation.allocations[task.attrib['id']]
-
-        # select top n branches
-        # TODO do this in the beginning for all branches
-        possible_branches = allocation.branches 
-        if force_valid:
-            possible_branches = [branch for branch in allocation.branches if branch.valid]
-        indices = np.argsort([branch.get_measure(measure, operator=sum) for branch in possible_branches])[:top_n]
-        # TODO create Iterproduct for the resulting list
-
-        used_branches = [allocation.branches[i] for i in indices]
-        #print(f"used_branches: {used_branches}")
-
-        for i, branch in enumerate(used_branches):
-            if i > 0:
-                new_solution = copy.deepcopy(solution)
-                self.solutions.append(new_solution)
-            else: 
-                solution_index=len(self.solutions)-1
-
-        for i, branch in enumerate(used_branches):
-            #TODO Delete Solution if error in Change Operation
-            if i > 0:
-                solution = self.solutions[solution_index + i]
-            #TODO ensure that label is the same too
-            tasklabel = R_RPST.get_label(etree.tostring(task))
-            task = solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)[0]
-
-            if branch.valid == False:
-                solution.invalid_branches = True
-            
-            solution.process = branch.apply_to_process(solution.process, solution, task)
-            self.find_solutions_with_heuristic(copy.deepcopy(tasks_iter), solution, top_n=top_n)
-        """
    
     def get_all_opts(self):
         #TODO should be callable with different options (Direct, Genetic, Heuristic, SemiHeuristic)
@@ -475,19 +373,6 @@ class Brute(SolutionSearch):
         
         with open("tmp/ra_pst.pkl", "wb") as f: 
             pickle.dump(etree.tostring(self.process_allocation), f)
-        
-        #with open("tmp/allocations.pkl", "wb") as f:
-
-
-            #for allocation in self.process_allocation.allocations.values():
-            #    allocation.process = 0
-            #    allocation.parent = 0 
-            #    allocation.intermediate_trees = [etree.tostring(tree) for tree in allocation.intermediate_trees]
-            #    for branch in allocation.branches:
-            #        branch.node = etree.tostring(branch.node)
-
-            #pickle.dump(self.process_allocation.allocations, f)
-
 
         list_parts = [solutions[part_size * i : part_size * (i + 1)] for i in range(num_parts)]
 
@@ -495,7 +380,6 @@ class Brute(SolutionSearch):
         pool.close()
         pool.join()
         print(results [1])
-        best_solutions = []
 
 def find_best_solution(solutions): # ,measure, n):
     solution_branches, measure, n = solutions
@@ -503,31 +387,16 @@ def find_best_solution(solutions): # ,measure, n):
         process  = etree.fromstring(pickle.load(f))
     with open("tmp/ra_pst.pkl", "rb") as f:
         ra_pst  = etree.fromstring(pickle.load(f))
-    #with open("tmp/allocations.pkl", "rb") as f:
-    #    allocations = pickle.load(f)
-    #    for allocation in allocations.values():
-    #        allocation.task = etree.fromstring(allocation.task)
-    #        for branch in allocation.branches:
-    #            branch.node = etree.fromstring(branch.node)
-
     
     best_solutions = [] 
     start = time.time()
     for i, individual in enumerate(solution_branches):
         
         new_solution = Solution(copy.deepcopy(ra_pst)) # create solution
-        #tasklist = new_solution.process.xpath("(//cpee1:call|//cpee1:manipulate)[not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation)]", namespaces=ns)
-        #individual = {tasklist[i]: list(solution)[i] for i in range(len(solution))}
-        #tasks_iter = copy.copy(iter(tasklist)) # iterator
-        #task = get_next_task(tasks_iter, new_solution) # gets next tasks and checks for deletes
-
-        #delay_deletes = []
         new_solution.branches_to_apply = list(individual)
         new_solution.apply_branches(new_solution.branches_to_apply)
         new_solution.check_validity()
-        #if new_solution.invalid_branches:
-        #    value = np.nan        
-        #else:
+
         value = new_solution.get_measure(measure, flag=False)   # calc. fitness of solution
         
 

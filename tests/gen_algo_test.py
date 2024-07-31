@@ -20,7 +20,7 @@ class TestGenetic(unittest.TestCase):
         with open("tests/test_processes/offer_process.xml") as f:
             task_xml = f.read()
         
-        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)    
+        ProcessAllocation = ProcessAllocation(task_xml, resource_url=resource_et)    
         trees = ProcessAllocation.allocate_process()
 
         start = time.time()
@@ -45,7 +45,7 @@ class TestGenetic(unittest.TestCase):
         with open("tests/test_processes/offer_process_short.xml") as f:
             task_xml = f.read()
         
-        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)    
+        ProcessAllocation = ProcessAllocation(task_xml, resource_url=resource_et)    
         trees = ProcessAllocation.allocate_process()
 
         start = time.time()
@@ -88,7 +88,7 @@ class TestGenetic(unittest.TestCase):
         with open("tests/test_processes/offer_process_paper.xml") as f:
             task_xml = f.read()
         
-        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)    
+        ProcessAllocation = ProcessAllocation(task_xml, resource_url=resource_et)    
         ProcessAllocation.allocate_process()
 
         findings = []
@@ -133,7 +133,7 @@ class TestGenetic(unittest.TestCase):
         with open("tests/test_processes/offer_process_short.xml") as f:
             task_xml = f.read()
         
-        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)    
+        ProcessAllocation = ProcessAllocation(task_xml, resource_url=resource_et)    
         trees = ProcessAllocation.allocate_process()
 
         start = time.time()
@@ -167,7 +167,7 @@ class TestGenetic(unittest.TestCase):
         with open("tests/test_processes/offer_process_paper copy.xml") as f:
             task_xml = f.read()
         
-        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)    
+        ProcessAllocation = ProcessAllocation(task_xml, resource_url=resource_et)    
         trees = ProcessAllocation.allocate_process()
 
         show = True

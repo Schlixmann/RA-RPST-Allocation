@@ -19,7 +19,7 @@ class TestCpeeAllocation(unittest.TestCase):
                 task_xml = f.read()
         show_graph = False
             
-        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)
+        ProcessAllocation = ProcessAllocation(task_xml, resource_url=resource_et)
         trees = ProcessAllocation.allocate_process()
 
         allocation = list(ProcessAllocation.allocations.values())[0]

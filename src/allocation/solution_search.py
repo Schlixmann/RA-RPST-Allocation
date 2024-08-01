@@ -185,7 +185,7 @@ class Genetic(SolutionSearch):
         # top_two_fitnesses: 
         top_indices = np.argsort(fitnesses)[:2]
         nextgen_population = [copy.copy(population[i]) for i in top_indices]
-        print([(solution, solution.get_measure("cost")) for solution in nextgen_population])
+        #print([(solution, solution.get_measure("cost")) for solution in nextgen_population])
         for i in range(int((self.pop_size-2) / 2)):
             parent1, xo1 = self.selection(population, fitnesses, gen)  # select first parent
             parent2, xo2 = self.selection(population, fitnesses, gen)  # select second parent
@@ -278,10 +278,17 @@ class Brute(SolutionSearch):
 
             possible_branches = solution.get_branches_for_task_wrap(task)
             if force_valid:
-                possible_branches = [branch for branch in possible_branches if branch.is_valid]
-            
-            branches.append(np.argsort([branch.get_measure(measure, operator=sum) for branch in possible_branches])[:top_n])
-            print(branches)
+                validity_of_branches = [branch.is_valid for branch in possible_branches]
+                to_del_branches = np.where(np.array(validity_of_branches) == False)
+
+                mask = ~np.isin(np.argsort([branch.get_measure(measure, operator=sum) for branch in possible_branches]), to_del_branches)
+                
+                possible_valid_branches = np.argsort([branch.get_measure(measure, operator=sum) for branch in possible_branches])[mask]
+                branches.append(possible_valid_branches[:top_n])
+                #possible_branches = [branch for branch in possible_branches if branch.is_valid]
+            else:
+                branches.append(np.argsort([branch.get_measure(measure, operator=sum) for branch in possible_branches])[:top_n])
+            #print(branches)
 
         possible_solutions = self.iter_product(branches)
         

@@ -30,7 +30,7 @@ class ChangeOperation():
         new_element.append(output)
         etree.ElementTree(output).write("text.xml")
         task.xpath(".")[0].append(new_element)
-        set_allocation = output.xpath("@name")[0] + " role: " + output.xpath("*/@role")[0]  + output.xpath("*/@id")[0]  # add ID
+        set_allocation = output.xpath("@name")[0] + " role: " + output.xpath("*/@role")[0]  + output.xpath("*/@id")[0]  + " resource " + output.xpath("@id")[0]# add ID
         task.xpath("cpee1:resources", namespaces=ns)[0].set("allocated_to", set_allocation)
     
     def get_next_task_id(self, process):

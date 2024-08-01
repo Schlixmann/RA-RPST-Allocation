@@ -211,3 +211,4 @@ class TestGenetic(unittest.TestCase):
         with open("tests/solutions/gen_solution.xml", "wb") as f:
             f.write(etree.tostring(population[-1]["solution"].solution_ra_pst))
         print("done")
+    

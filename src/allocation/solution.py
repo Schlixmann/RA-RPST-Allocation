@@ -44,6 +44,8 @@ class Solution():
             with open("text.xml", "wb") as f:
                 f.write(etree.tostring(task))
             if not task.xpath("cpee1:allocation/*", namespaces=self.ns):
+                with open("text.xml", "wb") as f:
+                    f.write(etree.tostring(self.solution_ra_pst))
                 self.invalid_branches=True
                 break
 
@@ -57,7 +59,7 @@ class Solution():
                 for branch, task in self.delay_deletes:
                     if self.solution_ra_pst.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=self.ns):
                         self.solution_ra_pst = branch.apply_to_process(self.solution_ra_pst, solution=self) # apply delays
-                print(f"For solution {self} len(allocated_branches) = len(branches_to_apply): {len(self.allocated_branches) == len(self.branches_to_apply)}")
+                #print(f"For solution {self} len(allocated_branches) = len(branches_to_apply): {len(self.allocated_branches) == len(self.branches_to_apply)}")
                 self.is_final = True
                 break
 
@@ -132,8 +134,8 @@ class Solution():
                     to_remove = [elem for elem in parent.xpath("child::*", namespaces=self.ns) if elem != node] 
                     set(map(parent.remove, to_remove))
                 
-                # Create a new branch for reach resource profile
-                children = node.xpath("resprofile", namespaces=self.ns)
+                # Create a new branch for each resource profile
+                children = node.xpath("cpee1:resprofile", namespaces=self.ns)
                 branches = [],[]
                 
                 for i, child in enumerate(children):

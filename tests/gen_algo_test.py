@@ -187,14 +187,16 @@ class TestGenetic(unittest.TestCase):
 
 
     def test_genetic_new_approach(self):
-        with open("resource_config/offer_resources_close_maxima.xml") as f: 
+        with open("resource_config/offer_resources_many_invalid_branches.xml") as f: 
             resource_et = etree.fromstring(f.read())
-        with open("tests/test_processes/offer_process_short.xml") as f:
+        with open("tests/test_processes/offer_process_paper.xml") as f:
             task_xml = f.read()
         
         process_allocation = ProcessAllocation(task_xml, resource_url=resource_et)    
         process_allocation.allocate_process()
 
+        with open("used_ra_pst.xml", "wb") as f:
+            f.write(process_allocation.ra_rpst)
         process_allocation.solver = Genetic(process_allocation.ra_rpst, pop_size=25, generations=25, k_mut=0.2)
         start = time.time()
         population, data = process_allocation.solver.find_solutions('elitist', "cost")

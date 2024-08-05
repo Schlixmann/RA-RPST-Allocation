@@ -51,8 +51,9 @@ class Solution():
 
 
     def apply_branches(self, branches:list):
-
-        for branch_no in branches:      
+        #print(len(self.task_list), "==", len(branches))
+        i = 0 
+        while True:
             task = utils.get_next_task(self.tasks_iter, self) # gets next tasks and checks for deletes
             self.branches = []
             if task == "end":
@@ -62,7 +63,8 @@ class Solution():
                 #print(f"For solution {self} len(allocated_branches) = len(branches_to_apply): {len(self.allocated_branches) == len(self.branches_to_apply)}")
                 self.is_final = True
                 break
-
+            branch_no = branches[i] 
+            i+=1
             # Try to build Branch from RA-PST
             node = self.init_ra_pst.xpath(f"//*[@id = '{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=self.ns)
             self.get_branches_for_task(node[0])

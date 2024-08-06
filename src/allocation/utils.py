@@ -40,7 +40,7 @@ def vary_resource_costs(file_path, measure, out_path=None, max_val=100):
 
 def get_label(element):
     el = type(element)
-    elem_et = etree.fromstring(element)
+    elem_et = element if isinstance(element, etree._Element) else etree.fromstring(element)
     ns = {"cpee1" : list(elem_et.nsmap.values())[0]}
     if elem_et.tag == f"{{{ns['cpee1']}}}manipulate":
         return elem_et.attrib["label"]

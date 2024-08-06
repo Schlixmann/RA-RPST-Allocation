@@ -52,7 +52,7 @@ class TestCpeeAllocation(unittest.TestCase):
                 f.write(etree.tostring(list(solution.keys())[0].process))
 
     def test_heuristic_solution_new(self):
-        with open("resource_config/offer_resources_close_maxima.xml") as f: 
+        with open("resource_config/offer_resources_many_invalid_branches.xml") as f: 
                 resource_et = etree.fromstring(f.read())
         with open("tests/test_processes/offer_process_paper.xml") as f:
                 task_xml = f.read()

@@ -8,6 +8,7 @@ import json
 
 from src.allocation.solution_search import Genetic,Brute
 from src.allocation.cpee_allocation import ProcessAllocation
+from src.allocation.solution import Solution
 from src.tree import parser, task_node as tn, gtw_node as gtw
 from src.allocation import gen_deap
 from src.tree import graphix
@@ -187,17 +188,20 @@ class TestGenetic(unittest.TestCase):
 
 
     def test_genetic_new_approach(self):
-        with open("resource_config/offer_resources_many_invalid_branches.xml") as f: 
+        with open("resource_config/offer_resources_many_invalid_branches2.xml") as f: 
             resource_et = etree.fromstring(f.read())
         with open("tests/test_processes/offer_process_paper.xml") as f:
             task_xml = f.read()
         
         process_allocation = ProcessAllocation(task_xml, resource_url=resource_et)    
         process_allocation.allocate_process()
+        valid_solution = Solution(process_allocation.ra_rpst)
 
-        with open("used_ra_pst.xml", "wb") as f:
-            f.write(process_allocation.ra_rpst)
-        process_allocation.solver = Genetic(process_allocation.ra_rpst, pop_size=25, generations=25, k_mut=0.2)
+        #with open("used_ra_pst.xml", "wb") as f:
+        #    f.write(valid_solution.init_ra_pst)
+
+        #process_allocation.solver = Genetic(process_allocation.ra_rpst, pop_size=25, generations=25, k_mut=0.2)
+        process_allocation.solver = Genetic(valid_solution.init_ra_pst, pop_size=25, generations=25, k_mut=0.2)
         start = time.time()
         population, data = process_allocation.solver.find_solutions('elitist', "cost")
         end = time.time()

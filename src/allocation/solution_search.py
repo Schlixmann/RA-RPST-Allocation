@@ -20,16 +20,16 @@ import multiprocessing as mp
 
 class SolutionSearch():
 
-    def __init__(self, process_allocation):
+    def __init__(self, ra_pst):
         self.solutions = []
-        self.process_allocation = etree.fromstring(process_allocation)
+        self.process_allocation = ra_pst if isinstance(ra_pst, etree._Element) else etree.fromstring(ra_pst)
         #self.process = process_allocation.process
         self.ns = {"cpee1" : list(self.process_allocation.nsmap.values())[0]}
 
 class Genetic(SolutionSearch):
 
-    def __init__(self, process_allocation, pop_size, generations, k_sel=3, k_mut=0.1, early_abandon=True):
-        super(Genetic, self).__init__(process_allocation)
+    def __init__(self, ra_pst, pop_size, generations, k_sel=3, k_mut=0.1, early_abandon=True):
+        super(Genetic, self).__init__(ra_pst)
         self.pop_size:int = pop_size
         self.generations:int = generations
         self.k_mut:float = k_mut

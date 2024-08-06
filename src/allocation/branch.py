@@ -22,7 +22,6 @@ class Branch():
         # For one allocation the best bracnch should then be found (or best 2,3,4 etc)
         values = self.node.xpath(f".//cpee1:children/cpee1:resource/cpee1:resprofile/cpee1:measures/cpee1:{measure}", namespaces=ns)
         return operator([float(value.text) for value in values])
-        pass
 
     def apply_to_process(self, process, solution=None, next_task=None) -> etree:
         #TODO should be part of "Branch"
@@ -31,10 +30,10 @@ class Branch():
         -> apply change operations
         """
         ns = {"cpee1" : list(process.nsmap.values())[0]}
-        with open("branch_raw.xml", "wb") as f:
-            f.write(etree.tostring(self.node))
-        with open("proc_raw.xml", "wb") as f:
-            f.write(etree.tostring(process))
+        #with open("branch_raw.xml", "wb") as f:
+        #    f.write(etree.tostring(self.node))
+        #with open("proc_raw.xml", "wb") as f:
+        #    f.write(etree.tostring(process))
         tasks = copy.deepcopy(self.node).xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:changepattern)and not(ancestor::cpee1:allocation)]", namespaces=ns)[1:]
 
 

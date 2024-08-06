@@ -19,6 +19,7 @@ tmp/results/*
 actions.txt
 final_schedule.json
 tests/results/*
+*.keras
 
 !tmp/results
 

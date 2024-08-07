@@ -1,5 +1,5 @@
 <description xmlns="http://cpee.org/ns/description/1.0">
-  <manipulate id="a1" label="new_tender">level1level2level3<resources allocated_to="level3 role: level3rp_13 resource r_3"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><children><resource id="r_1" name="level1">
+  <manipulate id="a1" label="new_tender">level1level2level3<resources allocated_to="level3 role: level3rp_13 resource r_5"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><children><resource id="r_1" name="level1">
         <resprofile id="rp_1" name="new_tender" role="level1" task="new_tender">
             <measures>
                 <cost>10</cost>
@@ -41,14 +41,14 @@
             </measures>
         <children/></resprofile>
         </resource>
-</children><allocation><resource id="r_3" name="level3">
+</children><allocation><resource id="r_5" name="level3">
         <resprofile id="rp_13" name="new_tender" role="level3" task="new_tender">
             <measures>
                 <cost>10</cost>
             </measures>
         <children/></resprofile>
         </resource>
-    </allocation></manipulate>
+</allocation></manipulate>
   <manipulate id="r11" label="data_support" type="insert" direction="before">
                         <resources allocated_to="level2 role: level2rp_20 resource r_4">
                             <resource>level2</resource>
@@ -68,7 +68,7 @@
         <children/></resprofile>
         </resource>
     </allocation></manipulate>
-                <manipulate id="a2" label="data_gathering">level1level2<resources allocated_to="level1 role: level1rp_2 resource r_6"><resource>level1</resource><resource>level2</resource></resources><children><resource id="r_1" name="level1">
+                <manipulate id="a2" label="data_gathering">level1level2<resources allocated_to="level1 role: level1rp_2 resource r_1"><resource>level1</resource><resource>level2</resource></resources><children><resource id="r_1" name="level1">
         <resprofile id="rp_2" name="data_gathering" role="level1" task="data_gathering">
             <measures>
                 <cost>10</cost>
@@ -144,7 +144,7 @@
     </children></manipulate>
                 </children></resprofile>
         </resource>
-    </children><allocation><resource id="r_6" name="level1">
+    </children><allocation><resource id="r_1" name="level1">
         <resprofile id="rp_2" name="data_gathering" role="level1" task="data_gathering">
             <measures>
                 <cost>10</cost>
@@ -176,7 +176,7 @@
                 </children></resprofile>
         </resource>
     </allocation></manipulate>
-  <manipulate id="a3" label="evaluate_risk">Must be checked by level3 if executed by 1 or 2<resources allocated_to="level3 role: level3rp_14 resource r_5"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><children><resource id="r_1" name="level1">
+  <manipulate id="a3" label="evaluate_risk">Must be checked by level3 if executed by 1 or 2<resources allocated_to="level3 role: level3rp_14 resource r_3"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><children><resource id="r_1" name="level1">
         <resprofile id="rp_3" name="evaluate_risk" role="level1" task="evaluate_risk">
             <measures>
                 <cost>10</cost>
@@ -287,14 +287,14 @@
             </measures>
         <children/></resprofile>
         </resource>
-</children><allocation><resource id="r_5" name="level3">
+</children><allocation><resource id="r_3" name="level3">
         <resprofile id="rp_14" name="evaluate_risk" role="level3" task="evaluate_risk">
             <measures>
                 <cost>30</cost>
             </measures>
         <children/></resprofile>
         </resource>
-</allocation></manipulate>
+    </allocation></manipulate>
   <manipulate id="a4" label="create_proposal">level3<resources allocated_to="level3 role: level3rp_15 resource r_3"><resource>level3</resource><resource>level2</resource></resources><children><resource id="r_2" name="level2">
         <resprofile id="rp_15" name="create_proposal" role="level3" task="create_proposal">
             <measures>
@@ -610,7 +610,7 @@
             <description/>
           </implementation>
         </documentation>
-        <resources allocated_to="level3 role: level3rp_16 resource r_5">
+        <resources allocated_to="level3 role: level3rp_16 resource r_3">
           <resource>level3</resource>
         </resources>
       <children><resource id="r_3" name="level3">
@@ -627,14 +627,14 @@
             </measures>
         <children/></resprofile>
         </resource>
-</children><allocation><resource id="r_5" name="level3">
+</children><allocation><resource id="r_3" name="level3">
         <resprofile id="rp_16" name="contact_suppliers" role="level3" task="contact_suppliers">
             <measures>
                 <cost>15</cost>
             </measures>
         <children/></resprofile>
         </resource>
-</allocation></call>
+    </allocation></call>
     </parallel_branch>
   </parallel>
   <choose mode="exclusive">
@@ -686,7 +686,7 @@
             <description/>
           </code>
         </documentation>
-        <resources allocated_to="level1 role: level3rp_16 resource r_6">
+        <resources allocated_to="level1 role: level3rp_16 resource r_1">
           <resource>level2</resource>
           <resource>level3</resource>
         </resources>
@@ -704,7 +704,7 @@
             </measures>
         <children/></resprofile>
         </resource>
-    </children><allocation><resource id="r_6" name="level1">
+    </children><allocation><resource id="r_1" name="level1">
         <resprofile id="rp_16" name="handover_to_engineering" role="level3" task="handover_to_engineering">
             <measures>
                 <cost>15</cost>

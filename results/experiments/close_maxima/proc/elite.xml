@@ -524,7 +524,7 @@
             <description/>
           </code>
         </documentation>
-        <resources allocated_to="level3 role: level3rp_9 resource r_5">
+        <resources allocated_to="level3 role: level3rp_9 resource r_3">
           <resource>level1</resource>
           <resource>level2</resource>
           <resource>level3</resource>
@@ -669,7 +669,7 @@
                     </manipulate>
                 </children></resprofile>
         </resource>
-</children><allocation><resource id="r_5" name="level3">
+</children><allocation><resource id="r_3" name="level3">
         <resprofile id="rp_9" name="design_offer" role="level3" task="design_offer">
             <measures>
                 <cost>50</cost>
@@ -687,7 +687,7 @@
                     </manipulate>
                 </children></resprofile>
         </resource>
-</allocation></call>
+    </allocation></call>
     </parallel_branch>
     <parallel_branch pass="" local="">
       <call id="a8" endpoint="">
@@ -723,7 +723,7 @@
             <description/>
           </implementation>
         </documentation>
-        <resources allocated_to="level3 role: level3rp_16 resource r_5">
+        <resources allocated_to="level3 role: level3rp_16 resource r_3">
           <resource>level3</resource>
         </resources>
       <children><resource id="r_3" name="level3">
@@ -740,14 +740,14 @@
             </measures>
         <children/></resprofile>
         </resource>
-</children><allocation><resource id="r_5" name="level3">
+</children><allocation><resource id="r_3" name="level3">
         <resprofile id="rp_16" name="contact_suppliers" role="level3" task="contact_suppliers">
             <measures>
                 <cost>15</cost>
             </measures>
         <children/></resprofile>
         </resource>
-</allocation></call>
+    </allocation></call>
     </parallel_branch>
   </parallel>
   <choose mode="exclusive">

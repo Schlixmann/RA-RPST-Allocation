@@ -1,5 +1,5 @@
 <description xmlns="http://cpee.org/ns/description/1.0">
-  <manipulate id="a1" label="new_tender">level1level2level3<resources allocated_to="level3 role: level3rp_13 resource r_3"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><children><resource id="r_1" name="level1">
+  <manipulate id="a1" label="new_tender">level1level2level3<resources allocated_to="level1 role: level1rp_1 resource r_1"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><children><resource id="r_1" name="level1">
         <resprofile id="rp_1" name="new_tender" role="level1" task="new_tender">
             <measures>
                 <cost>47</cost>
@@ -34,10 +34,10 @@
             </measures>
         <children/></resprofile>
         </resource>
-</children><allocation><resource id="r_3" name="level3">
-        <resprofile id="rp_13" name="new_tender" role="level3" task="new_tender">
+</children><allocation><resource id="r_1" name="level1">
+        <resprofile id="rp_1" name="new_tender" role="level1" task="new_tender">
             <measures>
-                <cost>52</cost>
+                <cost>47</cost>
             </measures>
         <children/></resprofile>
         </resource>
@@ -420,7 +420,7 @@
             <description/>
           </code>
         </documentation>
-        <resources allocated_to="level2 role: level2rp_89 resource r_2">
+        <resources allocated_to="level2 role: level2rp_99 resource r_4">
           <resource>level1</resource>
           <resource>level2</resource>
           <resource>level3</resource>
@@ -557,10 +557,10 @@
     </children></manipulate>
                 </children></resprofile>
         </resource>
-</children><allocation><resource id="r_2" name="level2">
-        <resprofile id="rp_89" name="design_offer" role="level2" task="design_offer">
+</children><allocation><resource id="r_4" name="level2">
+        <resprofile id="rp_99" name="design_offer" role="level2" task="design_offer">
             <measures>
-                <cost>43</cost>
+                <cost>55</cost>
             </measures>
         <children/></resprofile>
         </resource>

@@ -295,7 +295,7 @@
         <children/></resprofile>
         </resource>
     </allocation></manipulate>
-  <manipulate id="a4" label="create_proposal">level3<resources allocated_to="level2 role: level2rp_15 resource r_4"><resource>level3</resource><resource>level2</resource></resources><children><resource id="r_2" name="level2">
+  <manipulate id="a4" label="create_proposal">level3<resources allocated_to="level3 role: level3rp_15 resource r_3"><resource>level3</resource><resource>level2</resource></resources><children><resource id="r_2" name="level2">
         <resprofile id="rp_15" name="create_proposal" role="level3" task="create_proposal">
             <measures>
                 <cost>25</cost>
@@ -346,19 +346,10 @@
                     </manipulate>
                 </children></resprofile>
         </resource>
-</children><allocation><resource id="r_4" name="level2">
-        <resprofile id="rp_15" name="create_proposal" role="level2" task="create_proposal">
+</children><allocation><resource id="r_3" name="level3">
+        <resprofile id="rp_15" name="create_proposal" role="level3" task="create_proposal">
             <measures>
-                <cost>25</cost>
-            </measures>
-        <children/></resprofile>
-        
-        </resource>
-    </allocation></manipulate>
-  <manipulate id="a10" label="decide_on_proposal"><resources allocated_to="level3 role: level3rp_25 resource r_5"><resource>level3</resource></resources><children><resource id="r_3" name="level3">
-        <resprofile id="rp_25" name="decide_on_proposal" role="level3" task="decide_on_proposal">
-            <measures>
-                <cost>50</cost>
+                <cost>29</cost>
             </measures>
             <changepattern type="delete">
                 <parameters>
@@ -367,28 +358,13 @@
                 <description>
                     </description>
             </changepattern>
-        <children><manipulate id="r2" label="head_confirmation" type="delete" direction="any">
+        <children><manipulate id="a15" label="decide_on_proposal" type="delete" direction="any">
                         <resources allocated_to="not_allocated">
-                            <resource>level3</resource>
                         </resources>
                     </manipulate>
                 </children></resprofile>
-    </resource>
-    <resource id="r_5" name="level3">
-        <resprofile id="rp_25" name="decide_on_proposal" role="level3" task="decide_on_proposal">
-            <measures>
-                <cost>15</cost>
-            </measures>
-        <children/></resprofile>
-    </resource>
-</children><allocation><resource id="r_5" name="level3">
-        <resprofile id="rp_25" name="decide_on_proposal" role="level3" task="decide_on_proposal">
-            <measures>
-                <cost>15</cost>
-            </measures>
-        <children/></resprofile>
-    </resource>
-</allocation></manipulate>
+        </resource>
+    </allocation></manipulate>
   <choose xmlns="http://cpee.org/ns/description/1.0" mode="exclusive">
   <alternative condition=""> 
   <parallel wait="-1" cancel="last">
@@ -435,7 +411,7 @@
             <description/>
           </code>
         </documentation>
-        <resources allocated_to="level2 role: level2rp_89 resource r_2">
+        <resources allocated_to="level3 role: level3rp_9 resource r_3">
           <resource>level1</resource>
           <resource>level2</resource>
           <resource>level3</resource>
@@ -580,12 +556,23 @@
                     </manipulate>
                 </children></resprofile>
         </resource>
-</children><allocation><resource id="r_2" name="level2">
-        <resprofile id="rp_89" name="design_offer" role="level2" task="design_offer">
+</children><allocation><resource id="r_3" name="level3">
+        <resprofile id="rp_9" name="design_offer" role="level3" task="design_offer">
             <measures>
-                <cost>20</cost>
+                <cost>50</cost>
             </measures>
-        <children/></resprofile>
+            <changepattern type="delete">
+                <parameters>
+                    <direction>any</direction>
+                </parameters>
+                <description>
+                    </description>
+            </changepattern>
+        <children><manipulate id="a8" label="send_offer" type="delete" direction="any">
+                        <resources allocated_to="not_allocated">
+                        </resources>
+                    </manipulate>
+                </children></resprofile>
         </resource>
     </allocation></call>
     </parallel_branch>
@@ -650,141 +637,6 @@
     </allocation></call>
     </parallel_branch>
   </parallel>
-  <manipulate id="a5" label="send_offer">level1level2level3<resources allocated_to="level1 role: level1rp_5 resource r_1"><resource>level1</resource><resource>level2</resource><resource>level3</resource></resources><children><resource id="r_1" name="level1">
-        <resprofile id="rp_5" name="send_offer" role="level1" task="send_offer">
-            <measures>
-                <cost>70</cost>
-            </measures>
-        <children/></resprofile>
-    </resource>
-    <resource id="r_6" name="level1">
-        <resprofile id="rp_5" name="send_offer" role="level1" task="send_offer">
-            <measures>
-                <cost>40</cost>
-            </measures>
-            <changepattern type="insert">
-                <parameters>
-                    <direction>after</direction>
-                </parameters>
-                <description>
-                    <manipulate id="r10" label="invalidity" type="insert" direction="after">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    </manipulate>
-                </description>
-            </changepattern>
-        <children><manipulate id="r10" label="invalidity" type="insert" direction="after">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    <children/></manipulate>
-                </children></resprofile>
-    </resource>
-    <resource id="r_2" name="level2">
-        <resprofile id="rp_10" name="send_offer" role="level2" task="send_offer">
-            <measures>
-                <cost>30</cost>
-            </measures>
-            <changepattern type="insert">
-                <parameters>
-                    <direction>after</direction>
-                </parameters>
-                <description>
-                    <manipulate id="r10" label="invalidity" type="insert" direction="after">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    </manipulate>
-                </description>
-            </changepattern>
-        <children><manipulate id="r10" label="invalidity" type="insert" direction="after">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    <children/></manipulate>
-                </children></resprofile>
-        </resource>
-    <resource id="r_4" name="level2">
-        <resprofile id="rp_10" name="send_offer" role="level2" task="send_offer">
-            <measures>
-                <cost>20</cost>
-            </measures>
-            <changepattern type="insert">
-                <parameters>
-                    <direction>before</direction>
-                </parameters>
-                <description>
-                    <manipulate id="r10" label="invalidity" type="insert" direction="before">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    </manipulate>
-                </description>
-            </changepattern>
-        <children><manipulate id="r10" label="invalidity" type="insert" direction="before">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    <children/></manipulate>
-                </children></resprofile>
-        </resource>
-    <resource id="r_3" name="level3">
-        <resprofile id="rp_17" name="send_offer" role="level3" task="send_offer">
-            <measures>
-                <cost>50</cost>
-            </measures>
-            <changepattern type="insert">
-                <parameters>
-                    <direction>after</direction>
-                </parameters>
-                <description>
-                    <manipulate id="r10" label="invalidity" type="insert" direction="after">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    </manipulate>
-                </description>
-            </changepattern>
-        <children><manipulate id="r10" label="invalidity" type="insert" direction="after">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    <children/></manipulate>
-                </children></resprofile>
-        </resource>
-    <resource id="r_5" name="level3">
-        <resprofile id="rp_17" name="send_offer" role="level3" task="send_offer">
-            <measures>
-                <cost>60</cost>
-            </measures>
-            <changepattern type="insert">
-                <parameters>
-                    <direction>before</direction>
-                </parameters>
-                <description>
-                    <manipulate id="r10" label="invalidity" type="insert" direction="before">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    </manipulate>
-                </description>
-            </changepattern>
-        <children><manipulate id="r10" label="invalidity" type="insert" direction="before">
-                        <resources allocated_to="not_allocated">
-                            <resource>level2</resource>
-                        </resources>
-                    <children/></manipulate>
-                </children></resprofile>
-        </resource>
-</children><allocation><resource id="r_1" name="level1">
-        <resprofile id="rp_5" name="send_offer" role="level1" task="send_offer">
-            <measures>
-                <cost>70</cost>
-            </measures>
-        <children/></resprofile>
-    </resource>
-    </allocation></manipulate>
   <choose mode="exclusive">
     <alternative condition="positive">
       <_probability>

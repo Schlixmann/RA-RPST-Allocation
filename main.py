@@ -189,7 +189,7 @@ if __name__ == "__main__":
 
     targets = {"resource_config/offer_resources_heterogen.xml" : "results/experiments/heterogen",
         "resource_config/offer_resources_close_maxima.xml" : "results/experiments/close_maxima",
-        #"resource_config/offer_resources_many_invalid_branches.xml" : "results/experiments/invalid_branches",
+        "resource_config/offer_resources_many_invalid_branches.xml" : "results/experiments/invalid_branches",
         "resource_config/offer_resources_heterogen_no_deletes.xml" : "results/experiments/no_deletes",
         "resource_config/offer_resources_plain_fully_synthetic_small.xml" : "results/experiments/fully_synthetic",
         }

@@ -11,13 +11,14 @@ import copy
 from collections import defaultdict
 import pickle
 import json
+from tqdm import tqdm
 
 def train_dqn(env, episodes=50, batch_size=64):
     state_size = env.get_state_aggregation().shape[0]
     max_action_size = len(env.get_possible_branches()[1]) # All branches in RA-PST are possible actions
     agent = DQNAgentConfiguration(state_size, max_action_size)
     id = 10
-    for e in range(episodes):
+    for e in tqdm(range(episodes)):
         print(f"Episode_nr: {e}")
         
         print(f"Initial latest end: {env.init_last_task}, Last task after allocation of one config: {env.last_task_end}")

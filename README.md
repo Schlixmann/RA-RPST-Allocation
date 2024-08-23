@@ -5,10 +5,10 @@ The table and aggregations can be found in the Jupyternotebook: `results_present
 
 To reproduce the experiments from Optimizing Resource-Driven Process Configuration through Genetic Algorithms (2024):
 
-**Please note:** <br> Rerunning the iterative solution search is time and resource-consuming (>12h, >10GB RAM). <br>
+**Please note:** <br> Rerunning the solution search is time and resource-consuming, especially if you want to brute-force the search of the full solution space (>24h, >10GB RAM). <br>
 The results for the genetic algorithms might differ slightly from our results since the genetic algorithm is non-deterministic.
 
-To run heuristic search and genetic algorithm:
+To run only heuristic search and genetic algorithm:
 ```
 pip install -r requirements.txt
 python main.py
@@ -21,6 +21,7 @@ python main.py -b
 ## View Process Models in BPM Like representation: 
 To view a BPM-like representation of the process models, use the following command:
 `python3 open_model.py path_to_model`
+
 e.g.:
 ```
 python3 open_model.py results/experiments/fully_synthetic/proc/brute.xml

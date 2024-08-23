@@ -29,6 +29,13 @@ if __name__ == "__main__":
 
     with open(args.process_file) as f: 
         process_xml = f.read()
+
+    tree = etree.fromstring(process_xml)
+    if list(tree.nsmap.values())[0] == 'http://cpee.org/ns/properties/2.0':
+        proc_ns = {'cpee1':'http://cpee.org/ns/description/1.0'}
+        process_xml = etree.tostring(tree.xpath(f"//cpee1:description", namespaces = proc_ns)[0])
+        print("Created Model from testset")
+
     with open(args.resource_file) as f:
         resource_xml = etree.fromstring(f.read())
 

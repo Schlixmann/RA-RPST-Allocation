@@ -9,7 +9,7 @@ import argparse
 
 def show_graph(filename, output_path=f"ra_pst_out", res_option="children"):
     with open(filename, "r") as f:
-        TreeGraph().show(f.read(), filename=output_path, res_option=res_option)
+        TreeGraph().show(f.read(), filename=output_path, directory="", res_option=res_option)
 
 if __name__ == "__main__":
 

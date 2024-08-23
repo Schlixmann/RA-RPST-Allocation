@@ -10,7 +10,7 @@ import copy
 class Branch():
     def __init__(self, node):
         self.node = node
-        self.valid = True
+        self.is_valid = True
         self.open_delete = False
         self.current_path = ''
 
@@ -20,23 +20,21 @@ class Branch():
         ns = {"cpee1" : list(self.node.nsmap.values())[0]}
         #TODO should calculate the sum of the measure for the branch
         # For one allocation the best bracnch should then be found (or best 2,3,4 etc)
-        values = self.node.xpath(f".//cpee1:children/resource/resprofile/measures/{measure}", namespaces=ns)
+        values = self.node.xpath(f".//cpee1:children/cpee1:resource/cpee1:resprofile/cpee1:measures/cpee1:{measure}", namespaces=ns)
         return operator([float(value.text) for value in values])
-        pass
 
     def apply_to_process(self, process, solution=None, next_task=None) -> etree:
         #TODO should be part of "Branch"
         """
-        -> Find task to allocate in self.process
+        -> Find task to allocate in process
         -> apply change operations
         """
         ns = {"cpee1" : list(process.nsmap.values())[0]}
         #with open("branch_raw.xml", "wb") as f:
         #    f.write(etree.tostring(self.node))
-        #TODO Set allocated Resource!
-
+        #with open("proc_raw.xml", "wb") as f:
+        #    f.write(etree.tostring(process))
         tasks = copy.deepcopy(self.node).xpath("//*[self::cpee1:call or self::cpee1:manipulate][not(ancestor::changepattern) and not(ancestor::cpee1:changepattern)and not(ancestor::cpee1:allocation)]", namespaces=ns)[1:]
-        #TODO This does it work for branches with more than 2 levels?
 
 
         dummy = cpee_change_operations.ChangeOperation()

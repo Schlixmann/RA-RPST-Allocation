@@ -1,4 +1,3 @@
-from src.tree.R_RPST import get_label
 from lxml import etree
 import random
 import copy
@@ -6,7 +5,7 @@ import re
 # iterate open tasks
 def get_next_task(tasks_iter, solution=None):
     if solution:
-        ns = {"cpee1" : list(solution.process.nsmap.values())[0]}
+        ns = solution.ns
     while True:
         task = next(tasks_iter, "end")
         if task == "end":
@@ -17,7 +16,7 @@ def get_next_task(tasks_iter, solution=None):
         
         # check that next task was not deleted:
         elif solution: 
-            if not solution.process.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=ns):
+            if not solution.solution_ra_pst.xpath(f"//*[@id='{task.attrib['id']}'][not(ancestor::cpee1:children) and not(ancestor::cpee1:allocation) and not(ancestor::RA_RPST)]", namespaces=ns):
                 pass
             else:
                 break
@@ -37,6 +36,19 @@ def vary_resource_costs(file_path, measure, out_path=None, max_val=100):
         out_path=file_path
     with open(out_path, "wb") as f:
         f.write(etree.tostring(res_tree))
+
+
+def get_label(element):
+    el = type(element)
+    elem_et = element if isinstance(element, etree._Element) else etree.fromstring(element)
+    ns = {"cpee1" : list(elem_et.nsmap.values())[0]}
+    if elem_et.tag == f"{{{ns['cpee1']}}}manipulate":
+        return elem_et.attrib["label"]
+    if elem_et.tag == f"{{{ns['cpee1']}}}call":
+        to_ret = elem_et.xpath("cpee1:parameters/cpee1:label", namespaces=ns)[0].text
+        return to_ret
+    else:
+        raise TypeError("Wrong Element Type: No Task element Given. Type is: ", elem_et.tag)
 
 def vary_resource_changepatterns(proc_file, res_file, output_file=None, cp_ratio=0.8, in_de_re_ratios:list = [0.33, 0.33, 0.34], tasks=["dummy"], allowed_roles = ["level1", "level2", "level3"], cp_file = "tree_allocation/allocation/cp_descriptions.xml", insert_tasks = ["dummy"]):
     proc_file = "tests/test_processes/offer_process_paper.xml"

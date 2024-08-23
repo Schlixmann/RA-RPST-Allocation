@@ -685,9 +685,13 @@ class TestCpeeAllocation(unittest.TestCase):
         trees = process_allocation.allocate_process()
 
         ra_rpst = process_allocation.get_ra_rpst()
-        
+
         with open("ra_rpst.xml", "wb") as f:
             f.write(ra_rpst)
+        
+        brute_solutions = Brute(process_allocation)
+        brute_solutions.find_solutions_with_heuristic(top_n=1, force_valid=True)
+        process_allocation.solutions = brute_solutions.solutions
             
             
     def test_heur_opts(self):

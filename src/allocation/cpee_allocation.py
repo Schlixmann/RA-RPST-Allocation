@@ -1,5 +1,6 @@
 # Import modules
 from src.allocation.branch import Branch
+import src.allocation.utils
 from src.tree import task_node as tn
 from src.tree import res_node as rn, R_RPST
 from src.helpers import get_all_resources, get_all_tasks, get_process_model
@@ -28,19 +29,18 @@ class ProcessAllocation():
         self.id = str(uuid.uuid1())
         self.process = etree.fromstring(process)
         self.resource_url = resource_url
-        self.valid_allocations = []
         self.allocations = {}
         self.solutions = []
         self.ns = None
         self.ra_rpst:str = None
+
+        self.solver = None
      
     def allocate_process(self):
         """ 
-        This method triggers the threaded allocation of each task in the process
-        - if in parallel or XOR maybe add a flag?!
+        This method calls the allocation of each task in the process
         """
-        # TODO Tasks must still be adapted, only for testing purposes now
-        self.ns = {"cpee1" : list(self.process.nsmap.values())[0]}
+        self.ns = {"cpee1" : list(self.process.nsmap.values())[0], "ra_pst" : "http://cpee.org/ns/ra_rpst"}
         tasks = self.process.xpath("//cpee1:call|//cpee1:manipulate", namespaces=self.ns)
         allocations = []
         threads = []
@@ -67,12 +67,13 @@ class ProcessAllocation():
                 delete_tasks = allocation.intermediate_trees[-1].xpath("//cpee1:manipulate[@type='delete']|//cpee1:call[@type='delete']", namespaces=self.ns)
                 
                 for delete_task in delete_tasks:
-                    label = R_RPST.get_label(etree.tostring(delete_task))
+                    label = src.allocation.utils.get_label(etree.tostring(delete_task))
                     hits = allocation.intermediate_trees[0].xpath(f"//cpee1:*[@label='{label}']|//cpee1:parameters[cpee1:label='{label}']", namespaces=self.ns)
                     [hit for hit in hits if not hit.xpath("@type='delete'")]
                     #TODO -> should only be allowed to delete in branches which are not the delete branch is part of
                     # Implement
-        
+
+        self.get_ra_rpst()
         return self.allocations
     
     def add_allocation(self, task, output):
@@ -97,13 +98,24 @@ class ProcessAllocation():
             self.allocate_process()
 
         process = copy.deepcopy(self.process)
+        #ns_uri = "http://cpee.org/ns/ra_rpst"
+        #ns_prefix = "ra_rpst"
+        #nsmap =  self.ns
+        #namespace = {"rpst":ns_uri}
 
         for key, value in self.allocations.items():
-            node = process.xpath(f"//*[@id='{str(key)}']", namespaces = self.ns)[0]
-            node.append(etree.Element("ra_rpst")) # add new node ra_rpst
-            node.xpath("ra_rpst")[0].append(value.intermediate_trees[0].xpath("cpee1:children", namespaces=self.ns)[0]) # add allocation tree
-        
+            #element = etree.Element(etree.QName(ns_uri, "ra_rpst"))
+            #element = etree.Element('ra_rpst')
+            #element.attrib["xmlns"] = ns_uri
+            node = process.xpath(f"//*[@id='{str(key)}'][not(ancestor::cpee1:children)]", namespaces = self.ns)[0]
+            #node.append(element) # add new node ra_rpst
+            # Add RA-RPST as Subelement
+            ra_tree = value.intermediate_trees[0].xpath("cpee1:children", namespaces=self.ns)[0]
+            
+            node.append(ra_tree) # add allocation tree
+
         self.ra_rpst = etree.tostring(process)
+        x = etree.fromstring(etree.tostring(process))
 
     def get_best_solution(self, measure, operator=min, consider_all_solutions=True):
         """
@@ -219,8 +231,8 @@ class TaskAllocation(ProcessAllocation):
             
             if not children and node_type == 'delete':
                 p_tasks = [element for element in self.process.xpath(".//*") if element.tag in R_RPST.CpeeElements().task_elements]
-                task_labels = [R_RPST.get_label(etree.tostring(task)).lower() for task in p_tasks]
-                del_task = R_RPST.get_label(etree.tostring(node).lower())
+                task_labels = [src.allocation.utils.get_label(etree.tostring(task)).lower() for task in p_tasks]
+                del_task = src.allocation.utils.get_label(etree.tostring(node).lower())
                 if  del_task not in task_labels:
                     branch_obj.valid = False
                         
@@ -232,7 +244,7 @@ class TaskAllocation(ProcessAllocation):
                     new_branch = Branch(copy.deepcopy(child.xpath("/*", namespaces=self.ns)[0]))
                     self.branches.append(new_branch)
                     branches[1].append(new_branch)
-                    branches[0].append(new_branch.node.xpath(path)[0])
+                    branches[0].append(new_branch.node.xpath(path, namespaces=self.ns)[0])
                 else:
                     branches[0].append(child)
                     branches[1].append(branch_obj)
@@ -258,14 +270,17 @@ class TaskAllocation(ProcessAllocation):
             self.state='running'
             root = etree.fromstring(self.task)
             print("New created root: ", root)
-            self.ns = {"cpee1" : list(root.nsmap.values())[0]}
-            root.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
+            self.ns = {"cpee1" : list(root.nsmap.values())[0], "ra_pst" : "http://cpee.org/ns/ra_rpst"}
+            #etree.register_namespace("ra_pst", self.ns["ra_pst"])
+            new_element = etree.Element(f"{{{self.ns['cpee1']}}}children")
+            root.append(new_element)
             self.intermediate_trees.append(copy.deepcopy(self.allocate_task(root, resource_url=resource_url, excluded=[root])))
             return self.intermediate_trees[0]
         else:
             root.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
-            print("Task to allocate: ", R_RPST.get_label(etree.tostring(root)))
+            print("Task to allocate: ", src.allocation.utils.get_label(etree.tostring(root)))
 
+        etree.register_namespace("ra_pst", self.ns["ra_pst"])
         res_xml = copy.deepcopy(resource_url)
         # Create Resource Children
         for resource in res_xml.xpath("*"):
@@ -274,7 +289,7 @@ class TaskAllocation(ProcessAllocation):
             for profile in resource.xpath("resprofile"):
                 profile.append(etree.Element(f"{{{self.ns['cpee1']}}}children"))
                 
-                if not (R_RPST.get_label(etree.tostring(root).lower()) == profile.attrib["task"].lower() and (profile.attrib["role"] in R_RPST.get_allowed_roles(etree.tostring(root)) if len(R_RPST.get_allowed_roles(etree.tostring(root))) > 0 else True)):
+                if not (src.allocation.utils.get_label(etree.tostring(root).lower()) == profile.attrib["task"].lower() and (profile.attrib["role"] in R_RPST.get_allowed_roles(etree.tostring(root)) if len(R_RPST.get_allowed_roles(etree.tostring(root))) > 0 else True)):
                     resource.remove(profile)
             
             # Add Resource if it has fitting profiles
@@ -304,11 +319,11 @@ class TaskAllocation(ProcessAllocation):
 
             for change_pattern in profile.xpath("changepattern"):
                 cp_tasks = [element for element in change_pattern.xpath(".//*") if element.tag in task_elements]
-                cp_task_labels = [R_RPST.get_label(etree.tostring(task)).lower() for task in cp_tasks]
-                ex_tasks =  [R_RPST.get_label(etree.tostring(task)).lower() for task in ex_branch]
+                cp_task_labels = [src.allocation.utils.get_label(etree.tostring(task)).lower() for task in cp_tasks]
+                ex_tasks =  [src.allocation.utils.get_label(etree.tostring(task)).lower() for task in ex_branch]
                 
                 #TODO excluded tasks
-                if any(x in ex_tasks or x == R_RPST.get_label(etree.tostring(root)) for x in cp_task_labels): 
+                if any(x in ex_tasks or x == src.allocation.utils.get_label(etree.tostring(root)) for x in cp_task_labels): 
                     print(f"Break reached, task {[x for x in cp_task_labels if x in ex_tasks]} in excluded")
                     root.xpath("cpee1:children/resource/resprofile", namespaces=self.ns).remove(profile)
                     continue
@@ -320,7 +335,8 @@ class TaskAllocation(ProcessAllocation):
                     
                     if change_pattern.xpath("@type")[0].lower() in ["insert", "replace"]:                           
                         path = etree.ElementTree(task.xpath("/*")[0]).getpath(task) # generate path to current task
-                        task = copy.deepcopy(task.xpath("/*")[0]).xpath(path)[0]    # Deepcopy whole tree and re-locate current task
+                        etree.ElementTree(task.xpath("/*")[0]).write("test.xml")
+                        task = copy.deepcopy(task.xpath("/*", namespaces=self.ns)[0]).xpath(path, namespaces=self.ns)[0]    # Deepcopy whole tree and re-locate current task
                         ex_branch.append(task)
                         if change_pattern.xpath("@type")[0].lower() in ["replace"]:   
                             print("stop")
@@ -350,7 +366,7 @@ class ResourceError(Exception):
     
     def __init__(self, task, message="{} No valid resource allocation can be found for the given set of available resources"):
         self.task = task
-        self.message = message.format(R_RPST.get_label(etree.tostring(self.task)))
+        self.message = message.format(src.allocation.utils.get_label(etree.tostring(self.task)))
         super().__init__(self.message)
 
 class ResourceWarning(UserWarning):

@@ -25,18 +25,6 @@ class CpeeElements():
     def manipulate(self):
         return self.elems_et.xpath("cpee1:manipulate", namespaces=self.ns)[0]
     
-def get_label(element):
-    el = type(element)
-    elem_et = etree.fromstring(element)
-    ns = {"cpee1" : list(elem_et.nsmap.values())[0]}
-    if elem_et.tag == f"{{{ns['cpee1']}}}manipulate":
-        return elem_et.attrib["label"]
-    if elem_et.tag == f"{{{ns['cpee1']}}}call":
-        to_ret = elem_et.xpath("cpee1:parameters/cpee1:label", namespaces=ns)[0].text
-        return to_ret
-    else:
-        raise TypeError("Wrong Element Type: No Task element Given. Type is: ", elem_et.tag) 
-
 def get_allowed_roles(element):
     elem_et = etree.fromstring(element)
     ns = {"cpee1" : list(elem_et.nsmap.values())[0]}

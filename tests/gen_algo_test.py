@@ -7,7 +7,8 @@ from collections import defaultdict
 import json
 
 from src.allocation.solution_search import Genetic,Brute
-from src.allocation import cpee_allocation
+from src.allocation.cpee_allocation import ProcessAllocation
+from src.allocation.solution import Solution
 from src.tree import parser, task_node as tn, gtw_node as gtw
 from src.allocation import gen_deap
 from src.tree import graphix
@@ -20,7 +21,7 @@ class TestGenetic(unittest.TestCase):
         with open("tests/test_processes/offer_process.xml") as f:
             task_xml = f.read()
         
-        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)    
+        ProcessAllocation = ProcessAllocation(task_xml, resource_url=resource_et)    
         trees = ProcessAllocation.allocate_process()
 
         start = time.time()
@@ -45,7 +46,7 @@ class TestGenetic(unittest.TestCase):
         with open("tests/test_processes/offer_process_short.xml") as f:
             task_xml = f.read()
         
-        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)    
+        ProcessAllocation = ProcessAllocation(task_xml, resource_url=resource_et)    
         trees = ProcessAllocation.allocate_process()
 
         start = time.time()
@@ -88,7 +89,7 @@ class TestGenetic(unittest.TestCase):
         with open("tests/test_processes/offer_process_paper.xml") as f:
             task_xml = f.read()
         
-        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)    
+        ProcessAllocation = ProcessAllocation(task_xml, resource_url=resource_et)    
         ProcessAllocation.allocate_process()
 
         findings = []
@@ -133,7 +134,7 @@ class TestGenetic(unittest.TestCase):
         with open("tests/test_processes/offer_process_short.xml") as f:
             task_xml = f.read()
         
-        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)    
+        ProcessAllocation = ProcessAllocation(task_xml, resource_url=resource_et)    
         trees = ProcessAllocation.allocate_process()
 
         start = time.time()
@@ -167,7 +168,7 @@ class TestGenetic(unittest.TestCase):
         with open("tests/test_processes/offer_process_paper copy.xml") as f:
             task_xml = f.read()
         
-        ProcessAllocation = cpee_allocation.ProcessAllocation(task_xml, resource_url=resource_et)    
+        ProcessAllocation = ProcessAllocation(task_xml, resource_url=resource_et)    
         trees = ProcessAllocation.allocate_process()
 
         show = True
@@ -184,3 +185,36 @@ class TestGenetic(unittest.TestCase):
         with open("z_out.xml", "wb") as f:
             f.write(etree.tostring(population[-1]["solution"].process))
             print(population[-1]["solution"].invalid_branches)
+
+
+    def test_genetic_new_approach(self):
+        with open("resource_config/offer_resources_many_invalid_branches2.xml") as f: 
+            resource_et = etree.fromstring(f.read())
+        with open("tests/test_processes/offer_process_paper.xml") as f:
+            task_xml = f.read()
+        
+        process_allocation = ProcessAllocation(task_xml, resource_url=resource_et)    
+        process_allocation.allocate_process()
+        valid_solution = Solution(process_allocation.ra_rpst)
+
+        #with open("used_ra_pst.xml", "wb") as f:
+        #    f.write(valid_solution.init_ra_pst)
+
+        #process_allocation.solver = Genetic(process_allocation.ra_rpst, pop_size=25, generations=25, k_mut=0.2)
+        process_allocation.solver = Genetic(valid_solution.init_ra_pst, pop_size=25, generations=25, k_mut=0.2)
+        start = time.time()
+        population, data = process_allocation.solver.find_solutions('elitist', "cost")
+        end = time.time()
+        gen_time = end - start
+        
+        for individual in population:
+            print("Branches: ", individual["solution"].allocated_branches)
+            print("Solution Costs: ", individual["solution"].get_measure("cost"))
+        print("Gen_time: ", gen_time)
+        print(process_allocation.solver.best_tournament)
+
+        #print(population)
+        with open("tests/solutions/gen_solution.xml", "wb") as f:
+            f.write(etree.tostring(population[-1]["solution"].solution_ra_pst))
+        print("done")
+    

@@ -21,7 +21,7 @@ Use one of the resource files in ```resource_config/*``` as template
 python create_ra_pst.py <process-file> <resource-file> -p
 ```
 
-5. find the ra_pst as ```ra_pst.xml```
+6. Ra_pst is saved as ```ra_pst.xml```
 
 ## View a GraphViz visualization of an RA-PST or an allocated RA-PST_instance: 
 
@@ -29,9 +29,9 @@ python create_ra_pst.py <process-file> <resource-file> -p
 python draw_ra_pst.py <ra_pst_file.xml>
 ```
 
-## Experiments as described in "Optimizing Resource-Driven Process Configuration through Genetic Algorithms"
+## Experiments as described in "Optimizing Resource-Driven Process Configuration through Genetic Algorithms"
 
-All results of the experiments described in "Optimizing Resource-Driven Process Configuration through Genetic Algorithms" can be found in the directory: `results/experiments`. <br>
+All results of the experiments described in "Optimizing Resource-Driven Process Configuration through Genetic Algorithms" can be found in the directory: `results/experiments`. <br>
 The table and aggregations can be found in the Jupyternotebook: `results_presentation/results.ipynb`
 
 To reproduce the experiments from Optimizing Resource-Driven Process Configuration through Genetic Algorithms (2024):
